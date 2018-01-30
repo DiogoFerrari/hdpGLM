@@ -123,7 +123,7 @@
 #'                  about the estimation process. If zero, it does not display any information.
 #'                  Note: displaying informaiton at every iteration (n.display=1) may increase
 #'                  the time to estimate the model slightly. 
-#' @param hmc.iter an integer, used when \code{family='binomial'} or \code{family='multinomial'}.
+#' @param hmc_iter an integer, used when \code{family='binomial'} or \code{family='multinomial'}.
 #'                 It indicates the number of HMC interation for each Gibbs iteration.
 #'                 Default is 1.
 #' @return The function returns a list with elements \code{samples}, \code{pik}, \code{max_active},
@@ -160,7 +160,7 @@
 #' }
 #' @export
 ## }}}
-hdpGLM <- function(formula1, formula2=NULL, data, weights=NULL, mcmc, K=50, fix=NULL, family='gaussian', epsilon=0.01, leapFrog=40, n.display=1000, hmc.iter=1)
+hdpGLM <- function(formula1, formula2=NULL, data, weights=NULL, mcmc, K=50, fix=NULL, family='gaussian', epsilon=0.01, leapFrog=40, n.display=1000, hmc_iter=1)
 {
     if(! family %in% c('gaussian', 'binomial', 'multinomial'))
         stop(paste0('Error: Parameter -family- must be a string with one of the following options : \"gaussian\", \"binomial\", or \"multinomial\"'))
@@ -194,10 +194,10 @@ hdpGLM <- function(formula1, formula2=NULL, data, weights=NULL, mcmc, K=50, fix=
     T.mcmc  = Sys.time()
     if (is.null(Xj))
     {
-        samples        =  dpGLM_mcmc( y, X,    weights, K, fix,  family, mcmc, epsilon, leapFrog, n.display, hmc.iter) #
+        samples        =  dpGLM_mcmc( y, X,    weights, K, fix,  family, mcmc, epsilon, leapFrog, n.display, hmc_iter) #
     }else
     {
-        samples        =  hdpGLM_mcmc(y, X, Xj, weights, K, fix, family, mcmc, epsilon, leapFrog, n.display, hmc.iter)
+        samples        =  hdpGLM_mcmc(y, X, Xj, weights, K, fix, family, mcmc, epsilon, leapFrog, n.display, hmc_iter)
     }
     T.mcmc  = Sys.time() - T.mcmc
 
@@ -219,7 +219,7 @@ hdpGLM <- function(formula1, formula2=NULL, data, weights=NULL, mcmc, K=50, fix=
     }
 
     samples$samples                   = coda::as.mcmc(samples$samples)
-    attr(samples$samples, 'mcpar')[2] = mcmc$n.iter - mcmc$burn.in
+    attr(samples$samples, 'mcpar')[2] = mcmc$n.iter
     class(samples)                    = 'dpGLM'
 
     samples$time_elapsed = T.mcmc

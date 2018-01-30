@@ -9,7 +9,7 @@ void progress_bar(int t, int T)
 {
   int barWidth = 70;
   double pos = (t+2)*(double(barWidth/double(T)));
-  std::cout << "[";
+  std::cout <<  "[";
   for(int i = 0; i <= barWidth; i++){
     if(i <= int(pos)){
       std::cout << "="; 

@@ -6,7 +6,7 @@
 \usage{
 hdpGLM(formula1, formula2 = NULL, data, weights = NULL, mcmc, K = 50,
   fix = NULL, family = "gaussian", epsilon = 0.01, leapFrog = 40,
-  n.display = 1000, hmc.iter = 1)
+  n.display = 1000, hmc_iter = 1)
 }
 \arguments{
 \item{formula1}{a single symbolic description of the linear model of the
@@ -63,7 +63,7 @@ about the estimation process. If zero, it does not display any information.
 Note: displaying informaiton at every iteration (n.display=1) may increase
 the time to estimate the model slightly.}
 
-\item{hmc.iter}{an integer, used when \code{family='binomial'} or \code{family='multinomial'}.
+\item{hmc_iter}{an integer, used when \code{family='binomial'} or \code{family='multinomial'}.
 It indicates the number of HMC interation for each Gibbs iteration.
 Default is 1.}
 }
