@@ -1,0 +1,29 @@
+
+arma::colvec set_diff(arma::colvec& v1, arma::colvec& v2)
+{
+
+  std::vector<double> a = arma::conv_to< std::vector<double> >::from(arma::sort(v1));
+  std::vector<double> b = arma::conv_to< std::vector<double> >::from(arma::sort(v2));
+  std::vector<double> out;
+
+  std::set_difference(a.begin(), a.end(), b.begin(), b.end(), std::inserter(out, out.end()));
+
+  return arma::conv_to<arma::colvec>::from(out);
+}
+arma::mat rmvnormArma(int n, arma::vec mu, arma::mat sigma)
+{
+   int ncols = sigma.n_cols;
+   arma::mat Y = arma::randn(n, ncols);
+   return arma::repmat(mu, 1, n).t() + Y * arma::chol(sigma);
+}
+arma::colvec inv_scaled_chisq(int n, double df, double scale)
+{
+  arma::colvec z = arma::ones(n);
+  arma::colvec x = arma::ones(n);
+  for(int i = 0; i < n; i++){
+    z[i] = R::rchisq(df);
+    if(z[i]==0.0) z[i]=1e-100;
+    x[i] = (df*scale)/z[i];
+  }
+  return(x);
+}

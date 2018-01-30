@@ -1,0 +1,16 @@
+
+citHeader("To cite hdpGLM in publications use:")
+citEntry(entry = "Article",
+         title = "Hierarchial Dirichlet Process Generalized Linear Mixed Model (hdpGLM)",
+         author = personList(as.person("Diogo Ferrari")),
+         journal = "...",
+         year = "2018",
+         volume = "",
+         number = "",
+         pages = "",
+         url = "",
+         textVersion = paste("Ferrari, Diogo (2018).", 
+                             "Hierarchial Dirichlet Process Generalized Linear Mixed Model (hdpGLM)",
+                             "Journal...",
+                             "URL ...")
+         )

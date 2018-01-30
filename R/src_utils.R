@@ -70,4 +70,16 @@ NULL
         sapply(sapply(data, class), function(x) x[[1]]) == 'ordered'
     return(data.frame(data[,idxChar]))
 }
- 
+
+.onAttach<- function(libname, pkgname)
+{
+    packageStartupMessage('
+## =======================================================================
+##   Hierarchial Dirichlet Process Generalized Linear Mixed Model (hdpGLM)
+## =======================================================================
+')
+}
+
+.onUnload <- function (libpath) {
+    library.dynam.unload("hdpGLM", libpath)
+}

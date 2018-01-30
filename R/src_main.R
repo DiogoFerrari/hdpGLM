@@ -208,7 +208,7 @@ hdpGLM <- function(formula1, formula2=NULL, data, weights=NULL, mcmc, K=50, fix=
         if(family=='gaussian'){
             colnames(samples$samples)  <- c('k', paste0('beta',1:(ncol(samples$samples)-2),  sep=''),'sigma')
         }else{
-            colnames(samples$samples)  <- c('k', paste0('beta',1:(ncol(samples$samples)-2),  sep=''))
+            colnames(samples$samples)  <- c('k', paste0('beta',1:(ncol(samples$samples)-1),  sep=''))
         }
     }else{
         if(family=='gaussian'){

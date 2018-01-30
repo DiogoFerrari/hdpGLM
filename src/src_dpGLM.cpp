@@ -1,5 +1,9 @@
 // [[Rcpp::depends(RcppArmadillo)]]
 #include <RcppArmadillo.h>
+#include "src_utils.h"
+#include "src_hmc_binomial.h"
+#include "src_hmc_multinomial.h"
+#include "src_gibbs_gaussian.h"
 
 using namespace Rcpp;
 using namespace arma;
@@ -7,70 +11,13 @@ using namespace arma;
 
 // Global
 // ------
-int    dpGLM_ACCEPTANCE_COUNT = 0;
-double dpGLM_ACCEPTANCE_RATE_AVERAGE = 0.0;
-int    dpGLM_MCMC_TRIAL = 0;
- 
+double dpGLM_ACCEPTANCE_COUNT = 0.0;
+double dpGLM_ACCEPTANCE_RATE_AVERAGE = 1.0;
+double dpGLM_MCMC_TRIAL = 0.0;
 
 // {{{ ancillary }}}
 
-arma::colvec set_diff(arma::colvec& v1, arma::colvec& v2)
-{
-
-  std::vector<double> a = arma::conv_to< std::vector<double> >::from(arma::sort(v1));
-  std::vector<double> b = arma::conv_to< std::vector<double> >::from(arma::sort(v2));
-  std::vector<double> out;
-
-  std::set_difference(a.begin(), a.end(), b.begin(), b.end(), std::inserter(out, out.end()));
-
-  return arma::conv_to<arma::colvec>::from(out);
-}
-
-arma::mat rmvnormArma(int n, arma::vec mu, arma::mat sigma)
-{
-   int ncols = sigma.n_cols;
-   arma::mat Y = arma::randn(n, ncols);
-   return arma::repmat(mu, 1, n).t() + Y * arma::chol(sigma);
-}
-arma::colvec inv_scaled_chisq(int n, double df, double scale)
-{
-  arma::colvec z = arma::ones(n);
-  arma::colvec x = arma::ones(n);
-  for(int i = 0; i < n; i++){
-    z[i] = R::rchisq(df);
-    if(z[i]==0.0) z[i]=1e-100;
-    x[i] = (df*scale)/z[i];
-  }
-  return(x);
-}
-
-arma::mat dpGLM_update_countZik(arma::mat countZik, arma::mat Z)
-{
-  for(int i = 0; i < Z.n_rows; i++){
-    countZik(i, Z(i,0)-1) += 1;
-  }
-  return(countZik);
-}
-
-arma::mat dpGLM_get_pik(arma::mat countZik)
-{
-  arma::mat pik = arma::zeros(countZik.n_rows, countZik.n_cols);
-  for(int i = 0; i < countZik.n_rows; i++){
-    pik.row(i) = countZik.row(i)/sum(countZik.row(i));
-  }
-  return(pik);
-}
-arma::mat dpGLM_get_theta_active(arma::mat theta, arma::colvec Z)
-{
-  arma::colvec Zstar = unique(Z);
-  arma::mat theta_new(Zstar.n_rows,theta.n_cols);
-  for(int i = 0; i < Zstar.n_rows; i++){
-    theta_new.row(i) = theta.row(Zstar(i)-1);
-  }
-  return(theta_new);
-}
-void dpGLM_display_message(String family, int burn_in, int n_iter, int iter, int K, int max_active_cluster_at_a_iter,
-			   int active_clusters_at_iter, arma::colvec Z)
+void dpGLM_display_message(String family, int burn_in, int n_iter, int iter, int K, int max_active_cluster_at_a_iter, int active_clusters_at_iter, arma::colvec Z)
 {
   // compute table
   vec Zstar = unique(Z);
@@ -107,7 +54,35 @@ void dpGLM_display_message(String family, int burn_in, int n_iter, int iter, int
   Rcpp::Rcout << A_subset.t() << std::endl;
   
 }
+arma::mat dpGLM_update_countZik(arma::mat countZik, arma::mat Z)
+{
+  for(int i = 0; i < Z.n_rows; i++){
+    countZik(i, Z(i,0)-1) += 1;
+  }
+  return(countZik);
+}
+arma::mat dpGLM_get_pik(arma::mat countZik)
+{
+  arma::mat pik = arma::zeros(countZik.n_rows, countZik.n_cols);
+  for(int i = 0; i < countZik.n_rows; i++){
+    pik.row(i) = countZik.row(i)/sum(countZik.row(i));
+  }
+  return(pik);
+}
+arma::mat dpGLM_get_theta_active(arma::mat theta, arma::colvec Z)
+{
+  arma::colvec Zstar = unique(Z);
+  arma::mat theta_new(Zstar.n_rows,theta.n_cols);
+  for(int i = 0; i < Zstar.n_rows; i++){
+    theta_new.row(i) = theta.row(Zstar(i)-1);
+  }
+  return(theta_new);
+}
+
 // }}}
+
+
+
 // {{{ constants and inits }}}
 
 arma::mat dpGLM_get_inits(int K,int d, String family, List fix)
@@ -139,8 +114,14 @@ arma::mat dpGLM_get_inits(int K,int d, String family, List fix)
 }
 
 // }}}
+
+
+
 // {{{ update parameters (theta, pi, Z) }}}
 
+
+// pi and Z
+// --------
 arma::vec dpGLM_update_pi(arma::mat Z, int K, Rcpp::List fix)
 {
   arma::colvec  V = zeros<colvec>(K);
@@ -187,113 +168,56 @@ arma::colvec dpGLM_update_Z(arma::colvec y, arma::mat X, arma::colvec pi, int K,
     arma::colvec betak = theta(idx_k, span(1,D+1)).t();   // -1 b/c cpp indexes starts at zero
     arma::vec      pyk = zeros<vec>(n);
 
+    // updating p(y|X,betak)
+    // ---------------------
     if ( family == "gaussian"){
       double  sigmak = theta(idx_k, D+2);
       arma::colvec shatk = y - X*betak;
       pyk = normpdf(shatk, 0.0, sigmak);
     }
-
     if ( family == "binomial"){
+      arma::colvec nuk = X * betak;
+      // for(int i = 0; i < n; i++){
+      // 	if (y[i] == 1) {pyk[i] = 1/(1+exp(-nuk[i]));}
+      // 	if (y[i] == 0) {pyk[i] = 1 - 1/(1+exp(-nuk[i]));}
+      // }
+      pyk  = (y==1)%(1 / (1+exp(-nuk))) + (y==0)%(1 - 1 / (1+exp(-nuk)));
     }
 
     // computing phik
     phi.col(k) = pi[k]*pyk;
   }
+
+  // sampling Zi
+  // -----------
   for(int i = 0; i < n; i++){
     arma::rowvec phii = phi.row(i)/sum(phi.row(i));
     Z(i) = as<double>(sample(oneToK, 1, false, wrap(phii)));
   }
   return(Z);
 }
-
-
-arma::mat dpGLM_update_theta_gaussian(arma::colvec y,arma::mat X,arma::colvec Z, int K, arma::mat theta, List fix)
-{
-  
-  dpGLM_ACCEPTANCE_COUNT +=1;
-  dpGLM_MCMC_TRIAL +=1;
-
-  // constants
-  // ---------
-  int d = X.n_cols - 1;
-
-  // indexes
-  arma::uvec idx_col_X = arma::linspace<arma::uvec>(0, d, d+1);
-  arma::uvec idx_col_betas = arma::linspace<arma::uvec>(1, d+1, d+1);
-  arma::uvec idx_col_sigma = arma::linspace<arma::uvec>(d+1 +1, d+1 +1, 1);
-
-  arma::colvec Zstar = unique(Z);
-  for(int i = 0; i < Zstar.size(); i++){
-    double           k = Zstar[i];
-    arma::uvec   idx_k = find(Z == k);
-
-    arma::mat       Xk = X.submat(idx_k, idx_col_X);
-    arma::colvec    yk = y.elem( find (Z==k) );
-    int             Nk = yk.size();
-    double      sigmak = theta(k-1, d+1 +1); // k-1 b/c the index starts on 0
-    arma::colvec betak = theta(k-1, span(1,d+1)).t();
-
-    // update beta
-    // -----------
-    arma::mat Sigma_beta = fix["Sigma_beta"];
-    arma::mat Sk = (Sigma_beta + Xk.t()*Xk).i();
-    arma::colvec mu_betak = Sk * Xk.t() * yk;
-    arma::mat Sigma_betak = Sk * (sigmak*2);
-    arma::rowvec beta_new = rmvnormArma(1, mu_betak, Sigma_betak);
-    theta(k-1, span(1,d+1)) = beta_new;
-    
-    // update sigma
-    // ------------
-    double nu = fix["df_sigma"];
-    double s2 = fix["s2_sigma"];
-    double s2khat = as_scalar( (1.0/Nk) * ( (yk - Xk*betak).t() * (yk - Xk*betak) ) );
-    double df = nu + Nk;
-    double scale = as_scalar( (nu*s2 + Nk*s2khat)/( nu + Nk) );
-    if(scale>1){scale=1;}
-    theta(k-1, d+1 +1) = as_scalar( inv_scaled_chisq(1, df, scale) );
-    
-  }
-  arma::colvec Z_all = arma::linspace<arma::colvec>(1, K, K);
-  arma::colvec Zstar_complementar = set_diff(Z_all, Zstar);
-  for(int i = 0; i < Zstar_complementar.size(); i++){
-    int              k = Zstar_complementar[i];
-
-    // update beta
-    // -----------
-    arma::rowvec beta_new = rmvnormArma(1, fix["mu_beta"], fix["Sigma_beta"]);
-    theta(k-1, span(1,d+1)) = beta_new;
-
-    // update sigma
-    // ------------
-    double df    = fix["df_sigma"];
-    double scale = fix["s2_sigma"];
-    theta(k-1, d+1 +1) = as_scalar( inv_scaled_chisq(1, df, scale) );
-  }
-
-  return(theta);
-}
-arma::mat dpGLM_update_theta_binomial(arma::colvec y,arma::mat X,arma::colvec Z, int K, arma::mat theta, List fix,
-				      double epsilon, int leapFrog, int hmc_iter)
-{
-  return(theta);
-}
-arma::mat dpGLM_update_theta(arma::colvec y, arma::mat X, arma::colvec Z, int K, arma::mat theta, List fix,
-			     String family, double epsilon, int leapFrog, int hmc_iter)
+// Theta
+// -----
+arma::mat dpGLM_update_theta(arma::colvec y, arma::mat X, arma::colvec Z, int K, arma::mat theta, List fix, String family, double epsilon, int leapFrog, int hmc_iter)
 {
   if(family == "gaussian"){
     theta = dpGLM_update_theta_gaussian(y, X, Z, K, theta, fix);
   }
   if(family == "binomial"){
-    theta = dpGLM_update_theta_binomial(y, X, Z, K, theta, fix, epsilon, leapFrog, hmc_iter);
+    theta = dpGLM_update_theta_binomial(y, X, Z, K, theta, fix, epsilon, leapFrog, hmc_iter, family);
+  }
+  if(family == "multinomial"){
+    theta = dpGLM_update_theta_multinomial(y, X, Z, K, theta, fix, epsilon, leapFrog, hmc_iter, family);
   }
   return(theta);
 }
 
+
 // }}}
 
+
 // [[Rcpp::export]]
-List dpGLM_mcmc(arma::colvec y, arma::mat X, arma::colvec weights, int K, List fix,
-		String family, List mcmc, double epsilon, int leapFrog, int n_display, int hmc_iter)
+List dpGLM_mcmc(arma::colvec y, arma::mat X, arma::colvec weights, int K, List fix, String family, List mcmc, double epsilon, int leapFrog, int n_display, int hmc_iter)
 {
   // meta
   // ----
@@ -325,6 +249,8 @@ List dpGLM_mcmc(arma::colvec y, arma::mat X, arma::colvec weights, int K, List f
   if( family == "gaussian"){n_parameters+=1;} // for sigma
   arma::mat samples(0, n_parameters);
 
+  // MCMC iterations
+  // ---------------
   for(int iter = 0; iter < N; iter++){
     // sample parameters
     // -----------------
@@ -341,21 +267,27 @@ List dpGLM_mcmc(arma::colvec y, arma::mat X, arma::colvec weights, int K, List f
       }
     }
 
-    // update other quantities
+    // update countZik and pik
+    // -----------------------
     countZik = dpGLM_update_countZik(countZik, Z);
     pik	     = dpGLM_get_pik(countZik);
+
     // meta
+    // ----
     arma::colvec Zstar = unique(Z);
     active_clusters_at_iter =  Zstar.size();
     if (active_clusters_at_iter > max_active_cluster_at_a_iter){max_active_cluster_at_a_iter = active_clusters_at_iter;};
     
     // display information
+    // -------------------
     n_display_count+=1;
     if(n_display_count == n_display){
       dpGLM_display_message(family, burn_in, n_iter, iter, K, max_active_cluster_at_a_iter, active_clusters_at_iter, Z);
       n_display_count=0;
     }
-  }
+
+    progress_bar(iter,N);
+  } // end of MCMC iterations
 
   Rcpp::List results = Rcpp::List::create(Rcpp::Named("samples") = samples,
 					  Rcpp::Named("pik") = pik,
