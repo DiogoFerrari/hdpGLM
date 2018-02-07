@@ -5,6 +5,8 @@ Authors@R: person("Diogo", "Ferrari", email="diogoferrari@gmail.com", role=c("au
 Description: What the package does (one paragraph).
 Depends: R (>= 3.3.3)
 License: MIT
+URL: https://github.com/DiogoFerrari/hdpGLM
+BugReports: https://github.com/DiogoFerrari/hdpGLM/issues
 Encoding: UTF-8
 LazyData: true
 LinkingTo: Rcpp, RcppArmadillo
