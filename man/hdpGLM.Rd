@@ -4,7 +4,7 @@
 \alias{hdpGLM}
 \title{Hierarchical Dirichlet Process GLM}
 \usage{
-hdpGLM(formula1, formula2 = NULL, data, weights = NULL, mcmc, K = 50,
+hdpGLM(formula1, formula2 = NULL, data, weights = NULL, mcmc, K = 100,
   fix = NULL, family = "gaussian", epsilon = 0.01, leapFrog = 40,
   n.display = 1000, hmc_iter = 1)
 }

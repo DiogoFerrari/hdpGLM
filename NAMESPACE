@@ -2,7 +2,13 @@
 
 S3method(plot,dpGLM)
 S3method(plot,dpGLM_data)
+S3method(print,dpGLM)
+S3method(summary,dpGLM)
+export(addalpha)
 export(hdpGLM)
+export(hdpGLM_classify)
+export(hdpGLM_get_occupied_clusters)
+export(hdpGLM_match_clusters)
 export(hdpGLM_simulateData)
 export(hdpGLM_simulateParameters)
 importFrom(Hmisc,wtd.quantile)

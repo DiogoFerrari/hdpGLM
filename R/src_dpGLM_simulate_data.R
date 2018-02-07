@@ -42,7 +42,6 @@
 #' \dontrun{
 #' }
 #' @export
-
 ## }}}
 hdpGLM_simulateData <- function(n, K, nCov, nCovj=NULL, parameters=NULL, pi=NULL, family, seed=sample(1:777,1))
 {

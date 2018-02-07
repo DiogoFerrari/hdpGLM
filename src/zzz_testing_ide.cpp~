@@ -3,13 +3,18 @@
 #include "src_utils.h"
 #include "src_hmc.h"
 
-
 using namespace Rcpp;
 using namespace arma;
 
+Header completion:
+Show function interface and variable definition at the bottom:
+Show current function your cursor is inside at the top:
+Getting man pages for symbol at cursor:
+
+
+U_bin(betak, fix)
 
 // DONE
-// ----
 double U_bin(colvec betak, List fix)
 {
   arma::mat Sigma_beta  = Rcpp::as<Rcpp::List>(fix["fix"])["Sigma_beta"];
@@ -20,7 +25,7 @@ double U_bin(colvec betak, List fix)
 
   double log_p = as_scalar( (-(d+1)/2)*log(2*3.141593) - (1/2)*log(det(Sigma_beta)) - ( (1/2) * ((betak - mu_beta).t() * Sigma_beta.i() * (betak- mu_beta)) ) - yk.t()*log(1+exp(- Xk * betak)) - (1-yk).t()*log(1+exp( Xk * betak))  );
   return ( - log_p);
-  
+
 } 
 colvec grad_U_bin(colvec betak, List fix)
 {
@@ -56,8 +61,9 @@ colvec q_bin(colvec theta_t, List fix)
   int ncols = Sigma_beta.n_cols;
   arma::mat Y = arma::randn(1, ncols);
   mat sample = arma::repmat(mu_beta, 1, 1).t() + Y * arma::chol(G_bin(theta_t));
-  return (sample.t());
+  return (sample.row(0).t());
 }
+
 
 // DONE
 // ----
@@ -113,6 +119,3 @@ arma::mat dpGLM_update_theta_binomial (arma::colvec y,arma::mat X,arma::colvec Z
 
   return(theta);
 }
-
-
-

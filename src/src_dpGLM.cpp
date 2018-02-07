@@ -36,7 +36,7 @@ void dpGLM_display_message(String family, int burn_in, int n_iter, int iter, int
   Rcpp::Rcout << "-----------------------------------------------------" <<  std::endl;
   Rcpp::Rcout << "MCMC in progress ...." << std::endl;
   Rcpp::Rcout << std::endl;
-  Rcpp::Rcout << "Family of the link function of the mixture components: " << family.get_cstring();
+  Rcpp::Rcout << "Family of the distribution of the outcome variable of the mixture components: " << family.get_cstring() << std::endl;
   Rcpp::Rcout << std::endl;
   Rcpp::Rcout << "Burn-in: " << burn_in << std::endl;
   Rcpp::Rcout << "Number of MCMC samples: " << n_iter << std::endl;
@@ -252,11 +252,14 @@ List dpGLM_mcmc(arma::colvec y, arma::mat X, arma::colvec weights, int K, List f
   // MCMC iterations
   // ---------------
   for(int iter = 0; iter < N; iter++){
+    if (iter % 500 == 0) Rcpp::checkUserInterrupt();
+
     // sample parameters
     // -----------------
-    theta    = dpGLM_update_theta(y, X, Z, K, theta,  fix, family, epsilon, leapFrog, hmc_iter);
     pi	     = dpGLM_update_pi(Z, K, fix);
     Z	     = dpGLM_update_Z(y, X, pi, K, theta, family);
+    theta    = dpGLM_update_theta(y, X, Z, K, theta,  fix, family, epsilon, leapFrog, hmc_iter);
+
     // saving samples
     // --------------
     if(iter+1 > burn_in){

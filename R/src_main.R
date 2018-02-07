@@ -73,6 +73,7 @@
     }
 }
 
+
 ## {{{ doc }}}
 #' Hierarchical Dirichlet Process GLM
 #'
@@ -160,7 +161,7 @@
 #' }
 #' @export
 ## }}}
-hdpGLM <- function(formula1, formula2=NULL, data, weights=NULL, mcmc, K=50, fix=NULL, family='gaussian', epsilon=0.01, leapFrog=40, n.display=1000, hmc_iter=1)
+hdpGLM <- function(formula1, formula2=NULL, data, weights=NULL, mcmc, K=100, fix=NULL, family='gaussian', epsilon=0.01, leapFrog=40, n.display=1000, hmc_iter=1)
 {
     if(! family %in% c('gaussian', 'binomial', 'multinomial'))
         stop(paste0('Error: Parameter -family- must be a string with one of the following options : \"gaussian\", \"binomial\", or \"multinomial\"'))
@@ -188,7 +189,6 @@ hdpGLM <- function(formula1, formula2=NULL, data, weights=NULL, mcmc, K=50, fix=
         .dphGLM_check_constants(family=family, d=d, dj=dj, fix=fix)
     }
     
-
     ## get the samples from posterior
     ## ------------------------------
     T.mcmc  = Sys.time()
