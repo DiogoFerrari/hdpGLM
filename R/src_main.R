@@ -91,7 +91,7 @@
 #'                 of group level covariates. If \code{NULL}, it will use
 #'                 a single base measure to the DPP mixture model.
 #' @param data a data.frame with all the variables specified in \code{formula1}
-#'             and \code{formula2}
+#'             and \code{formula2}. Note: it is advisable to scale the variables before the estimation
 #' @param weights numeric vector with the same size as the number of rows of the data. It must contains the weights of the observations in the data set. NOTE: FEATURE NOT IMPLEMENTED YET
 #' @param mcmc a list containing elements named \code{burn.in} (required, an
 #'             integer greater or equal to 0 indicating the number iterations used in the
@@ -175,7 +175,6 @@ hdpGLM <- function(formula1, formula2=NULL, data, weights=NULL, mcmc, K=100, fix
     weights = ifelse(!is.null(mat$w), mat$w, rep(1,nrow(X)))
     ## Hierarchical covars
     Xj = unlist( ifelse(is.null(formula2), list(NULL), list ( .getRegMatrix(func.call, data, weights, formula_number=2)$X) ) ) # list and unlist only b/c ifelse() do not allow to return NULL
-
 
     ## get constants
     ## -------------
