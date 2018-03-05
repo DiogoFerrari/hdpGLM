@@ -78,7 +78,7 @@ NULL
 {
     packageStartupMessage('
 ## =======================================================================
-##   Hierarchial Dirichlet Process Generalized Linear Mixed Model (hdpGLM)
+##    Hierarchial Dirichlet Process Generalized Linear Model (hdpGLM)
 ## =======================================================================
 ')
 }

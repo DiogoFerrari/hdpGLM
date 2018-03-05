@@ -1,5 +1,6 @@
 // [[Rcpp::depends(RcppArmadillo)]]
 #include <RcppArmadillo.h>
+#include <cmath>
 #include "src_utils.h"
 
 using namespace Rcpp;
@@ -37,9 +38,11 @@ arma::mat dpGLM_update_theta_gaussian(arma::colvec y,arma::mat X,arma::colvec Z,
     // update beta
     // -----------
     arma::mat Sigma_beta = fix["Sigma_beta"];
-    arma::mat Sk = (Sigma_beta + Xk.t()*Xk).i();
+    // arma::mat Sk = (Sigma_beta + Xk.t()*Xk).i();                    # original
+    // arma::mat Sigma_betak = Sk * (sigmak*2);                        # original
+    arma::mat Sk          = (Sigma_beta.i()*pow(sigmak,2) + Xk.t()*Xk).i();
+    arma::mat Sigma_betak = Sk * pow(sigmak,2);                       
     arma::colvec mu_betak = Sk * Xk.t() * yk;
-    arma::mat Sigma_betak = Sk * (sigmak*2);
     arma::rowvec beta_new = rmvnormArma(1, mu_betak, Sigma_betak);
     theta(k-1, span(1,d+1)) = beta_new;
     

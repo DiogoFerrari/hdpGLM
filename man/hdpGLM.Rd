@@ -21,7 +21,7 @@ of group level covariates. If \code{NULL}, it will use
 a single base measure to the DPP mixture model.}
 
 \item{data}{a data.frame with all the variables specified in \code{formula1}
-and \code{formula2}}
+and \code{formula2}. Note: it is advisable to scale the variables before the estimation}
 
 \item{weights}{numeric vector with the same size as the number of rows of the data. It must contains the weights of the observations in the data set. NOTE: FEATURE NOT IMPLEMENTED YET}
 
