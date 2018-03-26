@@ -82,7 +82,6 @@ arma::mat dpGLM_get_theta_active(arma::mat theta, arma::colvec Z)
 // }}}
 
 
-
 // {{{ constants and inits }}}
 
 arma::mat dpGLM_get_inits(int K,int d, String family, List fix)
@@ -114,7 +113,6 @@ arma::mat dpGLM_get_inits(int K,int d, String family, List fix)
 }
 
 // }}}
-
 
 
 // {{{ update parameters (theta, pi, Z) }}}

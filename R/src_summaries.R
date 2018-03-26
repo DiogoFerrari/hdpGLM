@@ -267,8 +267,8 @@ summary.dpGLM <- function(x, nK = NULL, HPD.prob=.95, burn.in=NULL, only.occupie
         summ = rbind(summ, cbind(k, summary(xk)[[1]], coda::HPDinterval(xk, HPD.prob), n.active))
     }
     summ = summ[order(summ[,'n.active'], decreasing=T),]
-    summ           = summ[,c('k',       'Mean','lower','upper','SD','Naive SE', 'Time-series SE', 'n.active')]
-    colnames(summ) =         c('Cluster', 'Mean','HPD.l','HPD.u','SD','Naive SE', 'Time-series SE', 'Percentage of Iter. Cluster was active')
+    summ           = summ[,c('k',       'Mean','lower','upper','SD','Naive SE', 'Time-series SE')]
+    colnames(summ) =         c('Cluster', 'Mean','HPD.l','HPD.u','SD','Naive SE', 'Time-series SE')
 
     return(summ)
 }
@@ -333,6 +333,44 @@ print.dpGLM <- function(x,...)
     invisible()
 }
 
+
+#' @export
+predict.dpGLM <- function(samples, new_data, covar.par.names, family='gaussian', ...)
+{
+    new_data$Intercept = 1
+    if(class(samples)!='dpGLM') stop("\n\nParameter samples must be a dpGLM or hdpGLM object ! \n\n")
+    if(!all(names(covar.par.names) %in% names(new_data))) stop("\n\nCheck the value of \'covar.par.names\'\n\n")
+    est       = samples %>% summary(.) %>% data.frame(Parameter=rownames(.), ., row.names=1:nrow(.) )  %>%
+        filter(Parameter != 'sigma') %>%
+        mutate_if(is.factor, as.character) %>% 
+        full_join(., covar.par.names  %>% data.frame(covars=names(.),Parameter=., row.names=1:length(.), stringsAsFactors=F), by="Parameter") %>%
+        mutate(covars = ifelse(is.na(covars), 'Intercept', covars))
+    clusters  = est$Cluster %>% unique
+    pred = data_frame()
+    for (cluster in clusters)
+    {
+        est_cl = est %>%
+            filter(Cluster == cluster)
+        X = new_data %>% select(est_cl$covars) %>%
+            as.matrix
+        betas = est_cl %>%
+            select(Mean, contains("HPD")) %>%
+            as.matrix
+        if (family=="gaussian") {
+            pred.tmp = X %*% betas
+        }
+        if (family=="binomial") {
+            pred.tmp = 1/(1+exp(- X %*% betas))
+        }
+        pred.tmp = data.frame(pred.tmp, Cluster=cluster)
+        pred = pred %>% rbind(., pred.tmp)
+    }
+    new_data = new_data[rep(1:nrow(new_data), length(clusters)),]
+    pred = as_data_frame(pred)  %>%
+        bind_cols(new_data) %>%
+        rename(pred.mean=Mean, pred.l=HPD.l, pred.u=HPD.u)
+    return(pred)
+}
 
 
 dpGLM_plotDensity  <- function(x, ub=stats::quantile(x,.975), lb=stats::quantile(x,.025), shaded.area=F, shaded.area.col='grey90', lty=1, bty='n', add=F, grid=T, ...)
