@@ -5,3 +5,7 @@ dpGLM_mcmc <- function(y, X, weights, K, fix, family, mcmc, epsilon, leapFrog, n
     .Call('_hdpGLM_dpGLM_mcmc', PACKAGE = 'hdpGLM', y, X, weights, K, fix, family, mcmc, epsilon, leapFrog, n_display, hmc_iter)
 }
 
+hdpGLM_mcmc <- function(y, X, W, C, weights, K, fix, family, mcmc, epsilon, leapFrog, n_display, hmc_iter) {
+    .Call('_hdpGLM_hdpGLM_mcmc', PACKAGE = 'hdpGLM', y, X, W, C, weights, K, fix, family, mcmc, epsilon, leapFrog, n_display, hmc_iter)
+}
+

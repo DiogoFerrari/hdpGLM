@@ -27,9 +27,33 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// hdpGLM_mcmc
+List hdpGLM_mcmc(arma::colvec y, arma::mat X, arma::mat W, arma::colvec C, arma::colvec weights, int K, List fix, String family, List mcmc, double epsilon, int leapFrog, int n_display, int hmc_iter);
+RcppExport SEXP _hdpGLM_hdpGLM_mcmc(SEXP ySEXP, SEXP XSEXP, SEXP WSEXP, SEXP CSEXP, SEXP weightsSEXP, SEXP KSEXP, SEXP fixSEXP, SEXP familySEXP, SEXP mcmcSEXP, SEXP epsilonSEXP, SEXP leapFrogSEXP, SEXP n_displaySEXP, SEXP hmc_iterSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::colvec >::type y(ySEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type W(WSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type C(CSEXP);
+    Rcpp::traits::input_parameter< arma::colvec >::type weights(weightsSEXP);
+    Rcpp::traits::input_parameter< int >::type K(KSEXP);
+    Rcpp::traits::input_parameter< List >::type fix(fixSEXP);
+    Rcpp::traits::input_parameter< String >::type family(familySEXP);
+    Rcpp::traits::input_parameter< List >::type mcmc(mcmcSEXP);
+    Rcpp::traits::input_parameter< double >::type epsilon(epsilonSEXP);
+    Rcpp::traits::input_parameter< int >::type leapFrog(leapFrogSEXP);
+    Rcpp::traits::input_parameter< int >::type n_display(n_displaySEXP);
+    Rcpp::traits::input_parameter< int >::type hmc_iter(hmc_iterSEXP);
+    rcpp_result_gen = Rcpp::wrap(hdpGLM_mcmc(y, X, W, C, weights, K, fix, family, mcmc, epsilon, leapFrog, n_display, hmc_iter));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_hdpGLM_dpGLM_mcmc", (DL_FUNC) &_hdpGLM_dpGLM_mcmc, 11},
+    {"_hdpGLM_hdpGLM_mcmc", (DL_FUNC) &_hdpGLM_hdpGLM_mcmc, 13},
     {NULL, NULL, 0}
 };
 
