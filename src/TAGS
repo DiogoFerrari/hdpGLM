@@ -1,0 +1,91 @@
+
+/home/diogo/Dropbox/CienciasSociais/studies/computing/R/scripts/pkgs/hdpGLM/hdpGLM/src/src_hmc_binomial.h,71
+#define __HMC_BINOMIAL_H_INCLUDED__ __HMC_BINOMIAL_H_INCLUDED__5,147
+
+/home/diogo/Dropbox/CienciasSociais/studies/computing/R/scripts/pkgs/hdpGLM/hdpGLM/src/src_dpGLM.cpp,1125
+double dpGLM_ACCEPTANCE_COUNT = 0.0;dpGLM_ACCEPTANCE_COUNT15,277
+double dpGLM_ACCEPTANCE_RATE_AVERAGE = 1.0;dpGLM_ACCEPTANCE_RATE_AVERAGE16,314
+double dpGLM_MCMC_TRIAL = 0.0;dpGLM_MCMC_TRIAL17,358
+void dpGLM_display_message(String family, int burn_in, int n_iter, int iter, int K, int max_active_cluster_at_a_iter, int active_clusters_at_iter, arma::colvec Z)dpGLM_display_message21,412
+arma::mat dpGLM_update_countZik(arma::mat countZik, arma::mat Z)dpGLM_update_countZik58,2451
+arma::mat dpGLM_get_pik(arma::mat countZik)dpGLM_get_pik65,2613
+arma::mat dpGLM_get_theta_active(arma::mat theta, arma::colvec Z)dpGLM_get_theta_active73,2844
+arma::mat dpGLM_get_inits(int K,int d, String family, List fix)dpGLM_get_inits88,3152
+arma::mat dpGLM_update_theta(arma::colvec y, arma::mat X, arma::colvec Z, int K, arma::mat theta, List fix, String family, double epsilon, int leapFrog, int hmc_iter)dpGLM_update_theta124,3895
+List dpGLM_mcmc(arma::colvec y, arma::mat X, arma::colvec weights, int K, List fix, String family, List mcmc, double epsilon, int leapFrog, int n_display, int hmc_iter)dpGLM_mcmc143,4485
+
+/home/diogo/Dropbox/CienciasSociais/studies/computing/R/scripts/pkgs/hdpGLM/hdpGLM/src/src_hmc_multinomial.h,77
+#define __HMC_MULTINOMIAL_H_INCLUDED__ __HMC_MULTINOMIAL_H_INCLUDED__5,150
+
+/home/diogo/Dropbox/CienciasSociais/studies/computing/R/scripts/pkgs/hdpGLM/hdpGLM/src/src_pi_z_update.h,69
+#define __PI_Z_UPDATE_H_INCLUDED__ __PI_Z_UPDATE_H_INCLUDED__5,146
+
+/home/diogo/Dropbox/CienciasSociais/studies/computing/R/scripts/pkgs/hdpGLM/hdpGLM/src/src_hdpGLM.cpp,1465
+double hdpGLM_ACCEPTANCE_COUNT = 0.0;hdpGLM_ACCEPTANCE_COUNT15,277
+double hdpGLM_ACCEPTANCE_RATE_AVERAGE = 1.0;hdpGLM_ACCEPTANCE_RATE_AVERAGE16,315
+double hdpGLM_MCMC_TRIAL = 0.0;hdpGLM_MCMC_TRIAL17,360
+void hdpGLM_display_message(String family, int burn_in, int n_iter, int iter, int K, int max_active_cluster_at_a_iter, int active_clusters_at_iter, arma::colvec Z)hdpGLM_display_message22,416
+arma::mat hdpGLM_update_countZik(arma::mat countZik, arma::mat Z)hdpGLM_update_countZik59,2535
+arma::mat hdpGLM_get_pik(arma::mat countZik)hdpGLM_get_pik66,2698
+arma::mat hdpGLM_get_theta_active(arma::mat theta, arma::colvec Z, arma::colvec C)hdpGLM_get_theta_active74,2930
+arma::mat hdpGLM_get_inits_theta(int J, int K,int d, String family, List fix)hdpGLM_get_inits_theta117,4673
+arma::mat hdpGLM_get_inits_tau(int d, int Dw, String family, List fix)hdpGLM_get_inits_tau155,5676
+arma::mat hdpGLM_update_theta(arma::colvec y, arma::mat X, arma::mat W, arma::colvec C, arma::colvec Z, int K, arma::mat tau, arma::mat theta, List fix, String family, double epsilon, int leapFrog, int hmc_iter)hdpGLM_update_theta169,5913
+arma::mat hdpGLM_update_tau(arma::mat W, int K, int Dx, arma::mat theta, List fix)hdpGLM_update_tau185,6546
+List hdpGLM_mcmc(arma::colvec y, arma::mat X, arma::mat W, arma::colvec C, arma::colvec weights, int K, List fix, String family, List mcmc, double epsilon, int leapFrog, int n_display, int hmc_iter)hdpGLM_mcmc217,7471
+
+/home/diogo/Dropbox/CienciasSociais/studies/computing/R/scripts/pkgs/hdpGLM/hdpGLM/src/src_hmc_binomial.cpp,626
+double U_bin(colvec betak, List fix)U_bin13,171
+colvec grad_U_bin(colvec betak, List fix)grad_U_bin25,703
+mat G_bin(colvec theta)G_bin44,1335
+colvec q_bin(colvec theta_t, List fix)q_bin52,1458
+arma::mat dpGLM_update_theta_binomial (arma::colvec y,arma::mat X,arma::colvec Z, int K, arma::mat theta, List fix, double epsilon, int leapFrog, int hmc_iter, String family)dpGLM_update_theta_binomial64,1838
+arma::mat hdpGLM_update_theta_binomial (arma::colvec y,arma::mat X,arma::colvec Z, int K, arma::mat theta, List fix, double epsilon, int leapFrog, int hmc_iter, String family)hdpGLM_update_theta_binomial118,3609
+
+/home/diogo/Dropbox/CienciasSociais/studies/computing/R/scripts/pkgs/hdpGLM/hdpGLM/src/src_pi_z_update.cpp,477
+arma::vec dpGLM_update_pi(arma::mat Z, int K, Rcpp::List fix)dpGLM_update_pi11,145
+arma::colvec dpGLM_update_Z(arma::colvec y, arma::mat X, arma::colvec pi, int K, arma::mat theta, String family)dpGLM_update_Z44,1094
+arma::vec hdpGLM_update_pi(arma::mat Z, int K, Rcpp::List fix)hdpGLM_update_pi88,2436
+arma::colvec hdpGLM_update_Z(arma::colvec y, arma::mat X, arma::mat W, arma::colvec C, arma::colvec pi, int K, arma::mat theta, String family)hdpGLM_update_Z121,3386
+
+/home/diogo/Dropbox/CienciasSociais/studies/computing/R/scripts/pkgs/hdpGLM/hdpGLM/src/RcppExports.cpp,640
+RcppExport SEXP _hdpGLM_dpGLM_mcmc(SEXP ySEXP, SEXP XSEXP, SEXP weightsSEXP, SEXP KSEXP, SEXP fixSEXP, SEXP familySEXP, SEXP mcmcSEXP, SEXP epsilonSEXP, SEXP leapFrogSEXP, SEXP n_displaySEXP, SEXP hmc_iterSEXP) {_hdpGLM_dpGLM_mcmc11,382
+RcppExport SEXP _hdpGLM_hdpGLM_mcmc(SEXP ySEXP, SEXP XSEXP, SEXP WSEXP, SEXP CSEXP, SEXP weightsSEXP, SEXP KSEXP, SEXP fixSEXP, SEXP familySEXP, SEXP mcmcSEXP, SEXP epsilonSEXP, SEXP leapFrogSEXP, SEXP n_displaySEXP, SEXP hmc_iterSEXP) {_hdpGLM_hdpGLM_mcmc32,1803
+static const R_CallMethodDef CallEntries[] = {CallEntries54,3171
+RcppExport void R_init_hdpGLM(DllInfo *dll) {R_init_hdpGLM60,3370
+
+/home/diogo/Dropbox/CienciasSociais/studies/computing/R/scripts/pkgs/hdpGLM/hdpGLM/src/src_utils.h,57
+#define __UTILS_H_INCLUDED__ __UTILS_H_INCLUDED__5,140
+
+/home/diogo/Dropbox/CienciasSociais/studies/computing/R/scripts/pkgs/hdpGLM/hdpGLM/src/src_hmc_multinomial.cpp,649
+double U_multi(colvec theta, List fix)U_multi15,136
+colvec grad_U_multi(colvec theta, List fix)grad_U_multi19,195
+mat G_multi(colvec theta)G_multi23,264
+colvec q_multi(colvec theta_t, List fix)q_multi31,389
+arma::mat dpGLM_update_theta_multinomial (arma::colvec y,arma::mat X,arma::colvec Z, int K, arma::mat theta, List fix, double epsilon, int leapFrog, int hmc_iter, String family)dpGLM_update_theta_multinomial42,691
+arma::mat hdpGLM_update_theta_multinomial (arma::colvec y,arma::mat X,arma::colvec Z, int K, arma::mat theta, List fix, double epsilon, int leapFrog, int hmc_iter, String family)hdpGLM_update_theta_multinomial47,891
+
+/home/diogo/Dropbox/CienciasSociais/studies/computing/R/scripts/pkgs/hdpGLM/hdpGLM/src/src_gibbs_gaussian.h,75
+#define __GIBBS_GAUSSIAN_H_INCLUDED__ __GIBBS_GAUSSIAN_H_INCLUDED__5,149
+
+/home/diogo/Dropbox/CienciasSociais/studies/computing/R/scripts/pkgs/hdpGLM/hdpGLM/src/src_hmc.h,53
+#define __HMC_H_INCLUDED__ __HMC_H_INCLUDED__5,138
+
+/home/diogo/Dropbox/CienciasSociais/studies/computing/R/scripts/pkgs/hdpGLM/hdpGLM/src/src_hmc.cpp,350
+double U(colvec theta, List fix)U13,226
+colvec grad_U(colvec theta, List fix)grad_U24,439
+colvec q(colvec theta_t, List fix)q35,666
+mat G(colvec theta)G47,885
+double Kinectic(colvec v, colvec theta)Kinectic61,1166
+double H(double U , double K)H65,1265
+colvec hmc_update(colvec theta_t, double epsilon, int L, List fix)hmc_update69,1316
+
+/home/diogo/Dropbox/CienciasSociais/studies/computing/R/scripts/pkgs/hdpGLM/hdpGLM/src/src_gibbs_gaussian.cpp,347
+arma::mat dpGLM_update_theta_gaussian(arma::colvec y,arma::mat X,arma::colvec Z, int K, arma::mat theta, List fix)dpGLM_update_theta_gaussian9,149
+arma::mat hdpGLM_update_theta_gaussian(arma::colvec y,arma::mat X, arma::mat W, arma::colvec C, arma::colvec Z, int K, arma::mat tau, arma::mat theta, List fix)hdpGLM_update_theta_gaussian83,2721
+
+/home/diogo/Dropbox/CienciasSociais/studies/computing/R/scripts/pkgs/hdpGLM/hdpGLM/src/src_utils.cpp,291
+void progress_bar(int t, int T)progress_bar8,110
+arma::colvec set_diff(arma::colvec& v1, arma::colvec& v2)set_diff23,449
+arma::mat rmvnormArma(int n, arma::vec mu, arma::mat sigma)rmvnormArma34,856
+arma::colvec inv_scaled_chisq(int n, double df, double scale)inv_scaled_chisq40,1051

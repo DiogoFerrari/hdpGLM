@@ -21,6 +21,10 @@ extern double dpGLM_ACCEPTANCE_COUNT;
 extern double dpGLM_ACCEPTANCE_RATE_AVERAGE;
 extern double dpGLM_MCMC_TRIAL;
 
+extern double hdpGLM_ACCEPTANCE_COUNT;
+extern double hdpGLM_ACCEPTANCE_RATE_AVERAGE;
+extern double hdpGLM_MCMC_TRIAL;
+
 void progress_bar(int t, int T);
 arma::colvec set_diff(arma::colvec& v1, arma::colvec& v2);
 arma::mat rmvnormArma(int n, arma::vec mu, arma::mat sigma);

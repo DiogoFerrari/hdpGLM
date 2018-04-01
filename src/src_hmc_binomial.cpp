@@ -115,4 +115,9 @@ arma::mat dpGLM_update_theta_binomial (arma::colvec y,arma::mat X,arma::colvec Z
 }
 
 
+arma::mat hdpGLM_update_theta_binomial (arma::colvec y,arma::mat X,arma::colvec Z, int K, arma::mat theta, List fix, double epsilon, int leapFrog, int hmc_iter, String family)
+{
+  arma::mat tmp;
+  return(tmp);
+}
 

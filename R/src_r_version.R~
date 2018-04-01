@@ -1,137 +1,5 @@
 
-.hdpGLM_get_constants      <- function(family, d, Dw)
-{
-    Dw = ifelse(is.null(Dw), 0, Dw)
-    if(family=='gaussian') {        
-        sigma_beta = 10
-        sigma_tau  = 10
-        fix = list(alpha      = 1,
-                   mu_beta    = rep(0, d+1),
-                   Sigma_beta = sigma_beta * diag(d+1),
-                   s2_sigma   = 10,
-                   df_sigma   = 10,
-                   ## tau
-                   mu_tau     = rep(0, Dw+1),
-                   Sigma_tau  = sigma_tau * diag(Dw+1)
-                   )
-    }
-    if(family=='binomial') {        
-        sigma_beta = 10
-        sigma_tau  = 10
-        fix = list(alpha      = 1,
-                   mu_beta    = rep(0, d+1),
-                   Sigma_beta = sigma_beta * diag(d+1),
-                   ## tau
-                   mu_tau     = rep(0, Dw+1),
-                   Sigma_tau  = sigma_tau * diag(Dw+1)
-                   )
-    }
-    return(fix)
-}
-
-.dphGLM_check_constants <- function(family=family, d=d, Dw=NULL, fix)
-{
-    ## check type of 'fix'
-    ## ------------------
-    if (class(fix) != 'list')
-    {
-        stop("The parameter \'fix\" must be a list")
-    }
-    ## check names of the constants:
-    ## -----------------------------
-    if (family=='guassian')
-    {
-        if (any(! names(fix) %in% c('mu_beta', 'Sigma_beta', 'alpha', 's2_sigma', 'df_sigma', 'mu_tau', 'Sigma_tau')))
-        {
-            stop("\n\nThe parameter \'fix\' must be a named list with the parameters of the model. The parametters are 'mu_beta', 'Sigma_beta', 'alpha', 's2_sigma', 'df_sigma' \n\n. If there are context-level covariates, the additional parameters are required: 'mu_tau' and 'Sigma_tau'\n\n")
-        }
-    }
-    if (family=='binomial')
-    {
-        if (any(! names(fix) %in% c('mu_beta', 'Sigma_beta', 'alpha')))
-        {
-            stop("\n\nThe parameter \'fix\' must be a named list with the parameters of the model. The parametters are 'mu_beta', 'Sigma_beta', 'alpha'\n\n. If there are context-level covariates, the additional parameters are required: 'mu_tau' and 'Sigma_tau'\n\n")
-        }
-    }
-
-    ## check type of constants
-    ## ----------------
-    if (!all(is.vector(fix$mu_beta), is.vector(fix$alpha)))
-    {
-        stop("\n\n fix$mu_theta and fix$alpha must be vectors\n\n")
-    }
-    if (family=='gaussian')
-    {
-        if (!all(is.vector(fix$s2_sigma), is.vector(fix$df_sigma)))
-        {
-            stop("\n\n fix$s2_sigma and fix$df_sigma must be vectors\n\n")
-        }
-    } 
-    if (!is.matrix(fix$Sigma_beta))
-    {
-        stop("\n\n fix$Sigma_beta must be a matrix\n\n")
-    }
-    if (!is.null(Dw) & !is.vector(fix$mu_tau))
-    {
-        stop("\n\n fix$mu_tau must be a vector\n\n")
-    }
-    if (!is.null(Dw) & !is.matrix(fix$Sigma_tau))
-    {
-        stop("\n\n fix$Sigma_tau must be a matrix\n\n")
-    }
-
-    ## check the dimensions
-    ## --------------------
-    if (length(fix$mu_beta)!=d+1)
-    {
-        stop(paste0("Dimension of fix$mu_beta must be the same as the number of covariates plus one (for the intercept), that is", d+1, sep=''))
-    }
-    if (!all(dim(fix$Sigma_beta)==c(d+1,d+1)) )
-    {
-        stop(paste0("The dimension of fix$Sigma_beta must be ", d+1,' x ', d+1,  sep=''))
-    }
-    if(!is.null(Dw))
-    {
-        if (length(fix$mu_tau)!=Dw+1)
-        {
-            stop(paste0("Dimension of fix$mu_tau must be the same as the number of context-level covariates plus one (for the intercept), that is", Dw+1, sep=''))
-        }
-        if (!all(dim(fix$Sigma_beta)==c(d+1,d+1)) )
-        {
-            stop(paste0("The dimension of fix$Sigma_tau must be ", Dw+1,' x ', Dw+1,  sep=''))
-        }
-
-    }
-
-}
-
-
-getContextIndices <- function(W)
-{
-    return (
-        W %>%
-        tibble::as_data_frame(.) %>%  
-        dplyr::select(-dplyr::contains('Intercept')) %>% 
-        dplyr::group_by_(., names(.)) %>%
-        dplyr::group_indices(.)
-    )
-
-}
-getUniqueW <- function(W, C)
-{
-    return(
-        base::cbind(W,C) %>%
-        tibble::as_data_frame(.)  %>%
-        dplyr::filter(!base::duplicated(W)) %>%
-        dplyr::arrange(C) %>% 
-        dplyr::select(-C) %>%
-        as.matrix
-    )
-}
-
-
 ## {{{ doc }}}
-
 #' Hierarchical Dirichlet Process GLM
 #'
 #' The function estimates a semi-parametric mixture of Generalized
@@ -148,7 +16,7 @@ getUniqueW <- function(W, C)
 #'                 of group level covariates. If \code{NULL}, it will use
 #'                 a single base measure to the DPP mixture model.
 #' @param data a data.frame with all the variables specified in \code{formula1}
-#'             and \code{formula2}. Note: it is advisable to scale the variables before the estimation
+#'             and \code{formula2}
 #' @param weights numeric vector with the same size as the number of rows of the data. It must contains the weights of the observations in the data set. NOTE: FEATURE NOT IMPLEMENTED YET
 #' @param mcmc a list containing elements named \code{burn.in} (required, an
 #'             integer greater or equal to 0 indicating the number iterations used in the
@@ -217,9 +85,8 @@ getUniqueW <- function(W, C)
 #' \dontrun{
 #' }
 #' @export
-
 ## }}}
-hdpGLM <- function(formula1, formula2=NULL, data, weights=NULL, mcmc, K=100, fix=NULL, family='gaussian', epsilon=0.01, leapFrog=40, n.display=1000, hmc_iter=1)
+hdpGLMr <- function(formula1, formula2=NULL, data, mcmc, K=50, fix=NULL, family='gaussian', epsilon=0.01, leapFrog=40, n.display=1000, hmc_iter=1)
 {
     if(! family %in% c('gaussian', 'binomial', 'multinomial'))
         stop(paste0('Error: Parameter -family- must be a string with one of the following options : \"gaussian\", \"binomial\", or \"multinomial\"'))
@@ -227,71 +94,59 @@ hdpGLM <- function(formula1, formula2=NULL, data, weights=NULL, mcmc, K=100, fix
     ## ## construct the regression matrices (data.frames) based on the formula provided
     ## ## -----------------------------------------------------------------------------
     func.call <- match.call(expand.dots = FALSE)
-    mat     = .getRegMatrix(func.call, data, weights, formula_number=1)
+    mat     = getRegMatrix(func.call, data, weights, formula_number=1)
     y       = mat$y
     X       = mat$X
     weights = ifelse(!is.null(mat$w), mat$w, rep(1,nrow(X)))
     ## Hierarchical covars
-    if(is.null(formula2)){
-        W = NULL
-        C = NULL
-    }else{
-        W = .getRegMatrix(func.call, data, weights, formula_number=2)$X
-        C = getContextIndices(W)
-        W = getUniqueW(W, C)
-    } 
+    Xj = unlist( ifelse(is.null(formula2), list(NULL), list ( getRegMatrix(func.call, data, weights, formula_number=2)$X) ) ) # list and unlist only b/c ifelse() do not allow to return NULL
 
     ## get constants
     ## -------------
     d   = ncol(X)  - 1                        # d is the number of covars, we subtract the intercept as X has a column with ones
-    Dw  = unlist( ifelse(is.null(W), list(NULL), list(ncol(W) - 1)) ) # list and unlist only b/c ifelse() do not allow to return NULL
-
+    dj  = unlist( ifelse(is.null(Xj), list(NULL), list(ncol(Xj) - 1)) ) # list and unlist only b/c ifelse() do not allow to return NULL
     if (is.null(fix))
     {
-        fix = .hdpGLM_get_constants(family=family, d=d, Dw=Dw) # list with values of the parameters of the priors/hyperpriors
+        fix = dphGLM_get_constants(family=family, d=d, dj=dj) # list with values of the parameters of the priors/hyperpriors
     }else
     {
-        .dphGLM_check_constants(family=family, d=d, Dw=Dw, fix=fix)
+        dphGLM_check_constants(family=family, d=d, dj=dj, fix=fix)
     }
     
+
     ## get the samples from posterior
     ## ------------------------------
     T.mcmc  = Sys.time()
-    if (is.null(W))
+    if (is.null(Xj))
     {
-        samples        =  dpGLM_mcmc( y, X,       weights, K, fix,  family, mcmc, epsilon, leapFrog, n.display, hmc_iter) #
+        samples        =  dpGLM_mcmc( y, X,    weights, K, fix,  family, mcmc, epsilon, leapFrog, n.display, hmc_iter) #
     }else
     {
-        samples        =  hdpGLM_mcmc(y, X, W, C, weights, K, fix, family, mcmc, epsilon, leapFrog, n.display, hmc_iter)
+        samples        =  hdpGLM_mcmc(y, X, Xj, weights, K, fix, family, mcmc, epsilon, leapFrog, n.display, hmc_iter)
     }
     T.mcmc  = Sys.time() - T.mcmc
 
 
     ## including colnames and class for the output
     ## -------------------------------------------
-    if (is.null(W)){
+    if (is.null(Xj)){
         if(family=='gaussian'){
-            colnames(samples$samples)  <- c('k', paste0('beta',1:(ncol(samples$samples)-2),  sep=''),'sigma')
+            colnames(samples$samples)  <- c('k', paste0('beta',1:(d+1),  sep=''),'sigma')
         }else{
-            colnames(samples$samples)  <- c('k', paste0('beta',1:(ncol(samples$samples)-1),  sep=''))
+            colnames(samples$samples)  <- c('k', paste0('beta',1:(d+1),  sep=''))
         }
     }else{
         if(family=='gaussian'){
-            colnames(samples$samples)  <- c('k', 'j', paste0('beta',1:(d+1),  sep=''), 'sigma')
-            colnames(samples$tau)      <- paste0(rep(paste0('tau', 1:(Dw+1)), d+1), unlist(lapply(1:(d+1), function(d) rep(d, Dw+1))),sep='')
+            colnames(samples$samples)  <- c('k', paste0('beta',1:(d+1),  sep=''), 'sigma', paste0('tau',1:(dj+1),  sep=''))
         }else{
-            colnames(samples$samples)  <- c('k', 'j', paste0('beta',1:(d+1),  sep=''))
-            colnames(samples$tau)      <- paste0(rep(paste0('tau', 1:(Dw+1)), d+1), unlist(lapply(1:(d+1), function(d) rep(d, Dw+1))),sep='')
+            colnames(samples$samples)  <- c('k', paste0('beta',1:(d+1),  sep=''), paste0('tau',1:(dj+1),  sep=''))
         }
     }
 
     samples$samples                   = coda::as.mcmc(samples$samples)
-    samples$tau                       = coda::as.mcmc(samples$tau)
-    samples$context.index             = C
-    attr(samples$samples, 'mcpar')[2] = mcmc$n.iter
-    class(samples)                    = ifelse(is.null(W), 'dpGLM', 'hdpGLM')
+    attr(samples$samples, 'mcpar')[2] = mcmc$n.iter - mcmc$burn.in
+    class(samples)                    = 'dpGLM'
 
     samples$time_elapsed = T.mcmc
     return(samples)
 }
-

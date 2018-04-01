@@ -13,9 +13,10 @@
 #' @param K integer, the number of clusters
 #' @param nCov integer, the number of covariates of the
 #'             GLM components
-#' @param nCovj either NULL or an integer indicating the number of
+#' @param nCovj an integer indicating the number of
 #'              covariates determining the average parameter of the
 #'              base measure of the Dirichlet process prior
+#' @param J an integer representing the number of contexts 
 #' @param parameters either NULL or a list with the parameters
 #'                   to generate the model. If not NULL, it must
 #'                   contain a sublist name beta, a vector named tau,
@@ -23,11 +24,10 @@
 #'                   a list of vectors, each one with size nCov+1
 #'                   to be the coefficients of the GLM mixtures
 #'                   components that will generate the data.
-#'                   The vector tau must be present only if nCovj
-#'                   is not NULL, in which case it must be a vector
-#'                   of size nCov+1 with the linear coefficients of
-#'                   the average of the base measure. The vector pi
-#'                   must add up to 1 and have length K.
+#'                   For the vector tau, if nCovj=0 (single-context case)
+#'                   then it must be a 1x1 matrix containing 1.
+#'                   If ncovj>0, it must be a (nCov+1)x(nCovj+1) matrix.
+#'                   The vector pi must add up to 1 and have length K.
 #' @param pi either NULL or a vector with length K that add up to 1.
 #'           If not NULL, it determines the mixture probabilities
 #' @param seed a seed for \code{\link{set.seed}}
@@ -42,8 +42,9 @@
 #' \dontrun{
 #' }
 #' @export
+
 ## }}}
-hdpGLM_simulateData <- function(n, K, nCov, nCovj=NULL, parameters=NULL, pi=NULL, family, seed=sample(1:777,1))
+hdpGLM_simulateData <- function(n, K, nCov, nCovj=0, J=1, parameters=NULL, pi=NULL, family, seed=sample(1:777,1))
 {
     ## error handling
     if (n %% 2) stop("Sample size n must be an even number")
@@ -58,12 +59,12 @@ hdpGLM_simulateData <- function(n, K, nCov, nCovj=NULL, parameters=NULL, pi=NULL
     }
 
     if (is.null(parameters)) {
-        parameters <- hdpGLM_simulateParameters(K=K, nCov=nCov, pi, seed=seed) 
+        parameters <- hdpGLM_simulateParameters(K=K, nCov=nCov, nCovj=nCovj, J=J, pi, seed=seed) 
     }
-    if(family=='gaussian'){sim_data = .hdpGLM_simulateData_gaussian(n=n, K=K, nCov=nCov, parameters, seed=seed)}
-    if(family=='binomial'){sim_data = .hdpGLM_simulateData_binomial(n=n, K=K, nCov=nCov, parameters, seed=seed)}
+    if(family=='gaussian'){sim_data = .hdpGLM_simulateData_gaussian(n=n, K=K, nCov=nCov, nCovj=nCovj, parameters, seed=seed)}
+    if(family=='binomial'){sim_data = .hdpGLM_simulateData_binomial(n=n, K=K, nCov=nCov, nCovj=nCovj, parameters, seed=seed)}
 
-    class(sim_data) = "dpGLM_data"
+    class(sim_data) = "hdpGLM_data"
     return(sim_data)
 }
 
@@ -87,7 +88,7 @@ hdpGLM_simulateData <- function(n, K, nCov, nCovj=NULL, parameters=NULL, pi=NULL
 #' }
 #' @export
 ## }}}
-hdpGLM_simulateParameters <- function(nCov, nCovj=NULL, K, pi=NULL, seed=NULL)
+hdpGLM_simulateParameters <- function(nCov, K, nCovj=0, J=1, pi=NULL, seed=NULL)
 {
     if(is.null(seed)) seed <- sample(1:777,1)
     parameters <- list(pi=NA ,beta = list(), K=K)
@@ -101,75 +102,124 @@ hdpGLM_simulateParameters <- function(nCov, nCovj=NULL, K, pi=NULL, seed=NULL)
         parameters$pi <- pi
     }
 
+    ## tau
+    ## ---
+    if(nCovj ==0) {
+        parameters$tau = as.matrix(1)  
+        W              = as.matrix(1)  
+    }
+    if(nCovj  >0) {
+        parameters$tau = as.matrix(MASS::mvrnorm(n=nCovj+1, mu=rep(0, nCov+1), Sigma=5*diag(nCov+1)))  
+        Wprime         = matrix(MASS::mvrnorm(n=J      , mu=rep(0, nCovj) , Sigma=5*diag(nCovj)), nrow=J, ncol=nCovj)
+        W              = cbind(1,Wprime)
+        parameters$W   = Wprime
+    }
+    colnames(parameters$W) = paste0("W", 1:nCovj, sep='')
+    
     ## beta
     ## ----
-    parameters$beta <- lapply(rep(nCov, K), function(nCov) stats::runif(n=nCov+1, -10,10))
-    parameters$beta <- parameters$beta %>% purrr::map(., ~stats::setNames(., paste0('beta', 1:(nCov+1), sep='')))
+    parameters$beta <- lapply(1:J, function(J) rep(list(rep(NA, nCov+1)),K))
+    tau = parameters$tau
+    for (j in 1:J) {
+        for (k in 1:K) {
+            parameters$beta[[j]][[k]] = MASS::mvrnorm(n=1, mu=W[j, ] %*% tau, .01*diag(nCov+1))
+            names(parameters$beta[[j]][[k]] ) = paste0('beta', 1:(nCov+1))
+        }
+        names(parameters$beta[[j]]) = paste0('k=', 1:K, sep='')
+        
+    }
+    names(parameters$beta) = paste0('j=', 1:J, sep='')
 
     return(parameters)
 }
 
 
-.hdpGLM_simulateData_gaussian <- function(n, K, nCov, parameters, seed)
+.hdpGLM_simulateData_gaussian <- function(n, K, nCov, nCovj, parameters, seed)
 {
     set.seed(seed)
     n = floor(n*parameters$pi)
 
-    beta  = parameters$beta
-    X     = list()
-    y     = list()
-    for (k in 1:K){
-        epsilon   <- stats::rnorm(n=n[k], 0, 1)
+    W     = parameters$W
+    J     = nrow(W)
+    betas = parameters$beta
+    X     = matrix(NA, ncol=nCov, nrow=0) # +1 to C_i
+    Z     = c()
+    C     = c()
+    y     = c()
+    for (j in 1:J)
+    {
+        for (k in 1:K){
+            epsilon   <- stats::rnorm(n=n[k], 0, 1)
 
-        if(nCov!=0){
-            X[[k]] <- MASS::mvrnorm(n=n[k], mu = rep(0,nCov), Sigma = diag(nCov))
-            y[[k]] <- base::cbind(1,X[[k]]) %*% beta[[k]] + epsilon
-        }else{
-            X[[k]] <- NULL
-            y[[k]] <- beta[[k]] + epsilon
+            if(nCov!=0){
+                X_tmp <- MASS::mvrnorm(n=n[k], mu = rep(0,nCov), Sigma = diag(nCov))
+                y_tmp <- base::cbind(1,X_tmp) %*% betas[[j]][[k]] + epsilon
+            }else{
+                X_tmp <- NULL
+                y_tmp <- rep(1, n[k]) * betas[[j]][[k]] + epsilon
+            }
+            if(!is.null(X_tmp)) X = base::rbind(X, X_tmp)
+            Z = c(Z, rep(k, n[k]))
+            C = c(C, rep(j, n[k]))
+            y = c(y, y_tmp)
         }
     }
     if(nCov!=0){
-        data   = stats::setNames(data.frame(y = unlist(y), X = data.frame(do.call(base::rbind, X))), nm=c('y', paste0('X',1:nCov)))
+        data = data.frame(y=y, X=X, C=C) %>%
+            stats::setNames(., nm = c('y', paste0('X', 1:nCov, sep=''), 'C')) %>%
+            dplyr::full_join(., parameters$W %>% tibble::as_data_frame(.) %>% dplyr::mutate(C=1:J), by='C' )
     }else{
-        data   = data.frame(y = unlist(y))
+        data  = data.frame(y = y, C=C)
     }
-    return ( list(data=data, Z = rep(1:K,n), parameters=parameters) )
+    return ( list(data=data, Z = Z, parameters=parameters) )
 }
-.hdpGLM_simulateData_binomial <- function(n, K, nCov, parameters,  seed)
+.hdpGLM_simulateData_binomial <- function(n, K, nCov, nCovj, parameters,  seed)
 {
     set.seed(seed)
     n = floor(n*parameters$pi)
+    
+    W     = parameters$W
+    J     = nrow(W)
+    betas = parameters$beta
+    X     = matrix(NA, ncol=nCov, nrow=0) # +1 to C_i
+    Z     = c()
+    C     = c()
+    y     = c()
+    for (j in 1:J)
+    {
+        for (k in 1:K){
+            epsilon  <- stats::rnorm(n=n[k], 0, 1)
+            
+            if(nCov!=0){
+                X_tmp  <- MASS::mvrnorm(n=n[k], mu = rep(0,nCov), Sigma = diag(nCov))
+                nu     <- base::cbind(1,X_tmp) %*% betas[[j]][[k]]
+                p_tmp  <- 1/(1+exp(-nu))
+            }else{
+                X_tmp  <- NULL
+                nu     <- rep(betas[[j]][[k]], n[k]) 
+                p_tmp  <- 1/(1+exp(-nu))
+            }
+            y_tmp = rep(NA, n[k])
+            for (i in 1:n[k]) y_tmp[i] = stats::rbinom(n=1, size=1, prob=p_tmp[i])
 
-    beta  = parameters$beta
-    X     = list()
-    y     = list()
-    p     = list()
-    nu    = list()
-    for (k in 1:K){
-        epsilon  <- stats::rnorm(n=n[k], 0, 1)
-
-        if(nCov!=0){
-            X[[k]]   <- MASS::mvrnorm(n=n[k], mu = rep(0,nCov), Sigma = diag(nCov))
-            nu[[k]]  <- base::cbind(1,X[[k]]) %*% beta[[k]]
-            p[[k]]   <- 1/(1+exp(-nu[[k]]))
-        }else{
-            X[[k]]   <- NULL
-            nu[[k]]  <- rep(beta[[k]], n[k]) 
-            p[[k]]   <- 1/(1+exp(-nu[[k]]))
+            if(!is.null(X_tmp)) X = base::rbind(X, X_tmp)
+            Z = c(Z, rep(k, n[k]))
+            C = c(C, rep(j, n[k]))
+            y = c(y, y_tmp)
         }
-        y[[k]] = rep(NA, n[k])
-        for (i in 1:n[k]) y[[k]][i] = stats::rbinom(n=1, size=1, prob=p[[k]][i])
     }
     if(nCov!=0){
-        data   = stats::setNames(data.frame(y = unlist(y), X = data.frame(do.call(base::rbind, X))), nm=c('y', paste0('X',1:nCov)))
+        data = data.frame(y=y, X=X, C=C) %>%
+            stats::setNames(., nm = c('y', paste0('X', 1:nCov, sep=''), 'C')) %>%
+            dplyr::full_join(., parameters$W %>% tibble::as_data_frame(.) %>% dplyr::mutate(C=1:J), by='C' )
     }else{
-        data   = data.frame(y = unlist(y))
+        data  = data.frame(y = y, C=C)
     }
-    return ( list(data=data, Z = rep(1:K,n), parameters=parameters) )
+    return ( list(data=data, Z = Z, parameters=parameters) )
 }
 ## to be completed
-.hdpGLM_simulateData_multinomial <- function(n, K=2, nCov=0, nCat, pi=pi,  family, seed){
+.hdpGLM_simulateData_multinomial <- function(n, K=2, nCov=0, nCat, pi=pi,  family, seed)
+{
     
     set.seed(seed)
     ## rand('state', state);

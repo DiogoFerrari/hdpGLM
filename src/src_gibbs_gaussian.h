@@ -17,7 +17,7 @@
 
 
 arma::mat dpGLM_update_theta_gaussian(arma::colvec y,arma::mat X,arma::colvec Z, int K, arma::mat theta, Rcpp::List fix);
-
+arma::mat hdpGLM_update_theta_gaussian(arma::colvec y,arma::mat X, arma::mat W, arma::colvec C, arma::colvec Z, int K, arma::mat tau, arma::mat theta, Rcpp::List fix);
 
 //=================================
 #endif
