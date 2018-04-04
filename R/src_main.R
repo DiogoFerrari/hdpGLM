@@ -224,6 +224,10 @@ hdpGLM <- function(formula1, formula2=NULL, data, weights=NULL, mcmc, K=100, fix
     if(! family %in% c('gaussian', 'binomial', 'multinomial'))
         stop(paste0('Error: Parameter -family- must be a string with one of the following options : \"gaussian\", \"binomial\", or \"multinomial\"'))
 
+    ## Debug/Monitoring message --------------------------
+    msg <- paste0('\n\n','Starting Estimation ...',  '\n\n'); cat(msg)
+    ## ---------------------------------------------------
+
     ## ## construct the regression matrices (data.frames) based on the formula provided
     ## ## -----------------------------------------------------------------------------
     func.call <- match.call(expand.dots = FALSE)
@@ -257,6 +261,9 @@ hdpGLM <- function(formula1, formula2=NULL, data, weights=NULL, mcmc, K=100, fix
     ## get the samples from posterior
     ## ------------------------------
     T.mcmc  = Sys.time()
+    ## Debug/Monitoring message --------------------------
+    msg <- paste0('\n\n','Estimation in progress ...',  '\n\n'); cat(msg)
+    ## ---------------------------------------------------
     if (is.null(W))
     {
         samples        =  dpGLM_mcmc( y, X,       weights, K, fix,  family, mcmc, epsilon, leapFrog, n.display, hmc_iter) #
@@ -286,8 +293,10 @@ hdpGLM <- function(formula1, formula2=NULL, data, weights=NULL, mcmc, K=100, fix
     }
 
     samples$samples                   = coda::as.mcmc(samples$samples)
-    samples$tau                       = coda::as.mcmc(samples$tau)
-    samples$context.index             = C
+    if (!is.null(W)){
+        samples$tau                       = coda::as.mcmc(samples$tau)
+        samples$context.index             = C
+    }
     attr(samples$samples, 'mcpar')[2] = mcmc$n.iter
     class(samples)                    = ifelse(is.null(W), 'dpGLM', 'hdpGLM')
 

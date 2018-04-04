@@ -274,6 +274,7 @@ List hdpGLM_mcmc(arma::colvec y, arma::mat X, arma::mat W, arma::colvec C, arma:
 
     // meta
     // ----
+    active_clusters_at_iter = 1;
     for(int j = 0; j < J; j++){
       arma::uvec    idx_j = find(C == j); 
       arma::colvec Zjstar = unique(Z(idx_j));
