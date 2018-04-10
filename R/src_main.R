@@ -1,4 +1,5 @@
 
+
 .hdpGLM_get_constants      <- function(family, d, Dw)
 {
     Dw = ifelse(is.null(Dw), 0, Dw)
@@ -104,7 +105,6 @@
     }
 
 }
-
 
 getContextIndices <- function(W)
 {
@@ -250,11 +250,9 @@ hdpGLM <- function(formula1, formula2=NULL, data, weights=NULL, mcmc, K=100, fix
     d   = ncol(X)  - 1                        # d is the number of covars, we subtract the intercept as X has a column with ones
     Dw  = unlist( ifelse(is.null(W), list(NULL), list(ncol(W) - 1)) ) # list and unlist only b/c ifelse() do not allow to return NULL
 
-    if (is.null(fix))
-    {
+    if (is.null(fix)) {
         fix = .hdpGLM_get_constants(family=family, d=d, Dw=Dw) # list with values of the parameters of the priors/hyperpriors
-    }else
-    {
+    }else {
         .dphGLM_check_constants(family=family, d=d, Dw=Dw, fix=fix)
     }
     
@@ -266,7 +264,8 @@ hdpGLM <- function(formula1, formula2=NULL, data, weights=NULL, mcmc, K=100, fix
     ## ---------------------------------------------------
     if (is.null(W))
     {
-        samples        =  dpGLM_mcmc( y, X,       weights, K, fix,  family, mcmc, epsilon, leapFrog, n.display, hmc_iter) #
+        ## samples        =  dpGLM_mcmc( y, X,       weights, K, fix,  family, mcmc, epsilon, leapFrog, n.display, hmc_iter) #
+        samples        =  dpGLM_mcmc_xxr( y, X,       weights, K, fix,  family, mcmc, epsilon, leapFrog, n.display, hmc_iter) #
     }else
     {
         samples        =  hdpGLM_mcmc(y, X, W, C, weights, K, fix, family, mcmc, epsilon, leapFrog, n.display, hmc_iter)

@@ -102,6 +102,9 @@ dphGLM_check_constants_xxr <- function(family=family, d=d, dj=NULL, fix)
 dpGLM_update_theta_xxr <- function(y, X, Z, K, theta,  fix, family, epsilon, leapFrog, hmc.iter)
 {
     Zstar = unique(Z)
+
+    ## gaussian
+    ## --------
     if (family=='gaussian')
     {
         for (k in Zstar)
@@ -149,6 +152,8 @@ dpGLM_update_theta_xxr <- function(y, X, Z, K, theta,  fix, family, epsilon, lea
     }
 
 
+    ## binomial
+    ## --------
     if (family=='binomial'){
         for (k in Zstar){
             Xk     = matrix(X[Z==k,], nrow=sum(Z==k), ncol=ncol(X))
@@ -182,8 +187,8 @@ dpGLM_update_theta_xxr <- function(y, X, Z, K, theta,  fix, family, epsilon, lea
     }
 
     return(theta)
-
 }
+
 ## jags
 dphGLM_jags_xxr <- function(model=NA, n.chains=4, family)
 {

@@ -54,8 +54,9 @@ colvec q_bin(colvec theta_t, List fix)
   arma::mat Sigma_beta  = Rcpp::as<Rcpp::List>(fix["fix"])["Sigma_beta"];
   arma::colvec mu_beta = Rcpp::as<Rcpp::List>(fix["fix"])["mu_beta"];
   int ncols = Sigma_beta.n_cols;
-  arma::mat Y = arma::randn(1, ncols);
-  mat sample = arma::repmat(mu_beta, 1, 1).t() + Y * arma::chol(G_bin(theta_t));
+  // arma::mat      Y = arma::randn(1, ncols);
+  // arma::mat sample = arma::repmat(mu_beta, 1, 1).t() + Y * arma::chol(G_bin(theta_t));
+  arma::mat sample = rmvnormArma(1, mu_beta, G_bin(theta_t));
   return (sample.t());
 }
 

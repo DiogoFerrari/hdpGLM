@@ -85,7 +85,7 @@ arma::colvec dpGLM_update_Z(arma::colvec y, arma::mat X, arma::colvec pi, int K,
 
 // hdpGLM
 // ------
-arma::vec hdpGLM_update_pi(arma::mat Z, int K, Rcpp::List fix)
+arma::vec hdpGLM_update_pi(arma::colvec Z, arma::colvec C, int K, Rcpp::List fix)
 {
   arma::colvec  V = zeros<colvec>(K);
   arma::colvec pi = zeros<colvec>(K);

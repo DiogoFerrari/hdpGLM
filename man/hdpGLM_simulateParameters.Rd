@@ -5,7 +5,8 @@
 \title{Simulated a Parameters used to create Data Sets from hdpGLM model}
 \usage{
 hdpGLM_simulateParameters(nCov, K, nCovj, J, pi = NULL, same.K, seed = NULL,
-  context.effect = NULL, same.clusters.across.contexts)
+  context.effect = NULL, same.clusters.across.contexts,
+  context.dependent.cluster)
 }
 \arguments{
 \item{nCov}{integer, the number of covariates of the
@@ -26,9 +27,11 @@ If not NULL, it determines the mixture probabilities}
 
 \item{seed}{a seed for \code{\link{set.seed}}}
 
-\item{context.effect}{either \code{NULL} or a two dimensional integer vector. If it is \code{NULL}, all the coefficients (\code{beta}) of the individual level covariates are functions of context-level features (\code{tau}). If it is not \code{NULL}, the first component of the vector indicates the index of the lower leve covariate (\code{X}) whose linear effect \code{beta} depends on context (\code{tau}) (0 is the intercept). The second component indicates the index context-level covariate (\code{W}) whose linear coefficient (\code{tau}) is non-zero.}
+\item{context.effect}{either \code{NULL} or a two dimensional integer vector. If it is \code{NULL}, all the coefficients (\code{beta}) of the individual level covariates are functions of context-level features (\code{tau}). If it is not \code{NULL}, the first component of the vector indicates the index of the lower level covariate (\code{X}) whose linear effect \code{beta} depends on context (\code{tau}) (0 is the intercept). The second component indicates the index context-level covariate (\code{W}) whose linear coefficient (\code{tau}) is non-zero.}
 
 \item{same.clusters.across.contexts}{boolean, if \code{TRUE} all the contexts will have the same number of clusters AND each cluster will have the same coefficient \code{beta}.}
+
+\item{context.dependent.cluster}{integer, indicates which cluster will be context-dependent. If \code{zero}, all clusters will be context-dependent}
 }
 \value{
 The function returns a list with the parameters

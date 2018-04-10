@@ -1,5 +1,4 @@
 
-
 ## {{{ docs }}}
 
 #' Classify data points
@@ -551,6 +550,16 @@ hdpGLM_get_occupied_clusters <- function(x)
     return(x)
 }
 
+#' @export
+print.hdpGLM <- function(x, ...){
+    cat(paste0("\nMaximum number of clusters activated during the estimation: ", x$max_active, sep=''))
+    cat(paste0("\nNumer of MCMC iterations: ", x$n.iter, sep=''))
+    cat(paste0("\nburn-in: ", x$burn.in, "\n", sep=''))
+    cat("\nSummary statistics of cluster with data points\n")
+    s = summary(x)
+    print(s)
+    invisible()
+}
 
 ## ---------------------
 ## Both dpGLM and hdpGLm

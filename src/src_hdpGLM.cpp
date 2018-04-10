@@ -238,19 +238,19 @@ List hdpGLM_mcmc(arma::colvec y, arma::mat X, arma::mat W, arma::colvec C, arma:
 
   // MCMC
   // ----
-  int n_parameters = 1+1+d+1;   // d is number of covars, +1 for interctpt +1 for column with k +1 for column w/j
-  if( family == "gaussian"){n_parameters+=1;} // for sigma
+  int n_parameters = 1+1+d+1;                  // d is number of covars, +1 for interctpt +1 for column with k +1 for column with j
+  if( family == "gaussian"){n_parameters+=1;} // +1 for sigma
   arma::mat samples(0, n_parameters);
   arma::mat samples_tau(n_iter, (Dw+1)*(d+1));
 
   // MCMC iterations
   // ---------------
   for(int iter = 0; iter < N; iter++){
-    if (iter % 200 == 0) Rcpp::checkUserInterrupt();
+    if (iter % 80 == 0) Rcpp::checkUserInterrupt();
 
     // sample parameters
     // -----------------
-    pi	     = hdpGLM_update_pi(Z, K, fix);
+    pi	     = hdpGLM_update_pi(Z, C, K, fix);
     Z	     = hdpGLM_update_Z(y, X, W, C, pi, K, theta, family);
     theta    = hdpGLM_update_theta(y, X, W, C, Z, K, tau, theta,  fix, family, epsilon, leapFrog, hmc_iter);
     tau      = hdpGLM_update_tau(W, K, d, theta, fix);

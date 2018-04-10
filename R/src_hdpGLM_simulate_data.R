@@ -29,8 +29,9 @@
 #' @param pi either NULL or a vector with length K that add up to 1.
 #'           If not NULL, it determines the mixture probabilities
 #' @param same.K boolean, used when data is sampled from more than one context. If \code{TRUE} all contexts get the same number of clusters. If \code{FALSE}, each context gets a number of clusters sampled from a Poisson distribution with expectation equals to \code{K} (current not implemented)
-#' @param context.effect either \code{NULL} or a two dimensional integer vector. If it is \code{NULL}, all the coefficients (\code{beta}) of the individual level covariates are functions of context-level features (\code{tau}). If it is not \code{NULL}, the first component of the vector indicates the index of the lower leve covariate (\code{X}) whose linear effect \code{beta} depends on context (\code{tau}) (0 is the intercept). The second component indicates the index context-level covariate (\code{W}) whose linear coefficient (\code{tau}) is non-zero.
+#' @param context.effect either \code{NULL} or a two dimensional integer vector. If it is \code{NULL}, all the coefficients (\code{beta}) of the individual level covariates are functions of context-level features (\code{tau}). If it is not \code{NULL}, the first component of the vector indicates the index of the lower level covariate (\code{X}) whose linear effect \code{beta} depends on context (\code{tau}) (0 is the intercept). The second component indicates the index context-level covariate (\code{W}) whose linear coefficient (\code{tau}) is non-zero.
 #' @param same.clusters.across.contexts boolean, if \code{TRUE} all the contexts will have the same number of clusters AND each cluster will have the same coefficient \code{beta}.
+#' @param context.dependent.cluster integer, indicates which cluster will be context-dependent. If \code{zero}, all clusters will be context-dependent 
 #' @param seed a seed for \code{\link{set.seed}}
 #' @inheritParams hdpGLM 
 #'
@@ -44,12 +45,14 @@
 #' }
 #' @export
 ## }}}
-hdpGLM_simulateData <- function(n, K, nCov, nCovj=0, J=1, parameters=NULL, pi=NULL, family, same.K=FALSE, seed=sample(1:777,1), context.effect=NULL, same.clusters.across.contexts=NULL)
+hdpGLM_simulateData <- function(n, K, nCov, nCovj=0, J=1, parameters=NULL, pi=NULL, family, same.K=FALSE, seed=sample(1:777,1), 
+                                context.effect=NULL, same.clusters.across.contexts=NULL, context.dependent.cluster=0)
 {
     if(nCovj==0 | J < 2) 
         return( dpGLM_simulateData_main(n, K, nCov, nCovj=NULL, parameters=parameters, pi=pi, family=family, seed=seed) )
     if(nCovj> 0) 
-        return( hdpGLM_simulateData_main(n, K, nCov, nCovj=nCovj, J=J, parameters=parameters, pi=pi, family=family, same.K, seed=seed, context.effect, same.clusters.across.contexts=same.clusters.across.contexts) )
+        return( hdpGLM_simulateData_main(n, K, nCov, nCovj=nCovj, J=J, parameters=parameters, pi=pi, family=family, same.K, seed=seed, 
+                                         context.effect, same.clusters.across.contexts=same.clusters.across.contexts, context.dependent.cluster) )
 }
 
 ## =====================================================
@@ -237,9 +240,9 @@ dpGLM_simulateParameters <- function(nCov, nCovj=NULL, K, pi=NULL, seed=NULL)
 ## =====================================================
 ## hdpGLM
 ## =====================================================
-hdpGLM_simulateData_main <- function(n, K, nCov, nCovj, J, parameters=NULL, pi=NULL, family, same.K, seed=sample(1:777,1), context.effect, same.clusters.across.contexts)
+hdpGLM_simulateData_main <- function(n, K, nCov, nCovj, J, parameters=NULL, pi=NULL, family, same.K, seed=sample(1:777,1), context.effect, same.clusters.across.contexts, context.dependent.cluster)
 {
-    ## error handling
+    ## error handling ----------------------------------------
     if (n %% 2) stop("Sample size n must be an even number")
     if(! family %in% c('gaussian', 'binomial', 'multivariate')) stop(paste0('Error: family must be one element of the set : {', paste0(c('gaussian', 'binomial', 'multinomial'), collapse=','),'}'))
     if (!is.null(parameters)){
@@ -250,14 +253,18 @@ hdpGLM_simulateData_main <- function(n, K, nCov, nCovj, J, parameters=NULL, pi=N
         if(! sum(parameters$pi) == 1) stop ('\n\nThe element \'pi\' of the list \'parameters\' must add up to 1.')
         if(! all(parameters$beta %>% purrr::map(., ~length(.)) %>% unlist == nCov +1)) stop(paste0('\n\nAll elements of the list \'beta\' of the list \'parameters\' must have length ', nCov+1, sep=''))
     }
+    ## -----------------------------------------------------
 
-    if (is.null(parameters)) {parameters <- hdpGLM_simulateParameters(K=K, nCov=nCov, nCovj=nCovj, J=J, pi, same.K, seed=seed, context.effect=context.effect,same.clusters.across.contexts=same.clusters.across.contexts)}
+
+    if (is.null(parameters)) {parameters <- hdpGLM_simulateParameters(K=K, nCov=nCov, nCovj=nCovj, J=J, pi, same.K, seed=seed, 
+                                                                      context.effect=context.effect,same.clusters.across.contexts=same.clusters.across.contexts, context.dependent.cluster=context.dependent.cluster)}
     if(family=='gaussian')   {sim_data = .hdpGLM_simulateData_gaussian(n=n, K=K, nCov=nCov, nCovj=nCovj, parameters, seed=seed)}
     if(family=='binomial')   {sim_data = .hdpGLM_simulateData_binomial(n=n, K=K, nCov=nCov, nCovj=nCovj, parameters, seed=seed)}
 
     class(sim_data) = "hdpGLM_data"
     return(sim_data)
 }
+
 ## {{{ docs }}}
 
 #' Simulated a Parameters used to create Data Sets from hdpGLM model
@@ -279,7 +286,7 @@ hdpGLM_simulateData_main <- function(n, K, nCov, nCovj, J, parameters=NULL, pi=N
 #' @export
 
 ## }}}
-hdpGLM_simulateParameters <- function(nCov, K, nCovj, J, pi=NULL, same.K, seed=NULL, context.effect=NULL, same.clusters.across.contexts)
+hdpGLM_simulateParameters <- function(nCov, K, nCovj, J, pi=NULL, same.K, seed=NULL, context.effect=NULL, same.clusters.across.contexts, context.dependent.cluster)
 {
     if(is.null(seed)) seed <- base::sample(1:777,1)
 
@@ -341,7 +348,11 @@ hdpGLM_simulateParameters <- function(nCov, K, nCovj, J, pi=NULL, same.K, seed=N
         for (j in 1:J) {
             for (k in 1:K) {
                 if(!is.null(context.effect)){
-                    parameters$beta[[j]][[k]][-(context.effect[1]+1)] = beta[[k]][-(context.effect[1]+1)]
+                    if (context.dependent.cluster == 0 | k != context.dependent.cluster) {
+                        parameters$beta[[j]][[k]][-(context.effect[1]+1)] = beta[[k]][-(context.effect[1]+1)]
+                    }else{
+                        parameters$beta[[j]][[k]] = beta[[k]]
+                    }
                 }else{
                     parameters$beta[[j]][[k]] = beta[[k]]
                 }
