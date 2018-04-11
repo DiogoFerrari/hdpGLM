@@ -17,8 +17,6 @@ hdpGLM_classify <- function(data, samples)
     cluster = apply(samples$pik, 1, which.max)
     return(data.frame(Cluster = cluster, data))
 }
-
-
 hdpGLM_match_clusters_aux <- function(estimate, true){
     return(
         true %>%
@@ -33,9 +31,11 @@ hdpGLM_match_clusters_aux <- function(estimate, true){
         )
 }
 
-## -----
+
+
+## -----------------------------------------
 ## dpGLM
-## -----
+## -----------------------------------------
 ## {{{ docs }}}
 
 #' Defaul plot for class dpGLM
@@ -469,9 +469,20 @@ dpGLM_select_non_zero <- function(x, select_perc_time_active=60)
 }
 
 
-## ------
+## ------------------------------------
 ## hdpGLM
-## ------
+## ------------------------------------
+#' @export
+print.hdpGLM <- function(x, ...)
+{
+    cat(paste0("\nMaximum number of clusters activated during the estimation: ", x$max_active, sep=''))
+    cat(paste0("\nNumer of MCMC iterations: ", x$n.iter, sep=''))
+    cat(paste0("\nburn-in: ", x$burn.in, "\n", sep=''))
+    cat("\nSummary statistics of cluster with data points\n")
+    s = summary(x)
+    print(s)
+    invisible()
+}
 #' @export
 summary.hdpGLM_data <- function(x)
 {
@@ -494,7 +505,6 @@ summary.hdpGLM_data <- function(x)
         dplyr::select(dw,dx,Parameter, True) 
     return(list(data = summary(x$data),beta=betas, tau=taus))
 }
-
 #' @export
 summary.hdpGLM <- function(x, HPD.prob=.95, only.occupied.clusters.in.contexts=TRUE, true.beta=NULL, true.tau=NULL)
 {
@@ -530,7 +540,56 @@ summary.hdpGLM <- function(x, HPD.prob=.95, only.occupied.clusters.in.contexts=T
     }
     return(list(beta=betas, tau=taus))
 }
-    
+#' @export
+plot.hdpGLM <- function(x, true.beta=NULL, ncol=NULL,  legend.position="bottom", ...)
+{
+    x = hdpGLM_get_occupied_clusters(x)
+    if (!is.null(true.beta)) {
+        tab =  hdpGLM_match_clusters(x, true=true.beta) %>%
+            dplyr::mutate(jnext = j+1) %>%
+            dplyr::mutate(Parameter = paste0(stringr::str_extract(Parameter, 'beta') , '[', stringr::str_extract(Parameter, '[0-9]+') ,']'))
+        xlim = tab %>%
+            dplyr::summarize(lower=min(HPD.lower),
+                             upper=max(HPD.upper)) %>%
+            c %>%
+            unlist
+        g = x$samples %>%
+            tibble::as_data_frame(.)  %>%
+            dplyr::select(-sigma)  %>% 
+            tidyr::gather(key = Parameter, value=values, -j, -k) %>%
+            dplyr::mutate(Parameter = paste0(stringr::str_extract(Parameter, 'beta') , '[', stringr::str_extract(Parameter, '[0-9]+') ,']')) %>%
+            ggplot2::ggplot(.) +
+            ggjoy::geom_joy(aes(x=values, y=j, group=j), fill="#00000044") +
+            ggplot2::geom_segment(data=tab , aes(x=True, xend=True, y=j, yend=jnext, col='red')) +
+            ggplot2::geom_segment(data=tab , aes(x=Mean, xend=Mean, y=j, yend=jnext, col='black')) +
+            ggplot2::facet_wrap( ~ Parameter, ncol = ncol, scales='free', labeller=label_parsed) +
+            ggplot2::ylab('Context Index') +
+            ggplot2::theme(strip.background = element_rect(colour="white", fill="white"),
+                          strip.text.x = element_text(size=12, face='bold'),
+                          strip.text.y = element_text(size=12, face="bold")) +
+            ggplot2::scale_colour_manual(values = c("red", "black"), name="", labels=c('True', "MCMC Cluster Mean")) +
+            ggplot2::theme(legend.position = legend.position) +
+            xlim(xlim)
+    }else{
+        xlim = summary(x)$beta %>%
+            dplyr::summarize(lower=min(HPD.lower), upper=max(HPD.upper)) %>% c %>% unlist
+        g = x$samples %>%
+            tibble::as_data_frame(.)  %>%
+            dplyr::select(-sigma)  %>% 
+            tidyr::gather(key = Parameter, value=values, -j, -k) %>%
+            dplyr::mutate(Parameter = paste0(stringr::str_extract(Parameter, 'beta') , '[', stringr::str_extract(Parameter, '[0-9]+') ,']')) %>%
+            ggplot2::ggplot(.) +
+            ggjoy::geom_joy(aes(x=values, y=j, group=j), fill="#00000044") +
+            ggplot2::ylab('Context Index') +
+            ggplot2::facet_wrap( ~ Parameter, ncol = ncol, scales='free', labeller=label_parsed) +
+            ggplot2::theme(strip.background = element_rect(colour="white", fill="white"),
+                          strip.text.x = element_text(size=12, face='bold'),
+                          strip.text.y = element_text(size=12, face="bold")) +
+            xlim(xlim)
+
+    }
+    return(g)
+}
 #' @export
 hdpGLM_get_occupied_clusters <- function(x)
 {
@@ -548,17 +607,6 @@ hdpGLM_get_occupied_clusters <- function(x)
     n.iter = attr(x$samples, 'mcpar')[2]
     attr(x$samples, 'mcpar')[2] = n.iter
     return(x)
-}
-
-#' @export
-print.hdpGLM <- function(x, ...){
-    cat(paste0("\nMaximum number of clusters activated during the estimation: ", x$max_active, sep=''))
-    cat(paste0("\nNumer of MCMC iterations: ", x$n.iter, sep=''))
-    cat(paste0("\nburn-in: ", x$burn.in, "\n", sep=''))
-    cat("\nSummary statistics of cluster with data points\n")
-    s = summary(x)
-    print(s)
-    invisible()
 }
 
 ## ---------------------
@@ -613,7 +661,7 @@ hdpGLM_match_clusters <- function(samples, true)
                                                                    .f=function(estimate, true) hdpGLM_match_clusters_aux(estimate, true) ),
                               Parameter=as.character(Parameter)) %>%
                 dplyr::ungroup(.) %>%
-                dplyr::full_join(., truej , by=c("True.Cluster.match"= "k", 'Parameter', "j"))
+                dplyr::left_join(., truej , by=c("True.Cluster.match"= "k", 'Parameter', "j"))
             tab = tab %>%
                 dplyr::bind_rows(., tabj)  
         }

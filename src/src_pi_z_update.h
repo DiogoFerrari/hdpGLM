@@ -18,8 +18,8 @@
 arma::vec dpGLM_update_pi(arma::mat Z, int K, Rcpp::List fix);
 arma::colvec dpGLM_update_Z(arma::colvec y, arma::mat X, arma::colvec pi, int K, arma::mat theta, Rcpp::String family);
 
-arma::vec hdpGLM_update_pi(arma::colvec Z, arma::colvec C, int K, Rcpp::List fix);
-arma::colvec hdpGLM_update_Z(arma::colvec y, arma::mat X, arma::mat W, arma::colvec C, arma::colvec pi, int K, arma::mat theta, Rcpp::String family);
+arma::mat hdpGLM_update_pi(arma::colvec Z, arma::colvec C, int K, Rcpp::List fix);
+arma::colvec hdpGLM_update_Z(arma::colvec y, arma::mat X, arma::mat W, arma::colvec C, arma::mat pi, int K, arma::mat theta, Rcpp::String family);
 
 //=================================
 #endif

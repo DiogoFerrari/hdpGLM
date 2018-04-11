@@ -2,6 +2,7 @@
 
 S3method(plot,dpGLM)
 S3method(plot,dpGLM_data)
+S3method(plot,hdpGLM)
 S3method(predict,dpGLM)
 S3method(print,dpGLM)
 S3method(print,hdpGLM)

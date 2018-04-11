@@ -19,18 +19,8 @@ double hdpGLM_MCMC_TRIAL = 0.0;
 
 // {{{ ancillary }}}
 
-void hdpGLM_display_message(String family, int burn_in, int n_iter, int iter, int K, int max_active_cluster_at_a_iter, int active_clusters_at_iter, arma::colvec Z)
+void hdpGLM_display_message(String family, int burn_in, int n_iter, int iter, int K, int J, int max_active_cluster_at_a_iter, int active_clusters_at_iter, arma::colvec Z, arma::colvec C)
 {
-  // compute table
-  vec Zstar = unique(Z);
-  uvec Zstar_count = hist(Z,Zstar);
-  mat A(Zstar.n_rows, 2);
-  A.col(0) = Zstar;
-  A.col(1) = conv_to<vec>::from(Zstar_count);
-  A.col(1) = 100*A.col(1)/sum(A.col(1));
-  arma::uvec idx_larger_clusters = find(A.col(1) > 5);
-  arma::uvec idx_col = arma::linspace<arma::uvec>(0, 1, 2);
-  arma::mat A_subset = A(idx_larger_clusters, idx_col);
 
   hdpGLM_ACCEPTANCE_RATE_AVERAGE = (hdpGLM_ACCEPTANCE_RATE_AVERAGE + hdpGLM_ACCEPTANCE_COUNT/hdpGLM_MCMC_TRIAL)/2.0;
 
@@ -49,12 +39,28 @@ void hdpGLM_display_message(String family, int burn_in, int n_iter, int iter, in
   Rcpp::Rcout << "Average acceptance rate for beta : " << hdpGLM_ACCEPTANCE_RATE_AVERAGE << std::endl;
   Rcpp::Rcout << std::endl;
   Rcpp::Rcout << "Maximum Number of cluster allowed (K)                      : " << K << std::endl;
-  Rcpp::Rcout << "Maximum Number of cluster activated among all contexts j   : " << max_active_cluster_at_a_iter  << std::endl;
+  Rcpp::Rcout << "Maximum Number of cluster activated among all contexts     : " << max_active_cluster_at_a_iter  << std::endl;
   Rcpp::Rcout << "Maximum Number of clusters active in the current iteration : " << active_clusters_at_iter  << std::endl;
   Rcpp::Rcout << std::endl;
-  // Rcpp::Rcout << "Percentage of data classified in each clusters k at current iteraction (displaying only clusters with more than 5% of the data)" << std::endl;
-  // Rcpp::Rcout << A_subset.t() << std::endl;
+  Rcpp::Rcout << "(displaying only clusters with more than 5% of the data)" << std::endl;
   
+  for(int j = 1; j <= J; j++){
+    arma::uvec idx_j = find(C == j); 
+    arma::colvec Zj  = Z(idx_j);
+    arma::colvec Zjstar = unique(Zj);
+    uvec Zjstar_count = hist(Zj,Zjstar);
+    arma::mat tabj(Zjstar.n_rows, 2);
+    tabj.col(0) = Zjstar;
+    tabj.col(1) = conv_to<vec>::from(Zjstar_count);
+    tabj.col(1) = 100*tabj.col(1)/sum(tabj.col(1));
+
+    arma::uvec idx_larger_clusters = find(tabj.col(1) > 5);
+    arma::uvec idx_col = arma::linspace<arma::uvec>(0, 1, 2);
+    arma::mat tabj_subset = tabj(idx_larger_clusters, idx_col);
+
+    Rcpp::Rcout << "Clusters in context with index " << j << std::endl;
+    Rcpp::Rcout << tabj.t() << std::endl;
+  }
 }
 arma::mat hdpGLM_update_countZik(arma::mat countZik, arma::mat Z)
 {
@@ -231,7 +237,7 @@ List hdpGLM_mcmc(arma::colvec y, arma::mat X, arma::mat W, arma::colvec C, arma:
   arma::mat theta    = hdpGLM_get_inits_theta(J, K, d, family, fix);
   arma::mat tau	     = hdpGLM_get_inits_tau(d, Dw, family, fix);
   arma::mat countZik = arma::zeros(n, K);
-  arma::colvec pi(n);
+  arma::mat pi(K, J);
 
   arma::mat pik(n,K);
   countZik.col(0) = arma::ones(n);
@@ -287,7 +293,7 @@ List hdpGLM_mcmc(arma::colvec y, arma::mat X, arma::mat W, arma::colvec C, arma:
     // -------------------
     n_display_count+=1;
     if(n_display_count == n_display){
-      hdpGLM_display_message(family, burn_in, n_iter, iter, K, max_active_cluster_at_a_iter, active_clusters_at_iter, Z);
+      hdpGLM_display_message(family, burn_in, n_iter, iter, K, J, max_active_cluster_at_a_iter, active_clusters_at_iter, Z, C);
       n_display_count=0;
     }
 

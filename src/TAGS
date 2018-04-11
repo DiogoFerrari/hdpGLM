@@ -28,25 +28,25 @@ void hdpGLM_display_message(String family, int burn_in, int n_iter, int iter, in
 arma::mat hdpGLM_update_countZik(arma::mat countZik, arma::mat Z)hdpGLM_update_countZik59,2535
 arma::mat hdpGLM_get_pik(arma::mat countZik)hdpGLM_get_pik66,2698
 arma::mat hdpGLM_get_theta_active(arma::mat theta, arma::colvec Z, arma::colvec C)hdpGLM_get_theta_active74,2930
-arma::mat hdpGLM_get_inits_theta(int J, int K,int d, String family, List fix)hdpGLM_get_inits_theta117,4673
-arma::mat hdpGLM_get_inits_tau(int d, int Dw, String family, List fix)hdpGLM_get_inits_tau155,5676
-arma::mat hdpGLM_update_theta(arma::colvec y, arma::mat X, arma::mat W, arma::colvec C, arma::colvec Z, int K, arma::mat tau, arma::mat theta, List fix, String family, double epsilon, int leapFrog, int hmc_iter)hdpGLM_update_theta169,5913
-arma::mat hdpGLM_update_tau(arma::mat W, int K, int Dx, arma::mat theta, List fix)hdpGLM_update_tau185,6546
-List hdpGLM_mcmc(arma::colvec y, arma::mat X, arma::mat W, arma::colvec C, arma::colvec weights, int K, List fix, String family, List mcmc, double epsilon, int leapFrog, int n_display, int hmc_iter)hdpGLM_mcmc217,7471
+arma::mat hdpGLM_get_inits_theta(int J, int K,int d, String family, List fix)hdpGLM_get_inits_theta110,4244
+arma::mat hdpGLM_get_inits_tau(int d, int Dw, String family, List fix)hdpGLM_get_inits_tau148,5247
+arma::mat hdpGLM_update_theta(arma::colvec y, arma::mat X, arma::mat W, arma::colvec C, arma::colvec Z, int K, arma::mat tau, arma::mat theta, List fix, String family, double epsilon, int leapFrog, int hmc_iter)hdpGLM_update_theta162,5484
+arma::mat hdpGLM_update_tau(arma::mat W, int K, int Dx, arma::mat theta, List fix)hdpGLM_update_tau178,6117
+List hdpGLM_mcmc(arma::colvec y, arma::mat X, arma::mat W, arma::colvec C, arma::colvec weights, int K, List fix, String family, List mcmc, double epsilon, int leapFrog, int n_display, int hmc_iter)hdpGLM_mcmc210,7042
 
 /home/diogo/Dropbox/CienciasSociais/studies/computing/R/scripts/pkgs/hdpGLM/hdpGLM/src/src_hmc_binomial.cpp,626
 double U_bin(colvec betak, List fix)U_bin13,171
 colvec grad_U_bin(colvec betak, List fix)grad_U_bin25,703
 mat G_bin(colvec theta)G_bin44,1335
 colvec q_bin(colvec theta_t, List fix)q_bin52,1458
-arma::mat dpGLM_update_theta_binomial (arma::colvec y,arma::mat X,arma::colvec Z, int K, arma::mat theta, List fix, double epsilon, int leapFrog, int hmc_iter, String family)dpGLM_update_theta_binomial64,1838
-arma::mat hdpGLM_update_theta_binomial (arma::colvec y,arma::mat X,arma::colvec Z, int K, arma::mat theta, List fix, double epsilon, int leapFrog, int hmc_iter, String family)hdpGLM_update_theta_binomial118,3609
+arma::mat dpGLM_update_theta_binomial (arma::colvec y,arma::mat X,arma::colvec Z, int K, arma::mat theta, List fix, double epsilon, int leapFrog, int hmc_iter, String family)dpGLM_update_theta_binomial65,1917
+arma::mat hdpGLM_update_theta_binomial (arma::colvec y,arma::mat X,arma::colvec Z, int K, arma::mat theta, List fix, double epsilon, int leapFrog, int hmc_iter, String family)hdpGLM_update_theta_binomial119,3688
 
-/home/diogo/Dropbox/CienciasSociais/studies/computing/R/scripts/pkgs/hdpGLM/hdpGLM/src/src_pi_z_update.cpp,477
+/home/diogo/Dropbox/CienciasSociais/studies/computing/R/scripts/pkgs/hdpGLM/hdpGLM/src/src_pi_z_update.cpp,496
 arma::vec dpGLM_update_pi(arma::mat Z, int K, Rcpp::List fix)dpGLM_update_pi11,145
 arma::colvec dpGLM_update_Z(arma::colvec y, arma::mat X, arma::colvec pi, int K, arma::mat theta, String family)dpGLM_update_Z44,1094
-arma::vec hdpGLM_update_pi(arma::mat Z, int K, Rcpp::List fix)hdpGLM_update_pi88,2436
-arma::colvec hdpGLM_update_Z(arma::colvec y, arma::mat X, arma::mat W, arma::colvec C, arma::colvec pi, int K, arma::mat theta, String family)hdpGLM_update_Z121,3386
+arma::vec hdpGLM_update_pi(arma::colvec Z, arma::colvec C, int K, Rcpp::List fix)hdpGLM_update_pi88,2436
+arma::colvec hdpGLM_update_Z(arma::colvec y, arma::mat X, arma::mat W, arma::colvec C, arma::colvec pi, int K, arma::mat theta, String family)hdpGLM_update_Z121,3405
 
 /home/diogo/Dropbox/CienciasSociais/studies/computing/R/scripts/pkgs/hdpGLM/hdpGLM/src/RcppExports.cpp,640
 RcppExport SEXP _hdpGLM_dpGLM_mcmc(SEXP ySEXP, SEXP XSEXP, SEXP weightsSEXP, SEXP KSEXP, SEXP fixSEXP, SEXP familySEXP, SEXP mcmcSEXP, SEXP epsilonSEXP, SEXP leapFrogSEXP, SEXP n_displaySEXP, SEXP hmc_iterSEXP) {_hdpGLM_dpGLM_mcmc11,382
