@@ -295,6 +295,7 @@ hdpGLM <- function(formula1, formula2=NULL, data, weights=NULL, mcmc, K=100, fix
     if (!is.null(W)){
         samples$tau                       = coda::as.mcmc(samples$tau)
         samples$context.index             = C
+        samples$context.cov               = tibble::as_data_frame(cbind(C=sort(unique(C)), W))  %>% dplyr::select(-contains("Intercept")) 
     }
     attr(samples$samples, 'mcpar')[2] = mcmc$n.iter
     class(samples)                    = ifelse(is.null(W), 'dpGLM', 'hdpGLM')

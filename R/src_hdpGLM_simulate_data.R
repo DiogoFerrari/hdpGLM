@@ -49,10 +49,12 @@ hdpGLM_simulateData <- function(n, K, nCov, nCovj=0, J=1, parameters=NULL, pi=NU
                                 context.effect=NULL, same.clusters.across.contexts=NULL, context.dependent.cluster=0)
 {
     if(nCovj==0 | J < 2) 
-        return( dpGLM_simulateData_main(n, K, nCov, nCovj=NULL, parameters=parameters, pi=pi, family=family, seed=seed) )
-    if(nCovj> 0) 
-        return( hdpGLM_simulateData_main(n, K, nCov, nCovj=nCovj, J=J, parameters=parameters, pi=pi, family=family, same.K, seed=seed, 
-                                         context.effect, same.clusters.across.contexts=same.clusters.across.contexts, context.dependent.cluster) )
+        dat = dpGLM_simulateData_main(n, K, nCov, nCovj=NULL, parameters=parameters, pi=pi, family=family, seed=seed) 
+    if(nCovj> 0){ 
+        dat = hdpGLM_simulateData_main(n, K, nCov, nCovj=nCovj, J=J, parameters=parameters, pi=pi, family=family, same.K, seed=seed, 
+                                       context.effect, same.clusters.across.contexts=same.clusters.across.contexts, context.dependent.cluster) 
+    }
+    return(dat)
 }
 
 ## =====================================================

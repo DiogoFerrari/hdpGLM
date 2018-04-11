@@ -59,7 +59,7 @@ void hdpGLM_display_message(String family, int burn_in, int n_iter, int iter, in
     arma::mat tabj_subset = tabj(idx_larger_clusters, idx_col);
 
     Rcpp::Rcout << "Clusters in context with index " << j << std::endl;
-    Rcpp::Rcout << tabj.t() << std::endl;
+    Rcpp::Rcout << tabj_subset.t() << std::endl;
   }
 }
 arma::mat hdpGLM_update_countZik(arma::mat countZik, arma::mat Z)
