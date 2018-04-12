@@ -31,7 +31,6 @@ hdpGLM_match_clusters_aux <- function(estimate, true){
         )
 }
 
-
 ## {{{ dpGLM }}}
 
 ## {{{ docs }}}
@@ -470,9 +469,8 @@ dpGLM_select_non_zero <- function(x, select_perc_time_active=60)
 
 ## }}}
 
-## ------------------------------------
-## hdpGLM
-## ------------------------------------
+## {{{ hdpGLM }}}
+
 #' @export
 print.hdpGLM <- function(x, ...)
 {
@@ -638,6 +636,9 @@ hdpGLM_get_occupied_clusters <- function(x)
     attr(x$samples, 'mcpar')[2] = n.iter
     return(x)
 }
+
+
+## }}}
 
 ## ---------------------
 ## Both dpGLM and hdpGLm
