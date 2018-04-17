@@ -4,11 +4,15 @@
 \alias{plot.hdpGLM}
 \title{Plot}
 \usage{
-\method{plot}{hdpGLM}(x, true.beta = NULL, ncol = NULL,
-  legend.position = "bottom")
+\method{plot}{hdpGLM}(x, title = NULL, subtitle = NULL, true.beta = NULL,
+  ncol = NULL, legend.position = "bottom")
 }
 \arguments{
 \item{x}{an object of the class \code{hdpGLM} generted by the function \link{hdpGLM}}
+
+\item{title}{string, the title of the plot}
+
+\item{subtitle}{string, the subtitle of the plot}
 
 \item{true.beta}{a \code{data.frame} with the true values of the linear coefficients \code{beta} if they are known. The \code{data.frame} must contain a column named \code{j} with the index of the context associated with that particular linear coefficient \code{beta}. It must match the indexes used in the data set for each context. Another column named \code{k} must be provided, indicating the cluster of \code{beta}, and a column named \code{Parameter} with the name of the linear coefficients (\code{beta1}, \code{beta2}, ..., \code{beta_dx}, where \code{dx} is the number of covariates at the individual level, and beta1 is the coefficient of the intercept term). It must contain a column named \code{True} with the true value of the \code{betas}. Finally, the \code{data.frame} must contain columns with the context-level covariates as used in the estimation of the \link{hdpGLM} function (see Details below).}
 

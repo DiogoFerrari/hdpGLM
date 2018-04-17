@@ -7,18 +7,31 @@ using namespace arma;
 
 void progress_bar(int t, int T)
 {
+  // int barWidth = 70;
+  // double pos = (t+2)*(double(barWidth/double(T)));
+  // std::cout <<  "[";
+  // for(int i = 0; i <= barWidth; i++){
+  //   if(i <= int(pos)){
+  //     std::cout << "="; 
+  //   }else{
+  //     std::cout << " ";
+  //   }
+  // }
+  // std::cout << "] " << int((pos/barWidth)*100.0)<<" %\r";
+  // std::cout.flush();
   int barWidth = 70;
   double pos = (t+2)*(double(barWidth/double(T)));
-  std::cout <<  "[";
+  Rcpp::Rcout <<  "[";
   for(int i = 0; i <= barWidth; i++){
     if(i <= int(pos)){
-      std::cout << "="; 
+      Rcpp::Rcout << "="; 
     }else{
-      std::cout << " ";
+      Rcpp::Rcout << " ";
     }
   }
-  std::cout << "] " << int((pos/barWidth)*100.0)<<" %\r";
-  std::cout.flush();
+  Rcpp::Rcout << "] " << int((pos/barWidth)*100.0)<<" %\r";
+  Rcpp::Rcout.flush();
+
 }
 arma::colvec set_diff(arma::colvec& v1, arma::colvec& v2)
 {

@@ -4,17 +4,14 @@
 \alias{summary.dpGLM}
 \title{Default Summary function for dpGLM class}
 \usage{
-\method{summary}{dpGLM}(x, nK = NULL, HPD.prob = 0.95, burn.in = NULL,
-  only.occupied.clusters = TRUE)
+\method{summary}{dpGLM}(x, only.occupied.clusters = TRUE, true.beta = NULL)
 }
 \arguments{
-\item{x}{a MCMC object \code{\link{coda}} returned by the \code{\link{dpGLM}} function}
-
-\item{nK}{either \code{NULL} or an integer representing the number of clusters to display the summary statistics. The clusters displayed are ordered by the proportion of time they were active during the MCMC simulation. If \code{NULL}, the function displays only the clusters that contains data points (see Details)}
-
-\item{HPD.prob}{a number between 0 and 1 (default is .95). It is used to display the HPD of the posterior distribution}
+\item{x}{a \code{dpGLM} object returned by the function \code{hdpGLM}}
 
 \item{only.occupied.clusters}{boolean, if \code{TRUE} it shows the only the densities of the clusters that actually have data points assigned to it with high probability}
+
+\item{true.beta}{either \code{NULL} (default) or a \code{data.frame} with the true values of the linear coefficients \code{beta} if they are known. The \code{data.frame} must contain a column named \code{k} indicating the cluster of \code{beta}, and a column named \code{Parameter} with the name of the linear coefficients (\code{beta1}, \code{beta2}, ..., \code{beta_dx}, where \code{dx} is the number of covariates at the individual level, and beta1 is the coefficient of the intercept term). It must contain a column named \code{True} with the true value of the \code{betas}.}
 }
 \description{
 This function provides a summary of the MCMC samples from the dpGLM model

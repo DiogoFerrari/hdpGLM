@@ -25,5 +25,11 @@ Imports: coda,
     purrr,
     rprojroot,
     tidyverse,
-    tibble
+    tibble,
+    data.table,
+    dclone,
+    ggjoy,
+    ggplot2,
+    stringr,
+    tidyr
 RoxygenNote: 6.0.1

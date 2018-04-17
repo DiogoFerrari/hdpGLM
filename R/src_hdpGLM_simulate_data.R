@@ -44,6 +44,7 @@
 #' \dontrun{
 #' }
 #' @export
+
 ## }}}
 hdpGLM_simulateData <- function(n, K, nCov, nCovj=0, J=1, parameters=NULL, pi=NULL, family, same.K=FALSE, seed=sample(1:777,1), 
                                 context.effect=NULL, same.clusters.across.contexts=NULL, context.dependent.cluster=0)

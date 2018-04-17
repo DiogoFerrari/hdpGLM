@@ -2,3 +2,10 @@
 .Rhistory
 .RData
 dev.R
+TAGS
+
+# Backup files
+*~
+
+# Undo-tree save-files
+*.~undo-tree

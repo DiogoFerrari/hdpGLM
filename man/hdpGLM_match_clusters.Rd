@@ -7,7 +7,7 @@
 hdpGLM_match_clusters(samples, true)
 }
 \arguments{
-\item{samples}{a \code{\link{dpGLM}} object, output of the function \code{\link{hdpGLM}}}
+\item{samples}{a \code{\link{hdpGLM}} or a \code{dpGLM} object, output of the function \code{\link{hdpGLM}}.}
 
 \item{true}{a list with the true values of the parameters that generate the data (See \code{\link{hdpGLM_simulateParameters}})}
 }

@@ -210,12 +210,10 @@ getUniqueW <- function(W, C)
 #'
 #' summary(samples, nk=6)
 #' 
-#' plot(samples, K=5, true_parameters=data$parameters, plot.hist=F, title='Posterior Distribution', prop.time.active=.95)
+#' plot(samples)
 #' 
-#' plot(samples, K=5, true_parameters=data$parameters, plot.hist=F, title='Posterior Distribution', separate=T,  plot.hist.k=F)
+#' plot(samples, separate=T)
 #'  
-#' \dontrun{
-#' }
 #' @export
 
 ## }}}
@@ -264,8 +262,11 @@ hdpGLM <- function(formula1, formula2=NULL, data, weights=NULL, mcmc, K=100, fix
     ## ---------------------------------------------------
     if (is.null(W))
     {
-        ## samples        =  dpGLM_mcmc( y, X,       weights, K, fix,  family, mcmc, epsilon, leapFrog, n.display, hmc_iter) #
-        samples        =  dpGLM_mcmc_xxr( y, X,       weights, K, fix,  family, mcmc, epsilon, leapFrog, n.display, hmc_iter) #
+        if (family=='binomial') {
+            samples        =  dpGLM_mcmc_xxr( y, X,       weights, K, fix,  family, mcmc, epsilon, leapFrog, n.display, hmc_iter) #
+        }else{
+            samples        =  dpGLM_mcmc( y, X,       weights, K, fix,  family, mcmc, epsilon, leapFrog, n.display, hmc_iter) #
+        }
     }else
     {
         samples        =  hdpGLM_mcmc(y, X, W, C, weights, K, fix, family, mcmc, epsilon, leapFrog, n.display, hmc_iter)
@@ -295,7 +296,7 @@ hdpGLM <- function(formula1, formula2=NULL, data, weights=NULL, mcmc, K=100, fix
     if (!is.null(W)){
         samples$tau                       = coda::as.mcmc(samples$tau)
         samples$context.index             = C
-        samples$context.cov               = tibble::as_data_frame(cbind(C=sort(unique(C)), W))  %>% dplyr::select(-contains("Intercept")) 
+        samples$context.cov               = tibble::as_data_frame(cbind(C=sort(unique(C)), W))  %>% dplyr::select(-dplyr::contains("Intercept")) 
     }
     attr(samples$samples, 'mcpar')[2] = mcmc$n.iter
     class(samples)                    = ifelse(is.null(W), 'dpGLM', 'hdpGLM')

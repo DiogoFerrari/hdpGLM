@@ -6,7 +6,7 @@
 \usage{
 hdpGLM_xxr(formula1, formula2 = NULL, data, mcmc, K = 50, fix = NULL,
   family = "gaussian", epsilon = 0.01, leapFrog = 40, n.display = 1000,
-  hmc_iter = 1)
+  hmc_iter = 1, weights = NULL)
 }
 \arguments{
 \item{formula1}{a single symbolic description of the linear model of the
@@ -98,10 +98,8 @@ samples = hdpGLM(y~., data=data$data, mcmc=mcmc, family='gaussian', n.display=30
 
 summary(samples, nk=6)
 
-plot(samples, K=5, true_parameters=data$parameters, plot.hist=F, title='Posterior Distribution', prop.time.active=.95)
+plot(samples)
 
-plot(samples, K=5, true_parameters=data$parameters, plot.hist=F, title='Posterior Distribution', separate=T,  plot.hist.k=F)
+plot(samples, separate=T)
  
-\dontrun{
-}
 }

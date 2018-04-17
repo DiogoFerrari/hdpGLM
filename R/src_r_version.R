@@ -189,27 +189,6 @@ dpGLM_update_theta_xxr <- function(y, X, Z, K, theta,  fix, family, epsilon, lea
     return(theta)
 }
 
-## jags
-dphGLM_jags_xxr <- function(model=NA, n.chains=4, family)
-{
-
-    model = paste0('dphGLM_', model,'.jag', sep='')
-    ## start parallel processing
-    ## -------------------------
-    cl.chains    = makePSOCKcluster(min(4,n.chains))
-    name         = 'tmp'
-    sim          = parJagsModel(cl=cl.chains, file=model, data = data, name=name, inits=mcmc$inits, n.chains=mcmc$n.chains, n.adapt=mcmc$n.adapt)
-    parUpdate(cl=cl.chains, object=name, n.iter=mcmc$burn.in)
-    samples      = parCodaSamples(cl=cl.chains, model=name, variable.names=parameters, n.iter=mcmc$n.iter, thin=1)
-    ## stop parallelization
-    ## --------------------
-    stopCluster(cl.chains)
-
-    #### make here the output to match the one in mcmc_gaussian/mcmc_logistic, etc
-    return(samples)
-
-}
-
 ## }}}
 ## {{{ Gibbs : betas (gaussian family) }}}
 
@@ -307,18 +286,18 @@ dpGLM_update_pi    <- function(Z, K, fix){
     for (k in 1:K){N[k] = sum(Z==k)}
     
     l = 2:K
-    V[1]          = rbeta(1, 1 + N[1], alpha + sum(N[l]))
-    ## V[1]          = rbeta(1, 1 + N[1], alpha + N[l])
+    V[1]          = stats::rbeta(1, 1 + N[1], alpha + sum(N[l]))
+    ## V[1]          = stats::rbeta(1, 1 + N[1], alpha + N[l])
     pi[1]         = V[1]
     
     for (k in 2:(K-1)){
         l = (k+1):K
-        V[k]  = rbeta(1, 1 + N[k], alpha + sum(N[l]))  
-        ## V[k]  = rbeta(1, 1 + N[k], alpha + N[l])  
-        pi[k] = V[k] * prod( 1 - V[ 1:(k-1) ] )
+        V[k]  = stats::rbeta(1, 1 + N[k], alpha + sum(N[l]))  
+        ## V[k]  = stats::rbeta(1, 1 + N[k], alpha + N[l])  
+        pi[k] = V[k] * base::prod( 1 - V[ 1:(k-1) ] )
     }
     V[K]  = 1
-    pi[K] = V[k] * prod( 1 - V[ 1:(K-1) ] )
+    pi[K] = V[k] * base::prod( 1 - V[ 1:(K-1) ] )
 
     return(pi)
 }
@@ -334,7 +313,7 @@ dpGLM_update_Z     <- function(y,X, pi, K, theta, family){
             sigmak = theta[k.idx, grepl(colnames(theta), pattern='sigma') ]
 
             shatk = y - X %*% betak
-            phi[,k] = pi[k] * dnorm(shatk, mean = 0, sd = sigmak)
+            phi[,k] = pi[k] * stats::dnorm(shatk, mean = 0, sd = sigmak)
         }
     }
     if (family =='binomial'){
@@ -395,7 +374,7 @@ hmc_update_xxr <- function(theta_t, epsilon, L, U_xxr, grad_U_xxr, G_xxr, fix)
     v     = v     - (epsilon/2) * grad_U_xxr(theta, fix)
     v     = - v
 
-    u     = runif(1,0,1)
+    u     = stats::runif(1,0,1)
 
     ## print(paste0("U new: ", U(theta, fix)))
     ## print(paste0("k new: ", Kinectic_xxr(v, theta)) )
@@ -493,10 +472,11 @@ dpGLM_mcmc_xxr            <- function(y, X, weights, K, fix, family, mcmc, epsil
             msg <- paste0('Maximum Number of cluster activated  : ', max(Khat), '\n',sep='');cat(msg)
             msg <- paste0('Current number of active clusters    : ', length(table(Z)), '\n',sep='');cat(msg)
             cat('\n')
-            msg <- paste0('Distribution of total number of clusters:\n', sep='');cat(msg)
-            print(formatC(table(n.clusters, dnn='')/sum(table(n.clusters)), digits=4, format='f'))
-            msg <- paste0("Percentage of data classified in each clusters k at current iteraction ", sep=''); cat(msg)
-            print(round(100*table(Z, dnn='')/sum(table(Z)),1))
+            ## msg <- paste0('Distribution of total number of clusters:\n', sep='');cat(msg)
+            ## print(formatC(table(n.clusters, dnn='')/sum(table(n.clusters)), digits=4, format='f'))
+            msg <- paste0("Percentage of data classified in each clusters k at current iteraction\n(displaying only clusters with more than 5% of the data)", sep=''); cat(msg)
+            tab <- round(100*table(Z, dnn='')/sum(table(Z)),1)
+            print(tab[tab>5])
         }
         ## ---------------------------------------------------
     }
@@ -586,16 +566,13 @@ dpGLM_mcmc_xxr            <- function(y, X, weights, K, fix, family, mcmc, epsil
 #'
 #' summary(samples, nk=6)
 #' 
-#' plot(samples, K=5, true_parameters=data$parameters, plot.hist=F, title='Posterior Distribution', prop.time.active=.95)
+#' plot(samples)
 #' 
-#' plot(samples, K=5, true_parameters=data$parameters, plot.hist=F, title='Posterior Distribution', separate=T,  plot.hist.k=F)
+#' plot(samples, separate=T)
 #'  
-#' \dontrun{
-#' }
 #' @export
-
 ## }}}
-hdpGLM_xxr <- function(formula1, formula2=NULL, data, mcmc, K=50, fix=NULL, family='gaussian', epsilon=0.01, leapFrog=40, n.display=1000, hmc_iter=1)
+hdpGLM_xxr <- function(formula1, formula2=NULL, data, mcmc, K=50, fix=NULL, family='gaussian', epsilon=0.01, leapFrog=40, n.display=1000, hmc_iter=1, weights=NULL)
 {
     if(! family %in% c('gaussian', 'binomial', 'multinomial'))
         stop(paste0('Error: Parameter -family- must be a string with one of the following options : \"gaussian\", \"binomial\", or \"multinomial\"'))
