@@ -217,7 +217,7 @@ getUniqueW <- function(W, C)
 #' @export
 
 ## }}}
-hdpGLM <- function(formula1, formula2=NULL, data, weights=NULL, mcmc, K=100, fix=NULL, family='gaussian', epsilon=0.01, leapFrog=40, n.display=1000, hmc_iter=1)
+hdpGLM <- function(formula1, formula2=NULL, data, weights=NULL, mcmc, K=100, fix=NULL, family='gaussian', epsilon=0.01, leapFrog=40, n.display=1000, hmc_iter=1, imp.bin="R")
 {
     if(! family %in% c('gaussian', 'binomial', 'multinomial'))
         stop(paste0('Error: Parameter -family- must be a string with one of the following options : \"gaussian\", \"binomial\", or \"multinomial\"'))
@@ -263,7 +263,8 @@ hdpGLM <- function(formula1, formula2=NULL, data, weights=NULL, mcmc, K=100, fix
     if (is.null(W))
     {
         if (family=='binomial') {
-            samples        =  dpGLM_mcmc_xxr( y, X,       weights, K, fix,  family, mcmc, epsilon, leapFrog, n.display, hmc_iter) #
+            if (imp.bin=="R")   samples =  dpGLM_mcmc_xxr( y, X, weights, K, fix,  family, mcmc, epsilon, leapFrog, n.display, hmc_iter)
+            if (imp.bin=="cpp") samples =  dpGLM_mcmc    ( y, X, weights, K, fix,  family, mcmc, epsilon, leapFrog, n.display, hmc_iter) 
         }else{
             samples        =  dpGLM_mcmc( y, X,       weights, K, fix,  family, mcmc, epsilon, leapFrog, n.display, hmc_iter) #
         }

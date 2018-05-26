@@ -1,8 +1,8 @@
 Package: hdpGLM
-Title: What the Package Does (one line, title case)
+Title: Hierarchical Dirichlet Process Generalized Linear Models
 Version: 0.0.0.9000
 Authors@R: person("Diogo", "Ferrari", email="diogoferrari@gmail.com", role=c("aut", "cre"))
-Description: What the package does (one paragraph).
+Description: Package to estimate Hierarchical Dirichlet Process Generalized Linear Models
 Depends: R (>= 3.3.3)
 License: MIT
 URL: https://github.com/DiogoFerrari/hdpGLM
@@ -27,7 +27,6 @@ Imports: coda,
     tidyverse,
     tibble,
     data.table,
-    dclone,
     ggjoy,
     ggplot2,
     stringr,

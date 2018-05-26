@@ -4,14 +4,14 @@
 \alias{summary.dpGLM}
 \title{Default Summary function for dpGLM class}
 \usage{
-\method{summary}{dpGLM}(x, only.occupied.clusters = TRUE, true.beta = NULL)
+\method{summary}{dpGLM}(x, true.beta = NULL, only.occupied.clusters = TRUE)
 }
 \arguments{
 \item{x}{a \code{dpGLM} object returned by the function \code{hdpGLM}}
 
-\item{only.occupied.clusters}{boolean, if \code{TRUE} it shows the only the densities of the clusters that actually have data points assigned to it with high probability}
-
 \item{true.beta}{either \code{NULL} (default) or a \code{data.frame} with the true values of the linear coefficients \code{beta} if they are known. The \code{data.frame} must contain a column named \code{k} indicating the cluster of \code{beta}, and a column named \code{Parameter} with the name of the linear coefficients (\code{beta1}, \code{beta2}, ..., \code{beta_dx}, where \code{dx} is the number of covariates at the individual level, and beta1 is the coefficient of the intercept term). It must contain a column named \code{True} with the true value of the \code{betas}.}
+
+\item{only.occupied.clusters}{boolean, if \code{TRUE} it shows the only the densities of the clusters that actually have data points assigned to it with high probability}
 }
 \description{
 This function provides a summary of the MCMC samples from the dpGLM model

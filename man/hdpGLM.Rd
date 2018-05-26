@@ -6,7 +6,7 @@
 \usage{
 hdpGLM(formula1, formula2 = NULL, data, weights = NULL, mcmc, K = 100,
   fix = NULL, family = "gaussian", epsilon = 0.01, leapFrog = 40,
-  n.display = 1000, hmc_iter = 1)
+  n.display = 1000, hmc_iter = 1, imp.bin = "R")
 }
 \arguments{
 \item{formula1}{a single symbolic description of the linear model of the

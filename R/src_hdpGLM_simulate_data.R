@@ -243,7 +243,7 @@ dpGLM_simulateParameters <- function(nCov, nCovj=NULL, K, pi=NULL, seed=NULL)
 ## =====================================================
 ## hdpGLM
 ## =====================================================
-hdpGLM_simulateData_main <- function(n, K, nCov, nCovj, J, parameters=NULL, pi=NULL, family, same.K, seed=sample(1:777,1), context.effect, same.clusters.across.contexts, context.dependent.cluster)
+hdpGLM_simulateData_main <- function(n, K, nCov, nCovj=NULL, J, parameters=NULL, pi=NULL, family, same.K, seed=sample(1:777,1), context.effect, same.clusters.across.contexts, context.dependent.cluster)
 {
     ## error handling ----------------------------------------
     if (n %% 2) stop("Sample size n must be an even number")
@@ -289,7 +289,7 @@ hdpGLM_simulateData_main <- function(n, K, nCov, nCovj, J, parameters=NULL, pi=N
 #' @export
 
 ## }}}
-hdpGLM_simulateParameters <- function(nCov, K, nCovj, J, pi=NULL, same.K, seed=NULL, context.effect=NULL, same.clusters.across.contexts, context.dependent.cluster)
+hdpGLM_simulateParameters <- function(nCov, K, nCovj=NULL, J, pi=NULL, same.K, seed=NULL, context.effect=NULL, same.clusters.across.contexts, context.dependent.cluster)
 {
     if(is.null(seed)) seed <- base::sample(1:777,1)
 
@@ -367,7 +367,7 @@ hdpGLM_simulateParameters <- function(nCov, K, nCovj, J, pi=NULL, same.K, seed=N
     return(parameters)
 }
 
-.hdpGLM_simulateData_gaussian <- function(n, K, nCov, nCovj, parameters, seed)
+.hdpGLM_simulateData_gaussian <- function(n, K, nCov, nCovj=NULL, parameters, seed)
 {
     set.seed(seed)
     n = floor(n*parameters$pi)
@@ -406,7 +406,7 @@ hdpGLM_simulateParameters <- function(nCov, K, nCovj, J, pi=NULL, same.K, seed=N
     }
     return ( list(data=data, Z = Z, parameters=parameters) )
 }
-.hdpGLM_simulateData_binomial <- function(n, K, nCov, nCovj, parameters,  seed)
+.hdpGLM_simulateData_binomial <- function(n, K, nCov, nCovj=NULL, parameters,  seed)
 {
     set.seed(seed)
     n = floor(n*parameters$pi)

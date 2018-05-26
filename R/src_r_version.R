@@ -223,14 +223,24 @@ dphGLM_update_sigma_gaussian_xxr  <- function(yk,Xk, Nk, betak, fix){
 ## {{{ HMC   : betas (binomial family) }}}
 
 U_xxr      <- function(theta,fix){
-    X    = fix$X
-    y    = fix$y
+    X    = fix$X ## note: this is X = Xk
+    y    = fix$y ## note: this is y = yk
     beta = theta
     Sigma_beta     = fix$Sigma_beta
     Sigma_beta.inv = solve(Sigma_beta)
     mu_beta       = matrix(fix$mu_beta, nrow=length(fix$mu_beta))
+
     d              = nrow(mu_beta) -1       ## -1 to exclude the intercept
     log.p = (-(d+1)/2)*log(2*3.141593) - (1/2)*log(det(Sigma_beta)) - (1/2)*t(beta - mu_beta) %*% Sigma_beta.inv %*% (beta - mu_beta) - sum(y*log(1+exp(- X %*% beta))) - sum((1-y)*log(1+exp( X %*% beta)))
+
+    ## checking overflow
+    ## print(  'betak')
+    ## print(   beta)
+    ## print(  "sum(y*log(1+exp(- X %*% beta))) "    )
+    ## print(  sum(y*log(1+exp(- X %*% beta)))     )
+    ## print(  "sum((1-y)*log(1+exp( X %*% beta)))"  )
+    ## print(  sum((1-y)*log(1+exp( X %*% beta)))  )
+
     return( - log.p )
 }
 Kinectic_xxr <- function(v, theta){
@@ -376,13 +386,17 @@ hmc_update_xxr <- function(theta_t, epsilon, L, U_xxr, grad_U_xxr, G_xxr, fix)
 
     u     = stats::runif(1,0,1)
 
-    ## print(paste0("U new: ", U(theta, fix)))
+    ## check overflow
+    ## print(str(theta))
+    ## print(str(fix))
+    ## print(paste0("U new: ", U_xxr(theta, fix)))
     ## print(paste0("k new: ", Kinectic_xxr(v, theta)) )
-    ## print(paste0("H new: ", H(U(theta, fix),Kinectic_xxr(v, theta)) ), sep='')
-    ## print(paste0("U_t", U(theta_t, fix)), sep='') 
+    ## print(paste0("H new: ", H_xxr(U_xxr(theta, fix),Kinectic_xxr(v, theta)) ), sep='')
+    ## print(paste0("U_t", U_xxr(theta_t, fix)), sep='') 
     ## print(paste0("k_t", Kinectic_xxr(v.current, theta_t)), sep='')
-    ## print(paste0("H_t", H(U(theta_t, fix), Kinectic_xxr(v.current, theta_t))), sep='')
-
+    ## print(paste0("H_t", H_xxr(U_xxr(theta_t, fix), Kinectic_xxr(v.current, theta_t))), sep='')
+    ## stop()
+    
     alpha = exp( - H_xxr(U_xxr(theta, fix),Kinectic_xxr(v, theta)) + H_xxr(U_xxr(theta_t, fix), Kinectic_xxr(v.current, theta_t)) )
     if (u <= alpha){
         return (theta)
@@ -571,6 +585,7 @@ dpGLM_mcmc_xxr            <- function(y, X, weights, K, fix, family, mcmc, epsil
 #' plot(samples, separate=T)
 #'  
 #' @export
+
 ## }}}
 hdpGLM_xxr <- function(formula1, formula2=NULL, data, mcmc, K=50, fix=NULL, family='gaussian', epsilon=0.01, leapFrog=40, n.display=1000, hmc_iter=1, weights=NULL)
 {

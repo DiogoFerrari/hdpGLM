@@ -19,6 +19,14 @@ double U_bin(colvec betak, List fix)
   int d			= Xk.n_cols - 1;
 
   double log_p = as_scalar( (-(d+1)/2)*log(2*3.141593) - (1/2)*log(det(Sigma_beta)) - ( (1/2) * ((betak - mu_beta).t() * Sigma_beta.i() * (betak- mu_beta)) ) - yk.t()*log(1+exp(- Xk * betak)) - (1-yk).t()*log(1+exp( Xk * betak))  );
+
+  // check overflow
+  // Rcpp::Rcout << "betak: " << betak << std::endl;
+  // Rcpp::Rcout << "yk.t()*log(1+exp(- Xk * betak)) = " << yk.t()*log(1+exp(- Xk * betak)) << std::endl;
+  // Rcpp::Rcout << "(1-yk).t()*log(1+exp( Xk * betak)) " << (1-yk).t()*log(1+exp( Xk * betak))  << std::endl;
+  // Rcpp::Rcout << "log_p\n" << log_p << std::endl;
+  // stop("ok");
+
   return ( - log_p);
   
 } 

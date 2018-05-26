@@ -93,7 +93,7 @@ hdpGLM_match_clusters <- function(samples, true)
 #' @export
 
 ## }}}
-summary.dpGLM <- function(x, only.occupied.clusters=TRUE, true.beta=NULL)
+summary.dpGLM <- function(x, true.beta=NULL, only.occupied.clusters=TRUE)
 {
     if(only.occupied.clusters) x = dpGLM_get_occupied_clusters(x)
 
@@ -128,7 +128,7 @@ summary.dpGLM <- function(x, only.occupied.clusters=TRUE, true.beta=NULL)
 #' 
 #' @export
 ## }}}
-summary.hdpGLM <- function(x, only.occupied.clusters.in.contexts=TRUE, true.beta=NULL, true.tau=NULL)
+summary.hdpGLM <- function(x, true.beta=NULL, true.tau=NULL, only.occupied.clusters.in.contexts=TRUE)
 {
     if(only.occupied.clusters.in.contexts)   x = hdpGLM_get_occupied_clusters(x)
     if(!is.null(true.beta)){
@@ -198,7 +198,7 @@ summary.hdpGLM <- function(x, only.occupied.clusters.in.contexts=TRUE, true.beta
 #' 
 #' @export
 ## }}}
-plot.dpGLM    <- function(x, separate=FALSE, hpd=TRUE, true.beta=NULL, title=NULL, subtitle=NULL, adjust=.3, ncols=NULL, only.occupied.clusters=TRUE, focus.hpd=FALSE, legend.position="bottom")
+plot.dpGLM    <- function(x, separate=FALSE, hpd=TRUE, true.beta=NULL, title=NULL, subtitle=NULL, adjust=.3, ncols=NULL, only.occupied.clusters=TRUE, focus.hpd=FALSE, legend.position="bottom", colour='grey', alpha=.4)
 {
     x = dpGLM_get_occupied_clusters(x)
     tab = x$samples %>%
@@ -222,7 +222,8 @@ plot.dpGLM    <- function(x, separate=FALSE, hpd=TRUE, true.beta=NULL, title=NUL
     g = tab %>%
         ggplot2::ggplot(.) +
         ## geom_line(aes(x=values, group=Parameter), colour="#00000044", stat='density', alpha=1) +
-        ggplot2::geom_density(ggplot2::aes(x=values, group=Parameter), fill="#00000034", adjust=adjust) +
+        ## ggplot2::geom_density(ggplot2::aes(x=values, group=Parameter), fill="#00000028", adjust=adjust) +
+        ggplot2::geom_density(ggplot2::aes(x=values, group=Parameter), fill=colour, adjust=adjust, alpha=alpha) +
         ## geom_vline(data=tab, aes(xintercept=Mean,  linetype='solid', col="black")) +
         ## geom_vline(data=tab, aes(xintercept=HPD.lower,  linetype='dashed'), col="black") +
         ## geom_vline(data=tab, aes(xintercept=HPD.upper,  linetype='dashed'), col="black") +
@@ -343,9 +344,65 @@ plot.hdpGLM <- function(x, title=NULL, subtitle=NULL, true.beta=NULL, ncol=NULL,
     return(g)
 }
 ## =====================================================
+## predicted values
+## =====================================================
+## {{{ docs }}}
+#' dpGLM Predicted values
+#'
+#' Function returns the predicted (fitted) values of the outcome variable using the estimated posterior expectation of the linear covariate betas produced by the \code{hdpGLM} function
+#'
+#'
+#' @param samples outcome of the function hdpLGM
+#' @param new_data data frame with the values of the covariates that are going to be used to generate the predicted/fitted values of the outcome variable
+#' @param covar.par.names a named vector. The names must be the name of the covariates and the values the names of the linear coefficients (\code{beta2}, \code{beta3}, ...), so names of the covariates and names of the linear coefficients must match. \code{beta1} is the coefficient of the intercept term and can be omitted.
+#' @inheritParams hdpGLM
+#'
+#' @return It returns a data.frame with the fitted values for the outcome variable, which are produced using the estimated posterior expectation of the linear coefficients \code{beta}.
+#'
+#' @export
+## }}}
+predict.dpGLM <- function(samples, new_data, covar.par.names, family='gaussian', ...)
+{
+    new_data$Intercept = 1
+    if(class(samples)!='dpGLM') stop("\n\nParameter samples must be a dpGLM or hdpGLM object ! \n\n")
+    if(!all(names(covar.par.names) %in% names(new_data))) stop("\n\nCheck the value of \'covar.par.names\'\n\n")
+    est       = samples %>% summary(.) %>%
+        dplyr::filter(Parameter != 'sigma') %>%
+        dplyr::mutate_if(is.factor, as.character) %>% 
+        dplyr::full_join(., covar.par.names  %>% data.frame(covars=names(.),Parameter=., row.names=1:length(.), stringsAsFactors=F), by="Parameter") %>%
+        dplyr::mutate(covars = ifelse(is.na(covars), 'Intercept', covars))
+    clusters  = est$k %>% unique
+    pred = tibble::data_frame()
+    for (cluster in clusters)
+    {
+        est_cl = est %>%
+            dplyr::filter(k == cluster)
+        X = new_data %>% dplyr::select(est_cl$covars) %>%
+            as.matrix
+        betas = est_cl %>%
+            dplyr::select(Mean, dplyr::contains("HPD")) %>%
+            as.matrix
+        if (family=="gaussian") {
+            pred.tmp = X %*% betas
+        }
+        if (family=="binomial") {
+            pred.tmp = 1/(1+exp(- X %*% betas))
+        }
+        pred.tmp = data.frame(pred.tmp, k=cluster)
+        pred = pred %>% base::rbind(., pred.tmp)
+    }
+    new_data = new_data[rep(1:nrow(new_data), length(clusters)),]
+    pred = tibble::as_data_frame(pred)  %>%
+        dplyr::bind_cols(new_data) %>%
+        dplyr::rename(pred.mean=Mean, pred.l=HPD.lower, pred.u=HPD.upper)
+    return(pred)
+}
+
+## =====================================================
 ## print
 ## =====================================================
 ## {{{ docs }}}
+
 #' Print
 #'
 #' Generic method to print the output of a \code{hdpGLM} of \code{dpGLM} objects
@@ -356,6 +413,7 @@ plot.hdpGLM <- function(x, title=NULL, subtitle=NULL, true.beta=NULL, ncol=NULL,
 #' @return returns a summary of the posterior distribution of the parameters
 #'
 #' @export
+
 ## }}}
 print.dpGLM <- function(x)
 {
@@ -464,6 +522,16 @@ hdpGLM_match_clusters_aux <- function(estimate, true)
         dplyr::pull(.)
         )
 }
+## {{{ docs }}}
+#' Get estimated \code{betas} 
+#'
+#' This function take the sample from the posterior and returns only the samples from the linear coefficients \code{beta} of the clusters with data points assigned to them.
+#'
+#'
+#' @param x the dpGLM or hdpGLM object returned by the function \link{hdpGLM}
+#'
+#' @export
+## }}}
 hdpGLM_get_occupied_clusters <- function(x)
 {
     active = apply(x$pik, 1, which.max)
@@ -481,6 +549,16 @@ hdpGLM_get_occupied_clusters <- function(x)
     attr(x$samples, 'mcpar')[2] = n.iter
     return(x)
 }
+## {{{ docs }}}
+#' Get estimated \code{betas} 
+#'
+#' This function take the sample from the posterior and returns only the samples from the linear coefficients \code{beta} of the clusters with data points assigned to them.
+#'
+#'
+#' @param x the dpGLM or hdpGLM object returned by the function \link{hdpGLM}
+#'
+#' @export
+## }}}
 dpGLM_get_occupied_clusters <- function(x)
 {
     active = unique(apply(x$pik, 1, which.max))

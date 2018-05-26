@@ -4,8 +4,8 @@
 \alias{hdpGLM_simulateParameters}
 \title{Simulated a Parameters used to create Data Sets from hdpGLM model}
 \usage{
-hdpGLM_simulateParameters(nCov, K, nCovj, J, pi = NULL, same.K, seed = NULL,
-  context.effect = NULL, same.clusters.across.contexts,
+hdpGLM_simulateParameters(nCov, K, nCovj = NULL, J, pi = NULL, same.K,
+  seed = NULL, context.effect = NULL, same.clusters.across.contexts,
   context.dependent.cluster)
 }
 \arguments{
