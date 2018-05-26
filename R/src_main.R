@@ -184,6 +184,7 @@ getUniqueW <- function(W, C)
 #' @param hmc_iter an integer, used when \code{family='binomial'} or \code{family='multinomial'}.
 #'                 It indicates the number of HMC interation for each Gibbs iteration.
 #'                 Default is 1.
+#' @param imp.bin string, either "R" or "Cpp" indicating the language of the implementation of the binomial model.
 #' @return The function returns a list with elements \code{samples}, \code{pik}, \code{max_active},
 #'         \code{n.iter}, \code{burn.in}, and \code{time.elapsed}. The \code{samples} element
 #'         contains a MCMC object (from \pkg{coda} package) with the samples from the posterior

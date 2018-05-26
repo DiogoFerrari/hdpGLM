@@ -121,5 +121,36 @@ colorRampPaletteAlpha <- function(colors, n=32, interpolate='linear') {
     return(cr)
 }
 
-## quiets concerns of R CMD check re: the .'s that appear in pipelines
-if(getRversion() >= "2.15.1")  utils::globalVariables(c("."))
+## global varibles for dplyr (used only so that the check ignores it, it does not actually creates global variables)
+## -------------------------
+if(getRversion() >= "2.15.1")  utils::globalVariables(c(".",
+                                                        "<<-",
+                                                        "txtProgressBar",
+                                                        "setTxtProgressBar",
+                                                        "mh.accept.info" ,
+                                                        "parameter" ,
+                                                        "Cluster" ,
+                                                        "Percentage.of.Iter..Cluster.was.active" ,
+                                                        "HPD.l" ,
+                                                        "HPD.u",
+                                                        "HPD.lower" ,
+                                                        "HPD.upper",
+                                                        "flag" ,
+                                                        "Parameter",
+                                                        "k",
+                                                        "j",
+                                                        "Mean",
+                                                        "True.Cluster.match",
+                                                        "True",
+                                                        "d",
+                                                        "values" ,
+                                                        "C",
+                                                        "sigma",
+                                                        "jnext",
+                                                        "covars",
+                                                        "X2.5."  ,
+                                                        "X97.5.",
+                                                        "SD",
+                                                        "dw",
+                                                        "dx"
+                                                        ))

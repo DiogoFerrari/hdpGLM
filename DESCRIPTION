@@ -2,9 +2,9 @@ Package: hdpGLM
 Title: Hierarchical Dirichlet Process Generalized Linear Models
 Version: 0.0.0.9000
 Authors@R: person("Diogo", "Ferrari", email="diogoferrari@gmail.com", role=c("aut", "cre"))
-Description: Package to estimate Hierarchical Dirichlet Process Generalized Linear Models
+Description: Package to estimate Hierarchical Dirichlet Process Generalized Linear Models.
 Depends: R (>= 3.3.3)
-License: MIT
+License: MIT + file LICENSE
 URL: https://github.com/DiogoFerrari/hdpGLM
 BugReports: https://github.com/DiogoFerrari/hdpGLM/issues
 Encoding: UTF-8

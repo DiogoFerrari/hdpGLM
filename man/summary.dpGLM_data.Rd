@@ -4,10 +4,12 @@
 \alias{summary.dpGLM_data}
 \title{Summary dpGLM data}
 \usage{
-\method{summary}{dpGLM_data}(x)
+\method{summary}{dpGLM_data}(x, ...)
 }
 \arguments{
 \item{x}{an object of the class dpGLM_data}
+
+\item{...}{ignored}
 }
 \value{
 The function returns a list with the summary of the data produced by the standard summary function and a \code{data.frame} with the true values of beta for each cluster.

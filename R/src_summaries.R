@@ -87,13 +87,14 @@ hdpGLM_match_clusters <- function(samples, true)
 #'
 #' @param x a \code{dpGLM} object returned by the function \code{hdpGLM}
 #' @inheritParams plot.dpGLM
+#' @param ... ignored 
 #'
 #' @details Data points are assigned to clusters according to the highest estimated probability of belonging to that cluster
 #' 
 #' @export
 
 ## }}}
-summary.dpGLM <- function(x, true.beta=NULL, only.occupied.clusters=TRUE)
+summary.dpGLM <- function(x, true.beta=NULL, only.occupied.clusters=TRUE, ...)
 {
     if(only.occupied.clusters) x = dpGLM_get_occupied_clusters(x)
 
@@ -121,6 +122,7 @@ summary.dpGLM <- function(x, true.beta=NULL, only.occupied.clusters=TRUE)
 #' @param true.beta a \code{data.frame} with the true values of the linear coefficients \code{beta} if they are known. The \code{data.frame} must contain a column named \code{j} with the index of the context associated with that particular linear coefficient \code{beta}. It must match the indexes used in the data set for each context. Another column named \code{k} must be provided, indicating the cluster of \code{beta}, and a column named \code{Parameter} with the name of the linear coefficients (\code{beta1}, \code{beta2}, ..., \code{beta_dx}, where \code{dx} is the number of covariates at the individual level, and beta1 is the coefficient of the intercept term). It must contain a column named \code{True} with the true value of the \code{betas}. Finally, the \code{data.frame} must contain columns with the context-level covariates as used in the estimation of the \link{hdpGLM} function (see Details below).
 #' @param true.tau a \code{data.frame} with four columns. The first must be named \code{dw} and it indicates the index of each context-level covariate, starting with 1 for the intercept term. The second column named \code{dx} must contain the indexes of the individual level covariates, starting with 1 for the intercept term. The third column named \code{Parameter} must be named \code{tau<dw><dx>}, where \code{dw} and \code{dx} must be the actual values displayed in the columns \code{dw} and \code{dx}. Finally, it must have a column named \code{True} with the true value of the parameter.
 #' @param only.occupied.clusters.in.contexts boolean, summarize only the parameters in each contexts with active clusters, that is, those with data points classified into it based on the maximum of the estimated membership proability of the data points 
+#' @param ... ignored 
 #'
 #' @return The function returns a list with two data.frames. The first summarizes the posterior distribution of the linear coefficients \code{beta}. The mean, median, and the 95\% HPD interval are provided. The second data.frame contains the summary of the posterior distribution of the parameter \code{tau}.
 #'
@@ -128,7 +130,7 @@ summary.dpGLM <- function(x, true.beta=NULL, only.occupied.clusters=TRUE)
 #' 
 #' @export
 ## }}}
-summary.hdpGLM <- function(x, true.beta=NULL, true.tau=NULL, only.occupied.clusters.in.contexts=TRUE)
+summary.hdpGLM <- function(x, true.beta=NULL, true.tau=NULL, only.occupied.clusters.in.contexts=TRUE, ...)
 {
     if(only.occupied.clusters.in.contexts)   x = hdpGLM_get_occupied_clusters(x)
     if(!is.null(true.beta)){
@@ -187,6 +189,9 @@ summary.hdpGLM <- function(x, true.beta=NULL, true.tau=NULL, only.occupied.clust
 #' @param legend.position one of four options: "bottom" (default), "top", "left", or "right". It indicates the position of the legend
 #' @inheritParams graphics::par
 #' @inheritParams stats::density
+#' @param colour = string with color to fill the density plot
+#' @param alpha number between 0 and 1 indicating the degree of transparency of the density 
+#' @param ... ignored 
 #'
 #'
 #' @examples
@@ -198,7 +203,7 @@ summary.hdpGLM <- function(x, true.beta=NULL, true.tau=NULL, only.occupied.clust
 #' 
 #' @export
 ## }}}
-plot.dpGLM    <- function(x, separate=FALSE, hpd=TRUE, true.beta=NULL, title=NULL, subtitle=NULL, adjust=.3, ncols=NULL, only.occupied.clusters=TRUE, focus.hpd=FALSE, legend.position="bottom", colour='grey', alpha=.4)
+plot.dpGLM    <- function(x, separate=FALSE, hpd=TRUE, true.beta=NULL, title=NULL, subtitle=NULL, adjust=.3, ncols=NULL, only.occupied.clusters=TRUE, focus.hpd=FALSE, legend.position="bottom", colour='grey', alpha=.4, ...)
 {
     x = dpGLM_get_occupied_clusters(x)
     tab = x$samples %>%
@@ -276,11 +281,11 @@ plot.dpGLM    <- function(x, separate=FALSE, hpd=TRUE, true.beta=NULL, title=NUL
 #' @param subtitle  string, the subtitle of the plot
 #' @param ncol interger, the number of columns in the plot
 #' @param legend.position one of four options: "bottom" (default), "top", "left", or "right". It indicates the position of the legend
-#' @return what is returnts...
-#'
+#' @param ... ignored
+#' 
 #' @export
 ## }}}
-plot.hdpGLM <- function(x, title=NULL, subtitle=NULL, true.beta=NULL, ncol=NULL,  legend.position="bottom")
+plot.hdpGLM <- function(x, title=NULL, subtitle=NULL, true.beta=NULL, ncol=NULL,  legend.position="bottom", ...)
 {
     x = hdpGLM_get_occupied_clusters(x)
     if (!is.null(true.beta)) {
@@ -356,6 +361,7 @@ plot.hdpGLM <- function(x, title=NULL, subtitle=NULL, true.beta=NULL, ncol=NULL,
 #' @param new_data data frame with the values of the covariates that are going to be used to generate the predicted/fitted values of the outcome variable
 #' @param covar.par.names a named vector. The names must be the name of the covariates and the values the names of the linear coefficients (\code{beta2}, \code{beta3}, ...), so names of the covariates and names of the linear coefficients must match. \code{beta1} is the coefficient of the intercept term and can be omitted.
 #' @inheritParams hdpGLM
+#' @param ... ignored
 #'
 #' @return It returns a data.frame with the fitted values for the outcome variable, which are produced using the estimated posterior expectation of the linear coefficients \code{beta}.
 #'
@@ -409,13 +415,14 @@ predict.dpGLM <- function(samples, new_data, covar.par.names, family='gaussian',
 #'
 #'
 #' @inheritParams summary.hdpGLM
+#' @param ... ignore
 #'
 #' @return returns a summary of the posterior distribution of the parameters
 #'
 #' @export
 
 ## }}}
-print.dpGLM <- function(x)
+print.dpGLM <- function(x, ...)
 {
     cat(paste0("\nMaximum number of clusters activated during the estimation: ", x$max_active, sep=''))
     cat(paste0("\nNumer of MCMC iterations: ", x$n.iter, sep=''))
@@ -431,13 +438,14 @@ print.dpGLM <- function(x)
 #'
 #' Generic method to print the output of a \code{hdpGLM} of \code{dpGLM} objects
 #'
-#' @inheritParams summary.hdpGLM 
+#' @inheritParams summary.hdpGLM
+#' @param ... ignore 
 #'
 #' @return returns a summary of the posterior distribution of the parameters
 #'
 #' @export
 ## }}}
-print.hdpGLM <- function(x)
+print.hdpGLM <- function(x, ...)
 {
     cat(paste0("\nMaximum number of clusters activated during the estimation: ", x$max_active, sep=''))
     cat(paste0("\nNumer of MCMC iterations: ", x$n.iter, sep=''))
@@ -457,6 +465,7 @@ print.hdpGLM <- function(x)
 #' This function summarizes the data and parameters used to generate the data using the function hdpLGM.
 #'
 #' @param x an object of the class dpGLM_data
+#' @param ... ignored 
 #'
 #' @return The function returns a list with the summary of the data produced by the standard summary function and a \code{data.frame} with the true values of beta for each cluster.
 #'
@@ -464,7 +473,7 @@ print.hdpGLM <- function(x)
 #' @export
 
 ## }}}
-summary.dpGLM_data <- function(x)
+summary.dpGLM_data <- function(x, ...)
 {
     betas = x$parameters$beta %>% 
         base::do.call(base::rbind,.) %>%
@@ -479,12 +488,13 @@ summary.dpGLM_data <- function(x)
 #' This functions summarizes the data simulated by the function \code{hdpGLM_simulate_data} 
 #'
 #' @param x an object of the class \code{hdpGLM_data}, which is produced by the function \code{hdpGLM_simulate_data} 
+#' @param ... ignored 
 #'
 #' @return It returns a list with three elements. The first is a summary of the data, the second a data_frame with the linear coefficients \code{beta} and their values used to generate the data, and the third element is also a data_frame with the true values of \code{tau} used to generate the \code{betas}.
 #'
 #' @export
 ## }}}
-summary.hdpGLM_data <- function(x)
+summary.hdpGLM_data <- function(x, ...)
 {
     betas = x$parameters$beta %>% 
         base::data.frame(.) %>%

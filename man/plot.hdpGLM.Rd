@@ -5,7 +5,7 @@
 \title{Plot}
 \usage{
 \method{plot}{hdpGLM}(x, title = NULL, subtitle = NULL, true.beta = NULL,
-  ncol = NULL, legend.position = "bottom")
+  ncol = NULL, legend.position = "bottom", ...)
 }
 \arguments{
 \item{x}{an object of the class \code{hdpGLM} generted by the function \link{hdpGLM}}
@@ -19,9 +19,8 @@
 \item{ncol}{interger, the number of columns in the plot}
 
 \item{legend.position}{one of four options: "bottom" (default), "top", "left", or "right". It indicates the position of the legend}
-}
-\value{
-what is returnts...
+
+\item{...}{ignored}
 }
 \description{
 Generic function to plot the posterior density estimation produced by the function \code{hdpGLM}

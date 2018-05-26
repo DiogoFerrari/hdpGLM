@@ -16,6 +16,8 @@
 
 \item{family}{a character with either 'gaussian', 'binomial', or 'multinomial'.
 It indicates the family of the GLM components of the mixture model.}
+
+\item{...}{ignored}
 }
 \value{
 It returns a data.frame with the fitted values for the outcome variable, which are produced using the estimated posterior expectation of the linear coefficients \code{beta}.

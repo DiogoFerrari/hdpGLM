@@ -66,6 +66,8 @@ the time to estimate the model slightly.}
 \item{hmc_iter}{an integer, used when \code{family='binomial'} or \code{family='multinomial'}.
 It indicates the number of HMC interation for each Gibbs iteration.
 Default is 1.}
+
+\item{imp.bin}{string, either "R" or "Cpp" indicating the language of the implementation of the binomial model.}
 }
 \value{
 The function returns a list with elements \code{samples}, \code{pik}, \code{max_active},

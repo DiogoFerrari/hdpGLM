@@ -405,8 +405,9 @@ hmc_update_xxr <- function(theta_t, epsilon, L, U_xxr, grad_U_xxr, G_xxr, fix)
     }
 }
 
+
 ## MCMC
-dpGLM_mcmc_xxr            <- function(y, X, weights, K, fix, family, mcmc, epsilon, leapFrog, n.display, hmc.iter=1)
+dpGLM_mcmc_xxr  <- function(y, X, weights, K, fix, family, mcmc, epsilon, leapFrog, n.display, hmc.iter=1)
 {
     ## Constants
     ## ---------
@@ -499,6 +500,8 @@ dpGLM_mcmc_xxr            <- function(y, X, weights, K, fix, family, mcmc, epsil
 
     return(samples)
 }
+
+hdpGLM_mcmc_xxr <- function(y, X, Xj, weights, K, fix, family, mcmc, epsilon, leapFrog, n.display, hmc_iter){}
 
 ## {{{ doc }}}
 
@@ -600,7 +603,7 @@ hdpGLM_xxr <- function(formula1, formula2=NULL, data, mcmc, K=50, fix=NULL, fami
     X       = mat$X
     weights = ifelse(!is.null(mat$w), mat$w, rep(1,nrow(X)))
     ## Hierarchical covars
-    Xj = unlist( ifelse(is.null(formula2), list(NULL), list ( getRegMatrix(func.call, data, weights, formula_number=2)$X) ) ) # list and unlist only b/c ifelse() do not allow to return NULL
+    Xj = unlist( ifelse(is.null(formula2), list(NULL), list ( .getRegMatrix(func.call, data, weights, formula_number=2)$X) ) ) # list and unlist only b/c ifelse() do not allow to return NULL
 
     ## get constants
     ## -------------

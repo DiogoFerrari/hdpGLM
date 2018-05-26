@@ -4,10 +4,12 @@
 \alias{print.hdpGLM}
 \title{Print}
 \usage{
-\method{print}{hdpGLM}(x)
+\method{print}{hdpGLM}(x, ...)
 }
 \arguments{
 \item{x}{an object of the class \code{hdpGLM} generted by the function \link{hdpGLM}}
+
+\item{...}{ignore}
 }
 \value{
 returns a summary of the posterior distribution of the parameters

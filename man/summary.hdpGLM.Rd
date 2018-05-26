@@ -5,7 +5,7 @@
 \title{Summary of samples from hdpGLM}
 \usage{
 \method{summary}{hdpGLM}(x, true.beta = NULL, true.tau = NULL,
-  only.occupied.clusters.in.contexts = TRUE)
+  only.occupied.clusters.in.contexts = TRUE, ...)
 }
 \arguments{
 \item{x}{an object of the class \code{hdpGLM} generted by the function \link{hdpGLM}}
@@ -15,6 +15,8 @@
 \item{true.tau}{a \code{data.frame} with four columns. The first must be named \code{dw} and it indicates the index of each context-level covariate, starting with 1 for the intercept term. The second column named \code{dx} must contain the indexes of the individual level covariates, starting with 1 for the intercept term. The third column named \code{Parameter} must be named \code{tau<dw><dx>}, where \code{dw} and \code{dx} must be the actual values displayed in the columns \code{dw} and \code{dx}. Finally, it must have a column named \code{True} with the true value of the parameter.}
 
 \item{only.occupied.clusters.in.contexts}{boolean, summarize only the parameters in each contexts with active clusters, that is, those with data points classified into it based on the maximum of the estimated membership proability of the data points}
+
+\item{...}{ignored}
 }
 \value{
 The function returns a list with two data.frames. The first summarizes the posterior distribution of the linear coefficients \code{beta}. The mean, median, and the 95\% HPD interval are provided. The second data.frame contains the summary of the posterior distribution of the parameter \code{tau}.
