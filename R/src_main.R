@@ -300,6 +300,8 @@ hdpGLM <- function(formula1, formula2=NULL, data, weights=NULL, mcmc, K=100, fix
         samples$context.index             = C
         samples$context.cov               = tibble::as_data_frame(cbind(C=sort(unique(C)), W))  %>% dplyr::select(-dplyr::contains("Intercept")) 
     }
+    if(family=='gaussian') attr(samples$samples, 'terms') = c(colnames(X), 'sigma') 
+    if(family=='binomial') attr(samples$samples, 'terms') = colnames(X)
     attr(samples$samples, 'mcpar')[2] = mcmc$n.iter
     class(samples)                    = ifelse(is.null(W), 'dpGLM', 'hdpGLM')
 

@@ -405,7 +405,6 @@ hmc_update_xxr <- function(theta_t, epsilon, L, U_xxr, grad_U_xxr, G_xxr, fix)
     }
 }
 
-
 ## MCMC
 dpGLM_mcmc_xxr  <- function(y, X, weights, K, fix, family, mcmc, epsilon, leapFrog, n.display, hmc.iter=1)
 {

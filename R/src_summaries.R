@@ -110,6 +110,12 @@ summary.dpGLM <- function(x, true.beta=NULL, only.occupied.clusters=TRUE, ...)
             dplyr::summarize_all(.funs=list(Mean="mean", Median="median", SD="sd", "HPD.lower", "HPD.upper")) %>%
             dplyr::ungroup(.)
     }
+    n.clusters = betas$k %>% unique %>% length
+    covariates = rep(attr(x$samples, "terms"), n.clusters)
+    betas = betas %>%
+        dplyr::mutate(term = covariates)  %>%
+        dplyr::select(k, Parameter, term, dplyr::everything()) 
+
     return(betas)
 }
 ## {{{ docs }}}
@@ -166,6 +172,12 @@ summary.hdpGLM <- function(x, true.beta=NULL, true.tau=NULL, only.occupied.clust
             dplyr::full_join(., true.tau  %>% dplyr::mutate(Parameter=as.character(Parameter))  , by=c("Parameter"))  %>%
             dplyr::select(dw, dx, Parameter, True, Mean, SD, dplyr::contains("HPD"))
     }
+    n.clusters = betas$k %>% unique %>% length
+    covariates = rep(attr(x$samples, "terms"), n.clusters)
+    betas = betas %>%
+        dplyr::mutate(term = covariates)  %>%
+        dplyr::select(k, Parameter, term, dplyr::everything()) 
+
     return(list(beta=betas, tau=taus))
 }
 ## =====================================================
@@ -429,7 +441,7 @@ print.dpGLM <- function(x, ...)
     cat(paste0("\nburn-in: ", x$burn.in, "\n", sep=''))
     cat("\nSummary statistics of cluster with data points\n")
     s = summary(x)
-    s = s[,-ncol(s)]
+    ## s = s[,-ncol(s)]
     print(s)
     invisible()
 }
@@ -544,6 +556,7 @@ hdpGLM_match_clusters_aux <- function(estimate, true)
 ## }}}
 hdpGLM_get_occupied_clusters <- function(x)
 {
+    terms = attr(x$samples, 'terms')
     active = apply(x$pik, 1, which.max)
     active_in_each_context = tibble::data_frame(k=active, j = x$context.index) %>%
         dplyr::filter(!base::duplicated(.)) %>%
@@ -557,6 +570,7 @@ hdpGLM_get_occupied_clusters <- function(x)
         coda::as.mcmc(.)
     n.iter = attr(x$samples, 'mcpar')[2]
     attr(x$samples, 'mcpar')[2] = n.iter
+    attr(x$samples, 'terms') = terms
     return(x)
 }
 ## {{{ docs }}}
@@ -571,11 +585,13 @@ hdpGLM_get_occupied_clusters <- function(x)
 ## }}}
 dpGLM_get_occupied_clusters <- function(x)
 {
+    terms = attr(x$samples, 'terms')
     active = unique(apply(x$pik, 1, which.max))
     idx_active = x$samples[,'k'] %in% active
     n.iter = attr(x$samples, 'mcpar')[2]
     x$samples = coda::as.mcmc(x$samples[idx_active,])
     attr(x$samples, 'mcpar')[2] = n.iter
+    attr(x$samples, 'terms') = terms
     return(x)
 }
 dpGLM_select_non_zero <- function(x, select_perc_time_active=60)
