@@ -47,7 +47,7 @@ hdpGLM_match_clusters <- function(samples, true)
                                                                .f=function(estimate, true) hdpGLM_match_clusters_aux(estimate, true) ) ) %>%
             dplyr::ungroup(.) %>%
             dplyr::full_join(., true , by=c("True.Cluster.match"= "k", 'Parameter'='Parameter'))  %>%
-            dplyr::select(k, True.Cluster.match, Parameter, True, Mean, dplyr::contains("HPD"))  %>%
+            dplyr::select(k, True.Cluster.match, Parameter, True, Mean, Median, SD, dplyr::contains("HPD"))  %>%
             dplyr::arrange(True.Cluster.match) 
     }
     if(class(samples) == 'hdpGLM'){
@@ -110,11 +110,24 @@ summary.dpGLM <- function(x, true.beta=NULL, only.occupied.clusters=TRUE, ...)
             dplyr::summarize_all(.funs=list(Mean="mean", Median="median", SD="sd", "HPD.lower", "HPD.upper")) %>%
             dplyr::ungroup(.)
     }
-    n.clusters = betas$k %>% unique %>% length
-    covariates = rep(attr(x$samples, "terms"), n.clusters)
-    betas = betas %>%
-        dplyr::mutate(term = covariates)  %>%
-        dplyr::select(k, Parameter, term, dplyr::everything()) 
+    ## include terms column (var names) if not already present
+    if (!"term" %in% names(betas)) {
+        n.clusters = betas$k %>% unique %>% length
+        covariates = rep(attr(x$samples, "terms"), n.clusters)
+        if (!"sigma" %in% betas$Parameter %>% unique) {
+            covariates = covariates[covariates!='sigma']
+        }
+        betas = betas %>% dplyr::mutate(term = covariates) 
+    }
+    ## columns to return
+    if (is.null(true.beta)) {
+        betas = betas %>%
+            dplyr::select(k, Parameter, term, dplyr::everything()) 
+    }else{
+        betas = betas %>%
+            dplyr::select(True.Cluster.match, k, Parameter, term, True, Mean, Median, SD, dplyr::contains("HPD"), dplyr::everything()) 
+    }
+
 
     return(betas)
 }
@@ -172,12 +185,18 @@ summary.hdpGLM <- function(x, true.beta=NULL, true.tau=NULL, only.occupied.clust
             dplyr::full_join(., true.tau  %>% dplyr::mutate(Parameter=as.character(Parameter))  , by=c("Parameter"))  %>%
             dplyr::select(dw, dx, Parameter, True, Mean, SD, dplyr::contains("HPD"))
     }
-    n.clusters = betas$k %>% unique %>% length
-    covariates = rep(attr(x$samples, "terms"), n.clusters)
-    betas = betas %>%
-        dplyr::mutate(term = covariates)  %>%
-        dplyr::select(k, Parameter, term, dplyr::everything()) 
-
+    
+    if (!"term" %in% names(betas)) {
+        n.terms = betas$Parameter %>% unique %>% length
+        n.rows = betas %>% dplyr::select(k,j)  %>% nrow
+        covariates = rep(c(attr(x$samples, "terms")), n.rows/n.terms)
+        betas = betas %>%
+            dplyr::mutate(term = covariates)  %>%
+            dplyr::select(k, j, Parameter, term, dplyr::everything()) 
+    }else{
+        betas = betas %>%
+            dplyr::select(k, j, Parameter, term, True, Mean, Median, SD, dplyr::contains("HPD")) 
+    }
     return(list(beta=betas, tau=taus))
 }
 ## =====================================================
@@ -203,6 +222,7 @@ summary.hdpGLM <- function(x, true.beta=NULL, true.tau=NULL, only.occupied.clust
 #' @inheritParams stats::density
 #' @param colour = string with color to fill the density plot
 #' @param alpha number between 0 and 1 indicating the degree of transparency of the density 
+#' @param display.terms boolean, if \code{TRUE} (default), the covariate name is displayed in the plot
 #' @param ... ignored 
 #'
 #'
@@ -215,13 +235,14 @@ summary.hdpGLM <- function(x, true.beta=NULL, true.tau=NULL, only.occupied.clust
 #' 
 #' @export
 ## }}}
-plot.dpGLM    <- function(x, separate=FALSE, hpd=TRUE, true.beta=NULL, title=NULL, subtitle=NULL, adjust=.3, ncols=NULL, only.occupied.clusters=TRUE, focus.hpd=FALSE, legend.position="bottom", colour='grey', alpha=.4, ...)
+plot.dpGLM    <- function(x, separate=FALSE, hpd=TRUE, true.beta=NULL, title=NULL, subtitle=NULL, adjust=.3, ncols=NULL, only.occupied.clusters=TRUE, focus.hpd=FALSE, legend.position="bottom", colour='grey', alpha=.4, display.terms=TRUE, ...)
 {
     x = dpGLM_get_occupied_clusters(x)
     tab = x$samples %>%
         tibble::as_data_frame(.)  %>%
         dplyr::select(-dplyr::contains("sigma"))  %>%
         tidyr::gather(key = Parameter, value=values, -k) %>%
+        dplyr::full_join(., summary(x) %>% dplyr::select(term, Parameter) %>% dplyr::filter(Parameter!='sigma')   , by=c('Parameter'))  %>% 
         dplyr::mutate(Parameter = paste0(stringr::str_extract(Parameter, 'beta') , '[', stringr::str_extract(Parameter, '[0-9]+') ,']'),
                       k = paste0("Cluster~", k, sep='')) 
     ## %>% dplyr::rename('Cluster' = 'k') 
@@ -236,6 +257,14 @@ plot.dpGLM    <- function(x, separate=FALSE, hpd=TRUE, true.beta=NULL, title=NUL
         tab = tab %>%
             dplyr::filter(HPD.lower <= values & values <= HPD.upper) 
     }
+    if(display.terms)
+        tab = tab %>% 
+            dplyr::mutate(term = gsub("\\(", "", term),
+                          term = gsub(")", "", term),
+                          term = gsub(" ", "\\~", term),
+                          term = paste0("(",term,")") 
+                          )  %>% 
+            tidyr::unite(., Parameter, Parameter, term, sep='~')
     g = tab %>%
         ggplot2::ggplot(.) +
         ## geom_line(aes(x=values, group=Parameter), colour="#00000044", stat='density', alpha=1) +
@@ -293,11 +322,12 @@ plot.dpGLM    <- function(x, separate=FALSE, hpd=TRUE, true.beta=NULL, title=NUL
 #' @param subtitle  string, the subtitle of the plot
 #' @param ncol interger, the number of columns in the plot
 #' @param legend.position one of four options: "bottom" (default), "top", "left", or "right". It indicates the position of the legend
+#' @param display.terms boolean, if \code{TRUE} (default), the covariate name is displayed in the plot
 #' @param ... ignored
 #' 
 #' @export
 ## }}}
-plot.hdpGLM <- function(x, title=NULL, subtitle=NULL, true.beta=NULL, ncol=NULL,  legend.position="bottom", ...)
+plot.hdpGLM <- function(x, title=NULL, subtitle=NULL, true.beta=NULL, ncol=NULL,  legend.position="bottom", display.terms=TRUE,...)
 {
     x = hdpGLM_get_occupied_clusters(x)
     if (!is.null(true.beta)) {
@@ -313,11 +343,30 @@ plot.hdpGLM <- function(x, title=NULL, subtitle=NULL, true.beta=NULL, ncol=NULL,
                              upper=max(HPD.upper)) %>%
             c %>%
             unlist
-        g = x$samples %>%
+        tab2 = x$samples %>%
             tibble::as_data_frame(.)  %>%
             dplyr::select(-sigma)  %>% 
             tidyr::gather(key = Parameter, value=values, -j, -k) %>%
-            dplyr::mutate(Parameter = paste0(stringr::str_extract(Parameter, 'beta') , '[', stringr::str_extract(Parameter, '[0-9]+') ,']')) %>%
+            dplyr::full_join(., summary(x)$beta %>% dplyr::select(term, Parameter) %>% dplyr::filter(Parameter!='sigma')   , by=c('Parameter'))  %>% 
+            dplyr::mutate(Parameter = paste0(stringr::str_extract(Parameter, 'beta') , '[', stringr::str_extract(Parameter, '[0-9]+') ,']'))
+        if(display.terms)
+        {           
+            tab2 = tab2 %>% 
+                dplyr::mutate(term = gsub("\\(", "", term),
+                              term = gsub(")", "", term),
+                              term = gsub(" ", "\\~", term),
+                              term = paste0("(",term,")") 
+                              )  %>% 
+                tidyr::unite(., Parameter, Parameter, term, sep='~')
+            tab = tab %>%
+                dplyr::mutate(term = gsub("\\(", "", term),
+                              term = gsub(")", "", term),
+                              term = gsub(" ", "\\~", term),
+                              term = paste0("(",term,")") 
+                              )  %>% 
+                tidyr::unite(., Parameter, Parameter, term, sep='~')
+        }        
+        g = tab2 %>%
             ggplot2::ggplot(.) +
             ggjoy::geom_joy(ggplot2::aes(x=values, y=j, group=j), fill="#00000044") +
             ggplot2::geom_segment(data=tab , ggplot2::aes(x=True, xend=True, y=j, yend=jnext, col='red')) +
@@ -332,13 +381,22 @@ plot.hdpGLM <- function(x, title=NULL, subtitle=NULL, true.beta=NULL, ncol=NULL,
             ggplot2::theme(legend.position = legend.position) +
             ggplot2::xlim(xlim)
     }else{
-        xlim = summary(x)$beta %>%
-            dplyr::summarize(lower=min(HPD.lower), upper=max(HPD.upper)) %>% c %>% unlist
-        g = x$samples %>%
+        xlim = summary(x)$beta %>% dplyr::summarize(lower=min(HPD.lower), upper=max(HPD.upper)) %>% c %>% unlist
+        tab = x$samples %>%
             tibble::as_data_frame(.)  %>%
             dplyr::select(-sigma)  %>% 
             tidyr::gather(key = Parameter, value=values, -j, -k) %>%
-            dplyr::mutate(Parameter = paste0(stringr::str_extract(Parameter, 'beta') , '[', stringr::str_extract(Parameter, '[0-9]+') ,']')) %>%
+            dplyr::full_join(., summary(x)$beta %>% dplyr::select(term, Parameter) %>% dplyr::filter(Parameter!='sigma')   , by=c('Parameter'))  %>% 
+            dplyr::mutate(Parameter = paste0(stringr::str_extract(Parameter, 'beta') , '[', stringr::str_extract(Parameter, '[0-9]+') ,']')) 
+        if(display.terms)
+            tab = tab %>% 
+                dplyr::mutate(term = gsub("\\(", "", term),
+                              term = gsub(")", "", term),
+                              term = gsub(" ", "\\~", term),
+                              term = paste0("(",term,")") 
+                              )  %>% 
+                tidyr::unite(., Parameter, Parameter, term, sep='~')
+        g = tab %>%
             ggplot2::ggplot(.) +
             ggjoy::geom_joy(ggplot2::aes(x=values, y=j, group=j), fill="#00000044") +
             ggplot2::ylab('Context Index') +

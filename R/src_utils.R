@@ -152,5 +152,6 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(c(".",
                                                         "X97.5.",
                                                         "SD",
                                                         "dw",
-                                                        "dx"
+                                                        "dx",
+                                                        "term"
                                                         ))
