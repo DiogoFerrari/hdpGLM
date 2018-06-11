@@ -113,11 +113,8 @@ summary.dpGLM <- function(x, true.beta=NULL, only.occupied.clusters=TRUE, ...)
     ## include terms column (var names) if not already present
     if (!"term" %in% names(betas)) {
         n.clusters = betas$k %>% unique %>% length
-        covariates = rep(attr(x$samples, "terms"), n.clusters)
-        if (!"sigma" %in% betas$Parameter %>% unique) {
-            covariates = covariates[covariates!='sigma']
-        }
-        betas = betas %>% dplyr::mutate(term = covariates) 
+        covariates = attr(x$samples, "terms")
+        betas = betas %>% dplyr::left_join(., covariates %>% dplyr::mutate_if(is.factor, as.character), by=c("Parameter")) 
     }
     ## columns to return
     if (is.null(true.beta)) {
@@ -186,13 +183,16 @@ summary.hdpGLM <- function(x, true.beta=NULL, true.tau=NULL, only.occupied.clust
             dplyr::select(dw, dx, Parameter, True, Mean, SD, dplyr::contains("HPD"))
     }
     
+    ## include terms column (var names) if not already present
     if (!"term" %in% names(betas)) {
-        n.terms = betas$Parameter %>% unique %>% length
-        n.rows = betas %>% dplyr::select(k,j)  %>% nrow
-        covariates = rep(c(attr(x$samples, "terms")), n.rows/n.terms)
+        n.clusters = betas$k %>% unique %>% length
+        covariates = attr(x$samples, "terms")
+        betas = betas %>% dplyr::left_join(., covariates %>% dplyr::mutate_if(is.factor, as.character), by=c("Parameter")) 
+    }
+
+    if(is.null(true.beta)){
         betas = betas %>%
-            dplyr::mutate(term = covariates)  %>%
-            dplyr::select(k, j, Parameter, term, dplyr::everything()) 
+            dplyr::select(k, j, Parameter, term, Mean, Median, SD, dplyr::contains("HPD")) 
     }else{
         betas = betas %>%
             dplyr::select(k, j, Parameter, term, True, Mean, Median, SD, dplyr::contains("HPD")) 
