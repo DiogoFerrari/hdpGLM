@@ -1,5 +1,43 @@
 
+## {{{ print acceptance rate }}}
 
+print.accept.rate <- function(mh.accept.info, accepted, Z, n.display, iter, mcmc, K, Khat, family)
+{
+    ## update acceptance rate
+    mh.accept.info$trial    = mh.accept.info$trial + 1 
+    mh.accept.info$accepted = mh.accept.info$accepted + accepted 
+    mh.accept.info$average.acceptance = (mh.accept.info$average.acceptance + mh.accept.info$accepted/mh.accept.info$trial)/2
+
+    ## Debug/Monitoring message --------------------------
+    if (iter %% n.display == 0 & iter > n.display){
+        msg <- paste0('\n\n-----------------------------------------------------', '\n'); cat(msg)
+        msg <- paste0('MCMC in progress .... \n'); cat(msg)
+        cat('\n')
+        msg <- paste0('Family of the link function of the GLMM components: ', family, '\n'); cat(msg)
+        msg <- paste0('Burn-in: ', mcmc$burn.in,'\n'); cat(msg)
+        msg <- paste0('Number of MCMC samples per chain: ', mcmc$n.iter,'\n'); cat(msg)
+        cat('\n')
+        msg <- paste0('Iteration ', iter, '\n'); cat(msg)
+        cat('\n')
+        msg <- paste0('Acceptance rate for beta : ', round(mh.accept.info$accepted/mh.accept.info$trial,4), '\n'); cat(msg)
+        msg <- paste0('Average acceptance rate  : ', round(mh.accept.info$average.acceptance,4) , '\n'); cat(msg)
+        cat('\n')
+        msg <- paste0('Maximum Number of cluster allowed (K): ', K,'\n', sep='');cat(msg)
+        msg <- paste0('Maximum Number of cluster activated  : ', max(Khat), '\n',sep='');cat(msg)
+        msg <- paste0('Current number of active clusters    : ', length(table(Z)), '\n',sep='');cat(msg)
+        cat('\n')
+        ## msg <- paste0('Distribution of total number of clusters:\n', sep='');cat(msg)
+        ## print(formatC(table(n.clusters, dnn='')/sum(table(n.clusters)), digits=4, format='f'))
+        msg <- paste0("Percentage of data classified in each clusters k at current iteraction\n(displaying only clusters with more than 5% of the data)", sep=''); cat(msg)
+        tab <- round(100*table(Z, dnn='')/sum(table(Z)),1)
+        print(tab[tab>5])
+    }
+    ## ---------------------------------------------------
+    return(mh.accept.info)
+}
+
+
+## }}}
 ## {{{ constants }}}
 
 ## initial values and constants
@@ -109,9 +147,6 @@ dpGLM_update_theta_xxr <- function(y, X, Z, K, theta,  fix, family, epsilon, lea
     {
         for (k in Zstar)
         {
-            mh.accept.info$trial <<- mh.accept.info$trial + 1
-            mh.accept.info$accepted <<- mh.accept.info$accepted + 1
-
             Xk     = matrix(X[Z==k,], nrow=sum(Z==k), ncol=ncol(X))
             yk     = y[Z==k]
             Nk     = sum(Z == k)
@@ -127,7 +162,7 @@ dpGLM_update_theta_xxr <- function(y, X, Z, K, theta,  fix, family, epsilon, lea
             ## ------------
             theta[k.idx, sigma.idx] = dphGLM_update_sigma_gaussian_xxr(yk=yk ,Xk=Xk, Nk=Nk, betak= theta[k.idx, beta.idx], fix)
 
-
+            accepted = 1
         }
         Zstar_complement = setdiff(1:K, Zstar)
         for (k in Zstar_complement)
@@ -169,9 +204,8 @@ dpGLM_update_theta_xxr <- function(y, X, Z, K, theta,  fix, family, epsilon, lea
             theta_k_new = dphGLM_hmc_update_binomial_xxr(yk=yk ,Xk=Xk, betak= theta[k.idx, beta.idx], fix=fix, epsilon, leapFrog, hmc.iter)
             theta[k.idx, beta.idx] = theta_k_new
 
-            ## update acceptance rate
-            mh.accept.info$trial <<- mh.accept.info$trial + 1
-            if (any(theta_k_t != theta_k_new)) {mh.accept.info$accepted <<- mh.accept.info$accepted + 1}
+            accepted = 0
+            if (any(c(theta_k_t) != c(theta_k_new))) {accepted=1}
         }
         Zstar_complement = setdiff(1:K, Zstar)
         for (k in Zstar_complement){
@@ -186,7 +220,7 @@ dpGLM_update_theta_xxr <- function(y, X, Z, K, theta,  fix, family, epsilon, lea
         }
     }
 
-    return(theta)
+    return(list(theta=theta, accepted=accepted))
 }
 
 ## }}}
@@ -438,8 +472,8 @@ dpGLM_mcmc_xxr  <- function(y, X, weights, K, fix, family, mcmc, epsilon, leapFr
     ## meta
     ## ----
     if (n.display==0) n.display = mcmc$burn.in + mcmc$n.iter + 2
-    Khat      = 1                ## maximum active cluster used in a iteration 
-    mh.accept.info <<- list(trial = 0, accepted= 0, average.acceptance=0) 
+    Khat           = 1                ## maximum active cluster used in a iteration 
+    mh.accept.info = list(trial = 0, accepted= 0, average.acceptance=0)
     
     pb <- txtProgressBar(min = 0, max = mcmc$burn.in+mcmc$n.iter, style = 3, width=70)
     for (iter in 1:(mcmc$burn.in+mcmc$n.iter)){
@@ -447,9 +481,10 @@ dpGLM_mcmc_xxr  <- function(y, X, weights, K, fix, family, mcmc, epsilon, leapFr
 
         ## parameters
         ## ----------
-        theta  = dpGLM_update_theta_xxr(y=y, X=X, Z=Z, K=K, theta=theta,  fix, family, epsilon, leapFrog, hmc.iter)
-        pi     = dpGLM_update_pi(Z=Z, K=K, fix=fix)
-        Z      = dpGLM_update_Z(y=y,X=X, pi=pi, K=K, theta=theta, family)
+        theta.tmp = dpGLM_update_theta_xxr(y=y, X=X, Z=Z, K=K, theta=theta,  fix, family, epsilon, leapFrog, hmc.iter)
+        theta     = theta.tmp$theta
+        pi        = dpGLM_update_pi(Z=Z, K=K, fix=fix)
+        Z         = dpGLM_update_Z(y=y,X=X, pi=pi, K=K, theta=theta, family)
         ## update countZik (number of times) i was classified in cluster k
         ## ---------------
         countZik = dphGLM_update_countZik(countZik, Z)
@@ -462,37 +497,15 @@ dpGLM_mcmc_xxr  <- function(y, X, weights, K, fix, family, mcmc, epsilon, leapFr
         if(iter > mcmc$burn.in){
             thetaNew           = matrix(theta[unique(Z),], ncol=ncol(theta), nrow=length(unique(Z)))
             colnames(thetaNew) = colnames(samples$samples)
-            samples$samples = rbind(samples$samples,  thetaNew)
+            samples$samples    = rbind(samples$samples,  thetaNew)
         }
 
+        ## print message with acceptance rate
+        accepted       = theta.tmp$accepted
+        Khat           = max(Khat,length(table(Z)))
+        mh.accept.info = print.accept.rate(mh.accept.info, accepted, Z, n.display, iter, mcmc, K, Khat, family)
 
-        Khat = max(Khat,length(table(Z)))
-        mh.accept.info$average.acceptance <<- (mh.accept.info$average.acceptance + mh.accept.info$accepted/mh.accept.info$trial) /2
-        ## Debug/Monitoring message --------------------------
-        if (iter %% n.display == 0 & iter > n.display){
-            msg <- paste0('\n\n-----------------------------------------------------', '\n'); cat(msg)
-            msg <- paste0('MCMC in progress .... \n'); cat(msg)
-            cat('\n')
-            msg <- paste0('Family of the link function of the GLMM components: ', family, '\n'); cat(msg)
-            msg <- paste0('Burn-in: ', mcmc$burn.in,'\n'); cat(msg)
-            msg <- paste0('Number of MCMC samples per chain: ', mcmc$n.iter,'\n'); cat(msg)
-            cat('\n')
-            msg <- paste0('Iteration ', iter, '\n'); cat(msg)
-            cat('\n')
-            msg <- paste0('Acceptance rate for beta : ', round(mh.accept.info$accepted/mh.accept.info$trial,4), '\n'); cat(msg)
-            msg <- paste0('Average acceptance rate  : ', round(mh.accept.info$average.acceptance,4) , '\n'); cat(msg)
-            cat('\n')
-            msg <- paste0('Maximum Number of cluster allowed (K): ', K,'\n', sep='');cat(msg)
-            msg <- paste0('Maximum Number of cluster activated  : ', max(Khat), '\n',sep='');cat(msg)
-            msg <- paste0('Current number of active clusters    : ', length(table(Z)), '\n',sep='');cat(msg)
-            cat('\n')
-            ## msg <- paste0('Distribution of total number of clusters:\n', sep='');cat(msg)
-            ## print(formatC(table(n.clusters, dnn='')/sum(table(n.clusters)), digits=4, format='f'))
-            msg <- paste0("Percentage of data classified in each clusters k at current iteraction\n(displaying only clusters with more than 5% of the data)", sep=''); cat(msg)
-            tab <- round(100*table(Z, dnn='')/sum(table(Z)),1)
-            print(tab[tab>5])
-        }
-        ## ---------------------------------------------------
+
     }
     samples$pik        = dphGLM_get_pik(countZik)
     samples$n.clusters = n.clusters
@@ -503,7 +516,6 @@ dpGLM_mcmc_xxr  <- function(y, X, weights, K, fix, family, mcmc, epsilon, leapFr
 hdpGLM_mcmc_xxr <- function(y, X, Xj, weights, K, fix, family, mcmc, epsilon, leapFrog, n.display, hmc_iter){}
 
 ## {{{ doc }}}
-
 #' Hierarchical Dirichlet Process GLM
 #'
 #' The function estimates a semi-parametric mixture of Generalized
@@ -580,14 +592,11 @@ hdpGLM_mcmc_xxr <- function(y, X, Xj, weights, K, fix, family, mcmc, epsilon, le
 #' mcmc    = list(burn.in = 0,  n.iter = 2000)
 #' samples = hdpGLM(y~., data=data$data, mcmc=mcmc, family='gaussian', n.display=30, K=100)
 #'
-#' summary(samples, nk=6)
+#' summary(samples)
 #' 
 #' plot(samples)
-#' 
-#' plot(samples, separate=T)
+#' plot(samples, separate=TRUE)
 #'  
-#' @export
-
 ## }}}
 hdpGLM_xxr <- function(formula1, formula2=NULL, data, mcmc, K=50, fix=NULL, family='gaussian', epsilon=0.01, leapFrog=40, n.display=1000, hmc_iter=1, weights=NULL)
 {

@@ -4,10 +4,10 @@
 \alias{summary.hdpGLM_data}
 \title{Summary}
 \usage{
-\method{summary}{hdpGLM_data}(x, ...)
+\method{summary}{hdpGLM_data}(object, ...)
 }
 \arguments{
-\item{x}{an object of the class \code{hdpGLM_data}, which is produced by the function \code{hdpGLM_simulate_data}}
+\item{object}{an object of the class \code{hdpGLM_data}, which is produced by the function \code{hdpGLM_simulate_data}}
 
 \item{...}{ignored}
 }

@@ -4,7 +4,8 @@
 \alias{dpGLM_simulateParameters}
 \title{Simulated a Parameters used to create Data Sets from dpGLM model}
 \usage{
-dpGLM_simulateParameters(nCov, nCovj = NULL, K, pi = NULL, seed = NULL)
+dpGLM_simulateParameters(nCov, nCovj = NULL, K = NULL, pi = NULL,
+  seed = NULL)
 }
 \arguments{
 \item{nCov}{integer, the number of covariates of the
@@ -32,8 +33,6 @@ simulated data sets from the Hierarchical
 Dirichlet Process of Generalized Linear Model (dpGLM)
 }
 \examples{
-parameters = dpGLM_simulateParameters(nCov=2) 
+parameters = dpGLM_simulateParameters(nCov=2, K=2) 
 
-\dontrun{
-}
 }

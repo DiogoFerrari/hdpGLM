@@ -4,20 +4,14 @@
 \alias{predict.dpGLM}
 \title{dpGLM Predicted values}
 \usage{
-\method{predict}{dpGLM}(samples, new_data, covar.par.names,
-  family = "gaussian", ...)
+\method{predict}{dpGLM}(object, ...)
 }
 \arguments{
-\item{samples}{outcome of the function hdpLGM}
+\item{object}{outcome of the function hdpLGM}
 
-\item{new_data}{data frame with the values of the covariates that are going to be used to generate the predicted/fitted values of the outcome variable}
+\item{...}{\code{new_data} : data frame with the values of the covariates that are going to be used to generate the predicted/fitted values. The posterior mean is used to create the predicted values 
 
-\item{covar.par.names}{a named vector. The names must be the name of the covariates and the values the names of the linear coefficients (\code{beta2}, \code{beta3}, ...), so names of the covariates and names of the linear coefficients must match. \code{beta1} is the coefficient of the intercept term and can be omitted.}
-
-\item{family}{a character with either 'gaussian', 'binomial', or 'multinomial'.
-It indicates the family of the GLM components of the mixture model.}
-
-\item{...}{ignored}
+       \code{family} : a string with the family of the output variable: \code{gaussian} (default), \code{binomial}, etc...}
 }
 \value{
 It returns a data.frame with the fitted values for the outcome variable, which are produced using the estimated posterior expectation of the linear coefficients \code{beta}.

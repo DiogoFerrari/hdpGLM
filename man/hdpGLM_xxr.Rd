@@ -96,10 +96,9 @@ data    = hdpGLM_simulateData(n=5000,nCov=4, K=5, family='gaussian')
 mcmc    = list(burn.in = 0,  n.iter = 2000)
 samples = hdpGLM(y~., data=data$data, mcmc=mcmc, family='gaussian', n.display=30, K=100)
 
-summary(samples, nk=6)
+summary(samples)
 
 plot(samples)
-
-plot(samples, separate=T)
+plot(samples, separate=TRUE)
  
 }

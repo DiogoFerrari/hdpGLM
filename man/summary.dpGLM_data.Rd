@@ -4,10 +4,10 @@
 \alias{summary.dpGLM_data}
 \title{Summary dpGLM data}
 \usage{
-\method{summary}{dpGLM_data}(x, ...)
+\method{summary}{dpGLM_data}(object, ...)
 }
 \arguments{
-\item{x}{an object of the class dpGLM_data}
+\item{object}{an object of the class dpGLM_data}
 
 \item{...}{ignored}
 }

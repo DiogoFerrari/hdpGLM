@@ -95,13 +95,14 @@ Journal of computational and graphical statistics, 9(2), 249–265 (2000).
 }
 \examples{
 data    = hdpGLM_simulateData(n=5000,nCov=4, K=5, family='gaussian')
-mcmc    = list(burn.in = 0,  n.iter = 2000)
-samples = hdpGLM(y~., data=data$data, mcmc=mcmc, family='gaussian', n.display=30, K=100)
+mcmc    = list(burn.in = 0,  n.iter = 1000)
+samples = hdpGLM(y~., data=data$data, mcmc=mcmc, family='gaussian', n.display=30, K=50)
 
-summary(samples, nk=6)
+summary(samples)
+summary(samples, true.beta=summary(data)$beta)
 
 plot(samples)
 
-plot(samples, separate=T)
+plot(samples, separate=TRUE)
  
 }

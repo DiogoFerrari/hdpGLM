@@ -4,9 +4,9 @@
 \alias{hdpGLM_simulateParameters}
 \title{Simulated a Parameters used to create Data Sets from hdpGLM model}
 \usage{
-hdpGLM_simulateParameters(nCov, K, nCovj = NULL, J, pi = NULL, same.K,
-  seed = NULL, context.effect = NULL, same.clusters.across.contexts,
-  context.dependent.cluster)
+hdpGLM_simulateParameters(nCov, K = NULL, nCovj = NULL, J = NULL,
+  pi = NULL, same.K, seed = NULL, context.effect = NULL,
+  same.clusters.across.contexts, context.dependent.cluster)
 }
 \arguments{
 \item{nCov}{integer, the number of covariates of the
@@ -44,8 +44,7 @@ simulated data sets from the Hierarchical
 Dirichlet Process of Generalized Linear Model (hdpGLM)
 }
 \examples{
-parameters = hdpGLM_simulateParameters(nCov=2) 
+parameters = hdpGLM_simulateParameters(nCov=2, K=2, nCovj=3, J=20,
+                same.clusters.across.contexts=FALSE, context.dependent.cluster=0) 
 
-\dontrun{
-}
 }

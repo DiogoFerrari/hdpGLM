@@ -98,14 +98,11 @@ dpGLM_simulateData_main <- function(n, K, nCov, nCovj=NULL, parameters=NULL, pi=
 #'         used to generate data sets from the dpGLM model.
 #'         This list can be used in the function \code{\link{hdpGLM_simulateData}}
 #' @examples
-#' parameters = dpGLM_simulateParameters(nCov=2) 
+#' parameters = dpGLM_simulateParameters(nCov=2, K=2) 
 #'
-#' \dontrun{
-#' }
 #' @export
-
 ## }}}
-dpGLM_simulateParameters <- function(nCov, nCovj=NULL, K, pi=NULL, seed=NULL)
+dpGLM_simulateParameters <- function(nCov, nCovj=NULL, K=NULL, pi=NULL, seed=NULL)
 {
     if(is.null(seed)) seed <- sample(1:777,1)
     parameters <- list(pi=NA ,beta = list(), K=K)
@@ -282,14 +279,13 @@ hdpGLM_simulateData_main <- function(n, K, nCov, nCovj=NULL, J, parameters=NULL,
 #'         used to generate data sets from the hdpGLM model.
 #'         This list can be used in the function \code{\link{hdpGLM_simulateData}}
 #' @examples
-#' parameters = hdpGLM_simulateParameters(nCov=2) 
+#' parameters = hdpGLM_simulateParameters(nCov=2, K=2, nCovj=3, J=20,
+#'                 same.clusters.across.contexts=FALSE, context.dependent.cluster=0) 
 #'
-#' \dontrun{
-#' }
 #' @export
 
 ## }}}
-hdpGLM_simulateParameters <- function(nCov, K, nCovj=NULL, J, pi=NULL, same.K, seed=NULL, context.effect=NULL, same.clusters.across.contexts, context.dependent.cluster)
+hdpGLM_simulateParameters <- function(nCov, K=NULL, nCovj=NULL, J=NULL, pi=NULL, same.K, seed=NULL, context.effect=NULL, same.clusters.across.contexts, context.dependent.cluster)
 {
     if(is.null(seed)) seed <- base::sample(1:777,1)
 

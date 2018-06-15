@@ -7,7 +7,7 @@
 \method{print}{hdpGLM}(x, ...)
 }
 \arguments{
-\item{x}{an object of the class \code{hdpGLM} generted by the function \link{hdpGLM}}
+\item{x}{a \code{hdpGLM} object returned by the function \code{hdpGLM}}
 
 \item{...}{ignore}
 }
