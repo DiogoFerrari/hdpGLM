@@ -58,7 +58,7 @@ void hdpGLM_display_message(String family, int burn_in, int n_iter, int iter, in
     arma::uvec idx_col = arma::linspace<arma::uvec>(0, 1, 2);
     arma::mat tabj_subset = tabj(idx_larger_clusters, idx_col);
 
-    Rcpp::Rcout << "Clusters in context with index " << j << std::endl;
+    Rcpp::Rcout << "Clusters in context " << j << std::endl;
     Rcpp::Rcout << tabj_subset.t() << std::endl;
   }
 }

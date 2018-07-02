@@ -162,7 +162,6 @@ summary.dpGLM <- function(object, ...)
 ## }}}
 summary.hdpGLM <- function(object, ...)
 {
-
     x = object
     ## get additional parameters ...
     args = as.list(match.call())

@@ -20,7 +20,7 @@ Instalation
 ===========
 
 ``` {.r .rundoc-block rundoc-language="R" rundoc-exports="code"}
-devtools::install_github("hdpGLM")
+devtools::install_github("DiogoFerrari/hdpGLM")
 ```
 
 Usage
