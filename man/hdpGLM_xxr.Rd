@@ -91,14 +91,3 @@ Journal of the American Statistical Association, 96(453), 161–173 (2001).
 Neal, R. M., Markov chain sampling methods for dirichlet process mixture models,
 Journal of computational and graphical statistics, 9(2), 249–265 (2000).
 }
-\examples{
-data    = hdpGLM_simulateData(n=5000,nCov=4, K=5, family='gaussian')
-mcmc    = list(burn.in = 0,  n.iter = 2000)
-samples = hdpGLM(y~., data=data$data, mcmc=mcmc, family='gaussian', n.display=30, K=100)
-
-summary(samples)
-
-plot(samples)
-plot(samples, separate=TRUE)
- 
-}

@@ -25,3 +25,33 @@ plot_tau(samples, X = NULL, W = NULL, true.tau = NULL,
 \description{
 Function to plot posterior distribution of tau
 }
+\examples{
+set.seed(66)
+
+n = 20    # sample size
+K = 2     # number of clusters
+nCov = 3  # Dx, number of ind-level covars
+nCovj = 2 # Dw, number of context-level covars 
+J = 15    # number of contexts
+
+## simulating some data
+sim_data = hdpGLM_simulateData(n=n, K=K, nCov=nCov, nCovj=nCovj, J=J, family='gaussian')
+
+## estimation
+mcmc    = list(burn.in=1, n.iter=50)
+samples = hdpGLM(y ~ X1 + X2 + X3, y ~ W1 + W2, data=sim_data$data, mcmc=mcmc, n.display=1)
+
+
+plot_tau(samples)
+plot_tau(samples, ncol=2)
+plot_tau(samples, X='X1')
+plot_tau(samples, X='X2')
+plot_tau(samples, W='W1')
+plot_tau(samples, X='X1', W='W2')
+plot_tau(samples, show.all.taus=TRUE)
+plot_tau(samples, show.all.taus=TRUE, show.all.betas=TRUE)
+plot_tau(samples, show.all.taus=TRUE, show.all.betas=TRUE, ncol=2)
+plot_tau(samples, true.tau=summary(sim_data)$tau,
+         show.all.taus=TRUE, show.all.betas=TRUE, ncol=2)
+
+}

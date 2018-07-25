@@ -277,13 +277,13 @@ summary.hdpGLM <- function(object, ...)
 #' @examples
 #' dt      = hdpGLM_simulateData(n=5000,nCov=4, K=5, family='gaussian')
 #' mcmc    = list(burn.in = 0,  n.iter = 2000)
-#' samples = hdpGLM(y~., data=dt$data, mcmc=mcmc, family='gaussian', n.display=30, K=100)
+#' samples = hdpGLM(y~., data=dt$data, mcmc=mcmc, family='gaussian', n.display=1000, K=100)
 #'
-#' plot(samples, true.beta=summary(data)$beta)
+#' plot(samples, true.beta=summary(dt)$beta)
 #' 
 #' @export
 ## }}}
-plot.dpGLM    <- function(x, terms=NULL, separate=FALSE, hpd=TRUE, true.beta=NULL, title=NULL, subtitle=NULL, adjust=.3, ncols=NULL, only.occupied.clusters=TRUE, focus.hpd=FALSE, legend.position="bottom", colour='grey', alpha=.4, display.terms=TRUE, ...)
+plot.dpGLM    <- function(x, terms=NULL, separate=FALSE, hpd=TRUE, true.beta=NULL, title=NULL, subtitle=NULL, adjust=.3, ncols=NULL, only.occupied.clusters=TRUE, focus.hpd=FALSE, legend.position="top", colour='grey', alpha=.4, display.terms=TRUE, ...)
 {
     x = dpGLM_get_occupied_clusters(x)
     tab = x$samples %>%
@@ -331,8 +331,8 @@ plot.dpGLM    <- function(x, terms=NULL, separate=FALSE, hpd=TRUE, true.beta=NUL
         ggplot2::scale_x_continuous(expand = c(0, 0)) +
         ggplot2::scale_y_continuous(expand = c(0, 0)) +
         ggplot2::theme(strip.background = ggplot2::element_rect(colour="white", fill="white"),
-                       strip.text.x = ggplot2::element_text(size=11, face='bold'),
-                       strip.text.y = ggplot2::element_text(size=11, face="bold")) +
+                       strip.text.x = ggplot2::element_text(size=12, face='bold', hjust=0),
+                       strip.text.y = ggplot2::element_text(size=12, face="bold", vjust=0)) +
         ggplot2::theme(legend.position = legend.position) 
 
     ## separate betas by cluster ?
@@ -794,8 +794,36 @@ dpGLM_select_non_zero <- function(x, select_perc_time_active=60)
 #' @param show.all.betas boolean, if \code{FALSE} (default) the taus affecting only the intercept terms of the outcome variable are omitted
 #' @param ncol number of columns of the grid. If \code{NULL}, one column is used
 #'
+#' @examples
+#' set.seed(66)
+#' 
+#' n = 20    # sample size
+#' K = 2     # number of clusters
+#' nCov = 3  # Dx, number of ind-level covars
+#' nCovj = 2 # Dw, number of context-level covars 
+#' J = 15    # number of contexts
+#' 
+#' ## simulating some data
+#' sim_data = hdpGLM_simulateData(n=n, K=K, nCov=nCov, nCovj=nCovj, J=J, family='gaussian')
+#' 
+#' ## estimation
+#' mcmc    = list(burn.in=1, n.iter=50)
+#' samples = hdpGLM(y ~ X1 + X2 + X3, y ~ W1 + W2, data=sim_data$data, mcmc=mcmc, n.display=1)
+#' 
+#' 
+#' plot_tau(samples)
+#' plot_tau(samples, ncol=2)
+#' plot_tau(samples, X='X1')
+#' plot_tau(samples, X='X2')
+#' plot_tau(samples, W='W1')
+#' plot_tau(samples, X='X1', W='W2')
+#' plot_tau(samples, show.all.taus=TRUE)
+#' plot_tau(samples, show.all.taus=TRUE, show.all.betas=TRUE)
+#' plot_tau(samples, show.all.taus=TRUE, show.all.betas=TRUE, ncol=2)
+#' plot_tau(samples, true.tau=summary(sim_data)$tau,
+#'          show.all.taus=TRUE, show.all.betas=TRUE, ncol=2)
+#' 
 #' @export
-
 ## }}}
 plot_tau <- function(samples, X=NULL, W=NULL, true.tau=NULL, show.all.taus=FALSE, show.all.betas=FALSE, ncol=NULL)
 {
@@ -898,13 +926,46 @@ plot_tau <- function(samples, X=NULL, W=NULL, true.tau=NULL, show.all.taus=FALSE
 #' @param ncol.beta integer with number of rows of the grid used for each group of context-level covariates
 #' @param nrow.w integer with the number of rows of the grid
 #' @param ncol.w integer with the number of columns of the grid
-#' 
 #'
+#' @examples
+#' set.seed(66)
+#' 
+#' n = 20    # sample size
+#' K = 2     # number of clusters
+#' nCov = 3  # Dx, number of ind-level covars
+#' nCovj = 2 # Dw, number of context-level covars 
+#' J = 15    # number of contexts
+#' 
+#' ## simulating some data
+#' sim_data = hdpGLM_simulateData(n=n, K=K, nCov=nCov, nCovj=nCovj, J=J, family='gaussian')
+#' 
+#' ## estimation
+#' mcmc    = list(burn.in=1, n.iter=50)
+#' samples = hdpGLM(y ~ X1 + X2 + X3, y ~ W1 + W2, data=sim_data$data, mcmc=mcmc, n.display=1)
+#' 
+#' plot_pexp_beta(samples)
+#' plot_pexp_beta(samples, X='X1', nrow.w=2)
+#' plot_pexp_beta(samples, X='X1', ncol.w=2)
+#' plot_pexp_beta(samples, X='X1', ncol.w=2, nrow.w=1)
+#' plot_pexp_beta(samples, X='X1', ncol.beta=2)
+#' plot_pexp_beta(samples, ncol.beta=2)
+#' plot_pexp_beta(samples,  pred.pexp.beta=TRUE)
+#' plot_pexp_beta(samples,  pred.pexp.beta=TRUE, W="W1")
+#' plot_pexp_beta(samples,  pred.pexp.beta=TRUE, X="X1")
+#' plot_pexp_beta(samples,  pred.pexp.beta=TRUE, W="W1", X=c("X1", "X2"))
+#' plot_pexp_beta(samples, W='W1')
+#' plot_pexp_beta(samples, W='W1', smooth.line=TRUE)
+#' plot_pexp_beta(samples, W='W1', smooth.line=TRUE, pred.pexp.beta=TRUE)
+#' plot_pexp_beta(samples, W='W1', smooth.line=TRUE, pred.pexp.beta=TRUE, ncol.beta=2)
+#'
+#' 
 #' @export
-
 ## }}}
 plot_pexp_beta <- function(samples, X=NULL, W=NULL, smooth.line=FALSE, pred.pexp.beta=FALSE, ncol.beta=NULL, nrow.w=NULL, ncol.w=NULL)
 {
+    ## Debug/Monitoring message --------------------------
+    msg <- paste0('\n','\nGeneting plots ...\n',  '\n'); cat(msg)
+    ## ---------------------------------------------------
     ## keep all default options
     op.default <- options()
     on.exit(options(op.default), add=TRUE)
@@ -941,6 +1002,8 @@ plot_pexp_beta <- function(samples, X=NULL, W=NULL, smooth.line=FALSE, pred.pexp
     if (!is.null(X)) {
         betas = betas %>%
             dplyr::filter(stringr::str_detect(term, pattern=paste0(X, collapse="|") )) 
+    }else{
+        X = betas$term %>% unique
     }
 
     if (is.null(ncol.beta)) {
@@ -964,14 +1027,21 @@ plot_pexp_beta <- function(samples, X=NULL, W=NULL, smooth.line=FALSE, pred.pexp
             ## facet_grid( W ~ Parameter.facet ,  scales='free_x',labeller=label_parsed ) +
             ggplot2::facet_wrap( ~  Parameter.facet , ncol=ncol.beta, scales='free',labeller=ggplot2::label_parsed ) +
             ggplot2::scale_colour_brewer(palette='BrBG', name="Cluster") +
-            ggplot2::ylab(bquote(E(beta~"|"~ .)~"(Posterior expectation of "~beta~")")) 
+            ggplot2::ylab(bquote(E(beta~"|"~ .)~"(Posterior expectation of "~beta~")")) +
+            ggplot2::theme_bw()+
+            ggplot2::theme(strip.background = ggplot2::element_rect(colour="white", fill="white"),
+                           strip.text.x = ggplot2::element_text(size=12, face='bold', hjust=0),
+                           strip.text.y = ggplot2::element_text(size=12, face="bold", vjust=0)) 
         if (smooth.line) {
             plots[[i]] = plots[[i]] + ggplot2::geom_smooth(ggplot2::aes_string(x=w, y="Mean"), colour='grey40', size=.5, fill='grey80', method="lm") 
         }
         if (pred.pexp.beta) {
-            pred.betas = fit_pexp_beta(samples, W=W)
+            pred.betas = fit_pexp_beta(samples, W=w)
+            pred = pred.betas %>%
+                dplyr::left_join(., betas %>% dplyr::select(Parameter, Parameter.facet, term) , by=c("beta"="Parameter")) %>%
+                dplyr::filter(term %in% X) 
             plots[[i]] = plots[[i]] +
-                ggplot2::geom_line(data=pred.betas, ggplot2::aes_string(x=w, y="E.beta.pred", group=NULL, colour=NULL)) 
+                ggplot2::geom_line(data= pred, ggplot2::aes_string(x=w, y="E.beta.pred", group="beta", colour=NULL)) 
         }
     }
     g = ggpubr::ggarrange(plotlist=plots, nrow=nrow.w, ncol=ncol.w, common.legend=T)
@@ -1007,9 +1077,9 @@ fit_pexp_beta <- function(samples, W=NULL)
         {
             context.cov       = names(new_datas)[j]
             W.new             = new_datas[[j]] %>% as.matrix
-            ## E.beta.pred       = W.new %*% E.tau
+            E.beta.pred       = W.new %*% E.tau
             ## E.beta.pred.lower = W.new %*% (E)
-            E.beta.pred.upper = W.new %*% E.tau.upper 
+            ## E.beta.pred.upper = W.new %*% E.tau.upper 
             pred       = rbind(pred      ,data.frame(E.beta.pred      , W.new, beta = beta, cov=context.cov))
             ## pred.lower = rbind(pred.lower,data.frame(E.beta.pred.lower, W.new, beta = beta, cov=context.cov))
             ## pred.upper = rbind(pred.upper,data.frame(E.beta.pred.upper, W.new, beta = beta, cov=context.cov))
@@ -1082,20 +1152,44 @@ hdpglm_get_new_data          <- function(data, n, x, cat.values=NULL)
 #'
 #'
 #' @inheritParams plot_tau
+#' @inheritParams plot_pexp_beta
 #' @param ncol.taus integer with the number of columns of the grid containing the posterior distribution of tau
 #' @param ncol.betas integer with the number of columns of the posterior expectation of betas as function of context-level features
 #' @param ncol.w integer with the number of columns to use to diaplay the different context-level covariates
 #' @param nrow.w integer with the number of rows to use to diaplay the different context-level covariates
 #'
+#' set.seed(66)
+#' n = 20    # sample size
+#' K = 2     # number of clusters
+#' nCov = 3  # Dx, number of ind-level covars
+#' nCovj = 2 # Dw, number of context-level covars 
+#' J = 15    # number of contexts
+#' 
+#' ## simulating some data
+#' sim_data = hdpGLM_simulateData(n=n, K=K, nCov=nCov, nCovj=nCovj, J=J, family='gaussian')
+#' 
+#' ## estimation
+#' mcmc    = list(burn.in=1, n.iter=50)
+#' samples = hdpGLM(y ~ X1 + X2 + X3, y ~ W1 + W2, data=sim_data$data, mcmc=mcmc, n.display=1)
+#' 
+#' plot_hdpglm(samples)
+#' plot_hdpglm(samples, ncol.taus=2)
+#' plot_hdpglm(samples, ncol.taus=2, ncol.betas=2, X='X1')
+#' plot_hdpglm(samples, ncol.taus=2, ncol.betas=2, X='X1', ncol.w=2, nrow.w=1)
+#' plot_hdpglm(samples, ncol.taus=2, ncol.betas=2, X='X1', ncol.w=2, nrow.w=1,
+#'             pred.pexp.beta=TRUE,smooth.line=TRUE, )
+#' 
+#'
 #' @export
 ## }}}
-plot_hdpglm <- function(samples, X=NULL, W=NULL, ncol.taus=1, ncol.betas=NULL, ncol.w=NULL, nrow.w=NULL)
+plot_hdpglm <- function(samples, X=NULL, W=NULL, ncol.taus=1, ncol.betas=NULL, ncol.w=NULL, nrow.w=NULL, smooth.line=FALSE, pred.pexp.beta=FALSE)
 {
+    
     ## Debug/Monitoring message --------------------------
     msg <- paste0('\n','\nPlot being generated ...\n',  '\n'); cat(msg)
     ## ---------------------------------------------------
     g1 = plot_tau(samples, X=X, W=W, ncol=ncol.taus)
-    g2 = plot_pexp_beta(samples, X=X, W=W, ncol.beta=ncol.betas, ncol.w=ncol.w, nrow.w=nrow.w) 
+    g2 = plot_pexp_beta(samples, X=X, W=W, ncol.beta=ncol.betas, ncol.w=ncol.w, nrow.w=nrow.w, smooth.line=smooth.line, pred.pexp.beta= pred.pexp.beta) 
     
     g = ggpubr::ggarrange(plotlist=list(g2,g1), nrow=2)
     return(g)

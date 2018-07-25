@@ -5,7 +5,8 @@
 \title{Plot posterior distribution of tau and posterior expectation of beta}
 \usage{
 plot_hdpglm(samples, X = NULL, W = NULL, ncol.taus = 1,
-  ncol.betas = NULL, ncol.w = NULL, nrow.w = NULL)
+  ncol.betas = NULL, ncol.w = NULL, nrow.w = NULL, smooth.line = FALSE,
+  pred.pexp.beta = FALSE)
 }
 \arguments{
 \item{samples}{an output of the function \code{\link{hdpGLM}}}
@@ -20,7 +21,32 @@ plot_hdpglm(samples, X = NULL, W = NULL, ncol.taus = 1,
 
 \item{ncol.w}{integer with the number of columns to use to diaplay the different context-level covariates}
 
-\item{nrow.w}{integer with the number of rows to use to diaplay the different context-level covariates}
+\item{nrow.w}{integer with the number of rows to use to diaplay the different context-level covariates
+
+set.seed(66)
+n = 20    # sample size
+K = 2     # number of clusters
+nCov = 3  # Dx, number of ind-level covars
+nCovj = 2 # Dw, number of context-level covars 
+J = 15    # number of contexts
+
+## simulating some data
+sim_data = hdpGLM_simulateData(n=n, K=K, nCov=nCov, nCovj=nCovj, J=J, family='gaussian')
+
+## estimation
+mcmc    = list(burn.in=1, n.iter=50)
+samples = hdpGLM(y ~ X1 + X2 + X3, y ~ W1 + W2, data=sim_data$data, mcmc=mcmc, n.display=1)
+
+plot_hdpglm(samples)
+plot_hdpglm(samples, ncol.taus=2)
+plot_hdpglm(samples, ncol.taus=2, ncol.betas=2, X='X1')
+plot_hdpglm(samples, ncol.taus=2, ncol.betas=2, X='X1', ncol.w=2, nrow.w=1)
+plot_hdpglm(samples, ncol.taus=2, ncol.betas=2, X='X1', ncol.w=2, nrow.w=1,
+            pred.pexp.beta=TRUE,smooth.line=TRUE, )}
+
+\item{smooth.line}{boolean, if \code{TRUE} the plot will display a regression line representing the regression of the posterior expectation of the linear coefficients betas on the context-level covariates. Default \code{FALSE}}
+
+\item{pred.pexp.beta}{boolean, if \code{TRUE} the plots will display a line with the predicted posterior expectation of betas obtained using the posterior expectation of taus, the linear coefficients of the expectation of beta}
 }
 \description{
 this function creates a plot with two grids. One is the grid with posterior expectation of betas as function of context-level covariates. The other is the posterior distribution of tau

@@ -28,3 +28,36 @@ plot_pexp_beta(samples, X = NULL, W = NULL, smooth.line = FALSE,
 \description{
 This function plots the posterior expectation of beta, the linear effect of the individual level covariates, as function of the context-level covariates
 }
+\examples{
+set.seed(66)
+
+n = 20    # sample size
+K = 2     # number of clusters
+nCov = 3  # Dx, number of ind-level covars
+nCovj = 2 # Dw, number of context-level covars 
+J = 15    # number of contexts
+
+## simulating some data
+sim_data = hdpGLM_simulateData(n=n, K=K, nCov=nCov, nCovj=nCovj, J=J, family='gaussian')
+
+## estimation
+mcmc    = list(burn.in=1, n.iter=50)
+samples = hdpGLM(y ~ X1 + X2 + X3, y ~ W1 + W2, data=sim_data$data, mcmc=mcmc, n.display=1)
+
+plot_pexp_beta(samples)
+plot_pexp_beta(samples, X='X1', nrow.w=2)
+plot_pexp_beta(samples, X='X1', ncol.w=2)
+plot_pexp_beta(samples, X='X1', ncol.w=2, nrow.w=1)
+plot_pexp_beta(samples, X='X1', ncol.beta=2)
+plot_pexp_beta(samples, ncol.beta=2)
+plot_pexp_beta(samples,  pred.pexp.beta=TRUE)
+plot_pexp_beta(samples,  pred.pexp.beta=TRUE, W="W1")
+plot_pexp_beta(samples,  pred.pexp.beta=TRUE, X="X1")
+plot_pexp_beta(samples,  pred.pexp.beta=TRUE, W="W1", X=c("X1", "X2"))
+plot_pexp_beta(samples, W='W1')
+plot_pexp_beta(samples, W='W1', smooth.line=TRUE)
+plot_pexp_beta(samples, W='W1', smooth.line=TRUE, pred.pexp.beta=TRUE)
+plot_pexp_beta(samples, W='W1', smooth.line=TRUE, pred.pexp.beta=TRUE, ncol.beta=2)
+
+
+}
