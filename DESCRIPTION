@@ -30,5 +30,7 @@ Imports: coda,
     ggjoy,
     ggplot2,
     stringr,
-    tidyr
+    tidyr,
+    ggridges,
+    ggpubr
 RoxygenNote: 6.0.1

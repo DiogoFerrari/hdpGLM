@@ -287,6 +287,8 @@ hdpGLM_simulateData_main <- function(n, K, nCov, nCovj=NULL, J, parameters=NULL,
 ## }}}
 hdpGLM_simulateParameters <- function(nCov, K=NULL, nCovj=NULL, J=NULL, pi=NULL, same.K, seed=NULL, context.effect=NULL, same.clusters.across.contexts, context.dependent.cluster)
 {
+    Dw = nCovj
+    Dx = nCov
     if(is.null(seed)) seed <- base::sample(1:777,1)
 
     ## K
@@ -311,28 +313,33 @@ hdpGLM_simulateParameters <- function(nCov, K=NULL, nCovj=NULL, J=NULL, pi=NULL,
 
     ## tau
     ## ---
-    if(nCovj ==0) {
+    if(Dw ==0) {
         parameters$tau = as.matrix(1)  
         W              = as.matrix(1)  
     }
-    if(nCovj  >0) {
-        parameters$tau = as.matrix(MASS::mvrnorm(n=nCovj+1, mu=rep(0, nCov+1), Sigma=5*diag(nCov+1)))  
-        Wprime         = matrix(MASS::mvrnorm(n=J      , mu=rep(0, nCovj) , Sigma=5*diag(nCovj)), nrow=J, ncol=nCovj)
+    if(Dw  >0) {
+        ## user can specify specific betas to be affected by some specific context-level covars only, as well as with context level covar will affect that beta (instead of all context-level covars)
+        if(!is.null(context.effect)){
+            n.of.non.zero.taus = length(context.effect$on.betas) + length(context.effect$by.Ws)
+            ## all taus are zero...
+            parameters$tau = matrix(0, nrow=Dw+1, ncol=Dx+1)
+            ## ... but the intercept and the coefficients tau of those W's that the user wants to affect beta
+            parameters$tau[c(1, context.effect$by.Ws+1), context.effect$on.betas+1] = as.matrix(MASS::mvrnorm(n=1 , mu=rep(0,n.of.non.zero.taus), Sigma=5*diag(n.of.non.zero.taus)))  
+        }else{
+            ## if they don't all taus are different from zero and all W's affect all betas
+            parameters$tau = as.matrix(MASS::mvrnorm(n=Dw+1, mu=rep(0, Dx+1), Sigma=5*diag(Dx+1)))  
+        }
+        Wprime         = matrix(MASS::mvrnorm(n=J, mu=rep(0, Dw) , Sigma=5*diag(Dw)), nrow=J, ncol=Dw)
         W              = cbind(1,Wprime)
-        parameters$W   = Wprime
+        parameters$W   = W
     }
-    if(!is.null(context.effect)){
-        effect = parameters$tau[context.effect[1]+1, context.effect[2]+1]
-        parameters$tau = matrix(0, nrow=nrow(parameters$tau), ncol=ncol(parameters$tau))
-        parameters$tau[context.effect[1]+1, context.effect[2]+1] = effect
-    }
-    colnames(parameters$W) = paste0("W", 1:nCovj, sep='')
-    colnames(parameters$tau) = paste0("x", 1:(nCov+1) , sep='')
-    rownames(parameters$tau) = paste0("w", 1:(nCovj+1), sep='')
+    colnames(parameters$W)   = paste0("W", 0:Dw, sep='')
+    colnames(parameters$tau) = paste0("beta", 0:Dx, sep='')
+    rownames(parameters$tau) = paste0("w", 0:Dw, sep='')
     
     ## beta
     ## ----
-    parameters$beta <- lapply(1:J, function(J) rep(list(rep(NA, nCov+1)),K))
+    parameters$beta <- lapply(1:J, function(J) rep(list(rep(NA, Dx+1)),K))
     tau = parameters$tau
     for (j in 1:J) {
         for (k in 1:K) {

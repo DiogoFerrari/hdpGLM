@@ -6,7 +6,7 @@
 \usage{
 \method{plot}{hdpGLM}(x, terms = NULL, title = NULL, subtitle = NULL,
   true.beta = NULL, ncol = NULL, legend.position = "bottom",
-  display.terms = TRUE, ...)
+  display.terms = TRUE, context.label = NULL, data = NULL, ...)
 }
 \arguments{
 \item{x}{an object of the class \code{hdpGLM} generted by the function \link{hdpGLM}}
@@ -25,11 +25,15 @@
 
 \item{display.terms}{boolean, if \code{TRUE} (default), the covariate name is displayed in the plot}
 
+\item{context.label}{string with the name of the column containing the labels identifying the contexts. The data must also be provided.}
+
+\item{data}{the data.frame used to estimate the model. It must contain the column with the context labels. Only used if \code{context.labels} is also provided}
+
 \item{...}{Additional arguments accepted are:
 
            \code{true.beta}: a \code{data.frame} with the true values of the linear coefficients \code{beta} if they are known. The \code{data.frame} must contain a column named \code{j} with the index of the context associated with that particular linear coefficient \code{beta}. It must match the indexes used in the data set for each context. Another column named \code{k} must be provided, indicating the cluster of \code{beta}, and a column named \code{Parameter} with the name of the linear coefficients (\code{beta1}, \code{beta2}, ..., \code{beta_dx}, where \code{dx} is the number of covariates at the individual level, and beta1 is the coefficient of the intercept term). It must contain a column named \code{True} with the true value of the \code{betas}. Finally, the \code{data.frame} must contain columns with the context-level covariates as used in the estimation of the \link{hdpGLM} function (see Details below).
 
-           \code{true.tau}: a \code{data.frame} with four columns. The first must be named \code{dw} and it indicates the index of each context-level covariate, starting with 1 for the intercept term. The second column named \code{dx} must contain the indexes of the individual level covariates, starting with 1 for the intercept term. The third column named \code{Parameter} must be named \code{tau<dw><dx>}, where \code{dw} and \code{dx} must be the actual values displayed in the columns \code{dw} and \code{dx}. Finally, it must have a column named \code{True} with the true value of the parameter.}
+           \code{true.tau}: a \code{data.frame} with four columns. The first must be named \code{w} and it indicates the index of each context-level covariate, starting with 0 for the intercept term. The second column named \code{beta} must contain the indexes of the betas of individual-level covariates, starting with 0 for the intercept term. The third column named \code{Parameter} must be named \code{tau<w><beta>}, where \code{w} and \code{beta} must be the actual values displayed in the columns \code{w} and \code{beta}. Finally, it must have a column named \code{True} with the true value of the parameter.}
 }
 \description{
 Generic function to plot the posterior density estimation produced by the function \code{hdpGLM}

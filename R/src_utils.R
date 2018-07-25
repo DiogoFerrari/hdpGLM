@@ -154,5 +154,15 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(c(".",
                                                         "SD",
                                                         "dw",
                                                         "dx",
-                                                        "term"
+                                                        "term",
+                                                        "term.tau",
+                                                        "term.beta",
+                                                        "w",
+                                                        "Description",
+                                                        "E.beta.pred",
+                                                        "term.label",
+                                                        "Parameter.facet",
+                                                        "Parameter.label",
+                                                        "beta.label",
+                                                        "value"
                                                         ))

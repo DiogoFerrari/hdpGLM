@@ -221,6 +221,19 @@ getUniqueW <- function(W, C)
 ## }}}
 hdpGLM <- function(formula1, formula2=NULL, data, weights=NULL, mcmc, K=100, fix=NULL, family='gaussian', epsilon=0.01, leapFrog=40, n.display=1000, hmc_iter=1, imp.bin="R")
 {
+    ## other options
+    ## par.default <- par(no.readonly = TRUE)
+    ## on.exit(par(par.default), add=TRUE)
+    ## keep all default options
+    op.default <- options()
+    on.exit(options(op.default), add=TRUE)
+    ## keep current working folder on exit
+    dir.default <- getwd()
+    on.exit(setwd(dir.default), add=TRUE)
+    ## no warning messages
+    options(warn=-1)
+    on.exit(options(warn=0))
+
     if(! family %in% c('gaussian', 'binomial', 'multinomial'))
         stop(paste0('Error: Parameter -family- must be a string with one of the following options : \"gaussian\", \"binomial\", or \"multinomial\"'))
 
@@ -287,11 +300,11 @@ hdpGLM <- function(formula1, formula2=NULL, data, weights=NULL, mcmc, K=100, fix
         }
     }else{
         if(family=='gaussian'){
-            colnames(samples$samples)  <- c('k', 'j', paste0('beta',1:(d+1),  sep=''), 'sigma')
-            colnames(samples$tau)      <- paste0(rep(paste0('tau', 1:(Dw+1)), d+1), unlist(lapply(1:(d+1), function(d) rep(d, Dw+1))),sep='')
+            colnames(samples$samples)  <- c('k', 'j', paste0('beta',0:(d),  sep=''), 'sigma')
+            colnames(samples$tau)      <- paste0(rep(paste0('tau', 0:(Dw)), d+1), unlist(lapply(0:(d), function(d) rep(d, Dw+1))),sep='')
         }else{
-            colnames(samples$samples)  <- c('k', 'j', paste0('beta',1:(d+1),  sep=''))
-            colnames(samples$tau)      <- paste0(rep(paste0('tau', 1:(Dw+1)), d+1), unlist(lapply(1:(d+1), function(d) rep(d, Dw+1))),sep='')
+            colnames(samples$samples)  <- c('k', 'j', paste0('beta',0:(d),  sep=''))
+            colnames(samples$tau)      <- paste0(rep(paste0('tau', 0:(Dw)), d+1), unlist(lapply(0:(d), function(d) rep(d, Dw+1))),sep='')
         }
     }
 
@@ -305,6 +318,17 @@ hdpGLM <- function(formula1, formula2=NULL, data, weights=NULL, mcmc, K=100, fix
     if(family=='binomial') attr(samples$samples, 'terms') = data.frame(term = c(colnames(X)         ) , Parameter=c(stringr::str_subset(colnames(samples$samples), pattern="beta")) )
     attr(samples$samples, 'mcpar')[2] = mcmc$n.iter
     class(samples)                    = ifelse(is.null(W), 'dpGLM', 'hdpGLM')
+    if (class(samples) == 'hdpGLM') {
+        attr(samples$tau, "terms")  = data.frame(Parameter = samples$tau %>% colnames %>% sort,
+                                                 beta = paste0("beta",rep(0:d, Dw+1))) %>%
+            dplyr::mutate(beta = as.character(beta))  %>%
+            dplyr::left_join(., attr(samples$samples, "terms") %>%
+                                dplyr::rename(beta = Parameter)  %>%
+                                dplyr::mutate(beta = as.character(beta))
+                           , by=c('beta')) %>%
+            dplyr::rename(term.beta = term) %>%
+            dplyr::bind_cols(., data.frame(term.tau = lapply(colnames(W), function(x) rep(x, times=d+1) ) %>% unlist)) 
+    }
 
     samples$time_elapsed = T.mcmc
     return(samples)
