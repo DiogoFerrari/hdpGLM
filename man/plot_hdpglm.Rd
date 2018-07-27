@@ -6,7 +6,7 @@
 \usage{
 plot_hdpglm(samples, X = NULL, W = NULL, ncol.taus = 1,
   ncol.betas = NULL, ncol.w = NULL, nrow.w = NULL, smooth.line = FALSE,
-  pred.pexp.beta = FALSE)
+  pred.pexp.beta = FALSE, title.tau = NULL, true.tau = NULL)
 }
 \arguments{
 \item{samples}{an output of the function \code{\link{hdpGLM}}}
@@ -21,7 +21,13 @@ plot_hdpglm(samples, X = NULL, W = NULL, ncol.taus = 1,
 
 \item{ncol.w}{integer with the number of columns to use to diaplay the different context-level covariates}
 
-\item{nrow.w}{integer with the number of rows to use to diaplay the different context-level covariates
+\item{nrow.w}{integer with the number of rows to use to diaplay the different context-level covariates}
+
+\item{smooth.line}{boolean, if \code{TRUE} the plot will display a regression line representing the regression of the posterior expectation of the linear coefficients betas on the context-level covariates. Default \code{FALSE}}
+
+\item{pred.pexp.beta}{boolean, if \code{TRUE} the plots will display a line with the predicted posterior expectation of betas obtained using the posterior expectation of taus, the linear coefficients of the expectation of beta}
+
+\item{title.tau}{string, the title for the posterior distribution of the context effects
 
 set.seed(66)
 n = 20    # sample size
@@ -44,9 +50,7 @@ plot_hdpglm(samples, ncol.taus=2, ncol.betas=2, X='X1', ncol.w=2, nrow.w=1)
 plot_hdpglm(samples, ncol.taus=2, ncol.betas=2, X='X1', ncol.w=2, nrow.w=1,
             pred.pexp.beta=TRUE,smooth.line=TRUE, )}
 
-\item{smooth.line}{boolean, if \code{TRUE} the plot will display a regression line representing the regression of the posterior expectation of the linear coefficients betas on the context-level covariates. Default \code{FALSE}}
-
-\item{pred.pexp.beta}{boolean, if \code{TRUE} the plots will display a line with the predicted posterior expectation of betas obtained using the posterior expectation of taus, the linear coefficients of the expectation of beta}
+\item{true.tau}{a \code{data.frame} with four columns. The first must be named \code{w} and it indicates the index of each context-level covariate, starting with 0 for the intercept term. The second column named \code{beta} must contain the indexes of the betas of individual-level covariates, starting with 0 for the intercept term. The third column named \code{Parameter} must be named \code{tau<w><beta>}, where \code{w} and \code{beta} must be the actual values displayed in the columns \code{w} and \code{beta}. Finally, it must have a column named \code{True} with the true value of the parameter.}
 }
 \description{
 this function creates a plot with two grids. One is the grid with posterior expectation of betas as function of context-level covariates. The other is the posterior distribution of tau

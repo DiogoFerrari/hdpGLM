@@ -688,6 +688,69 @@ summary.hdpGLM_data <- function(object, ...)
         dplyr::rename(w = dw, beta = dx) 
     return(list(data = summary(x$data),beta=betas, tau=taus))
 }
+## {{{ docs }}}
+#' Plot simulated data
+#'
+#' Create a plot with the beta sampled from its distribution, as a function of context-level feature $W$
+#'
+#'
+#' @param data the output of the function \code{\link{hdpGLM_simulateData}} 
+#' @param w.idx integer, the index of the context level covariate the plot
+#' @param ncol integer, the number of columns in the grid of the plot
+#'
+#' @export
+## }}}
+plot_beta_sim <- function(data, w.idx, ncol=NULL)
+{
+    W = data$parameter$W %>%
+        tibble::as_data_frame(.)  %>% 
+        dplyr::mutate(W0=1, j=1:nrow(.))
+    taus = summary(data)$tau %>%
+                       tibble::as_data_frame(.)  %>%
+                       dplyr::mutate(beta = paste0('beta', beta, sep=''),
+                                     w = paste0('W', w, sep=''),
+                                     tau.label = paste0(stringr::str_extract(Parameter, 'tau') , '[', stringr::str_extract(Parameter, '[0-9]+') ,']'),
+                                     w.label   = paste0(stringr::str_extract(w, 'W') , '[', stringr::str_extract(w, '[0-9]+') ,']'))  %>%
+                       dplyr::group_by(beta) %>%
+                       dplyr::mutate(beta.exp        = paste0(paste0(tau.label, w.label), collapse="~+~"),
+                                     beta.exp.values = paste0(paste0(round(True, 2), "~", w.label), collapse="~+~"),
+                                     )  %>%
+                       dplyr::ungroup(.)  %>%
+                       dplyr::mutate(beta.exp = stringr::str_replace(string=beta.exp, pattern="W\\[0\\]", replacement=""),
+                                     beta.exp.values = stringr::str_replace(string=beta.exp.values, pattern="W\\[0\\]", replacement=""),
+                                     ) 
+    betas = summary(data)$beta %>%
+                        dplyr::full_join(., W , by=c("j"))  %>%
+                        tidyr::gather(key = w, value=W, dplyr::contains("W") )  %>%
+                        dplyr::left_join(., taus %>% dplyr::select(dplyr::contains("beta")) , by=c('Parameter'="beta")) 
+    parameters = betas %>%
+        dplyr::full_join(., taus , by=c("w", "Parameter"="beta"), suffix=c(".beta", ".tau")) 
+    parameters = parameters %>%
+        dplyr::mutate(
+                   Parameter = paste0("E(", stringr::str_extract(Parameter, 'beta') , '[', stringr::str_extract(Parameter, '[0-9]+') ,'])'),
+                   Parameter.tau = paste0(stringr::str_extract(Parameter.tau,'tau'),'[',
+                                          stringr::str_extract(Parameter.tau,'[0-9]+') ,']'),
+                   order = paste0(stringr::str_extract(w, '[0-9]+'),  sep=''),
+                   facet = paste0(Parameter, "==", beta.exp.values.tau)) 
+    ## plot
+    g = parameters %>% 
+        tidyr::separate(., col=w, into=c("w.label", "w.idx"), sep="W", remove=FALSE) %>%
+        dplyr::mutate(w.idx = as.numeric(w.idx))  %>%
+        dplyr::filter(w.idx == !!w.idx) %>% 
+        ggplot2::ggplot(.)+
+        ggplot2::geom_point(ggplot2::aes(x=W, y=True.beta, colour=as.factor(k)), size=2, alpha=.5) +
+        ggplot2::geom_smooth(ggplot2::aes(x=W, y=True.beta), colour='grey40', size=.5, fill='grey80', method="lm") +
+        ggplot2::facet_wrap( ~ facet, ncol = ncol, scales='free', labeller=ggplot2::label_parsed) +
+        ggplot2::ylab(bquote("True randomly generated values of "~beta))+
+        ggplot2::theme_bw()+
+        ggplot2::theme(strip.background = ggplot2::element_rect(colour="white", fill="white"),
+                       strip.text.x = ggplot2::element_text(size=12, face='bold', hjust=0),
+                       strip.text.y = ggplot2::element_text(size=12, face="bold", vjust=0)) +
+        ggplot2::scale_colour_brewer(palette='Dark2', name="Cluster (k)")+
+        ggplot2::xlab(bquote(W[.(w.idx)]))+
+        ggplot2::theme(legend.position = "top") 
+    return(g)
+} 
 ## =====================================================
 ## ancillary function
 ## =====================================================
@@ -793,6 +856,7 @@ dpGLM_select_non_zero <- function(x, select_perc_time_active=60)
 #' @param show.all.taus  boolean, if \code{FALSE} (default) the posterior distribution of taus representing the intercept of the expectation of beta are omitted
 #' @param show.all.betas boolean, if \code{FALSE} (default) the taus affecting only the intercept terms of the outcome variable are omitted
 #' @param ncol number of columns of the grid. If \code{NULL}, one column is used
+#' @param title string, title of the plot
 #'
 #' @examples
 #' set.seed(66)
@@ -825,7 +889,7 @@ dpGLM_select_non_zero <- function(x, select_perc_time_active=60)
 #' 
 #' @export
 ## }}}
-plot_tau <- function(samples, X=NULL, W=NULL, true.tau=NULL, show.all.taus=FALSE, show.all.betas=FALSE, ncol=NULL)
+plot_tau <- function(samples, X=NULL, W=NULL, title=NULL, true.tau=NULL, show.all.taus=FALSE, show.all.betas=FALSE, ncol=NULL)
 {
     ## keep all default options
     op.default <- options()
@@ -911,6 +975,10 @@ plot_tau <- function(samples, X=NULL, W=NULL, true.tau=NULL, show.all.taus=FALSE
                                          name=' ') 
 
     }
+    if (is.null(title)) {
+        g = g +
+            ggplot2::ggtitle(label="Posterior distribution of context effect", subtitle="")
+    }
     return(g)
 
 }
@@ -926,6 +994,7 @@ plot_tau <- function(samples, X=NULL, W=NULL, true.tau=NULL, show.all.taus=FALSE
 #' @param ncol.beta integer with number of rows of the grid used for each group of context-level covariates
 #' @param nrow.w integer with the number of rows of the grid
 #' @param ncol.w integer with the number of columns of the grid
+#' @param ylab string, the label of the y-axis 
 #'
 #' @examples
 #' set.seed(66)
@@ -961,7 +1030,7 @@ plot_tau <- function(samples, X=NULL, W=NULL, true.tau=NULL, show.all.taus=FALSE
 #' 
 #' @export
 ## }}}
-plot_pexp_beta <- function(samples, X=NULL, W=NULL, smooth.line=FALSE, pred.pexp.beta=FALSE, ncol.beta=NULL, nrow.w=NULL, ncol.w=NULL)
+plot_pexp_beta <- function(samples, X=NULL, W=NULL, pred.pexp.beta=FALSE, ncol.beta=NULL, ylab=NULL, nrow.w=NULL, ncol.w=NULL, smooth.line=FALSE)
 {
     ## Debug/Monitoring message --------------------------
     msg <- paste0('\n','\nGeneting plots ...\n',  '\n'); cat(msg)
@@ -1027,11 +1096,15 @@ plot_pexp_beta <- function(samples, X=NULL, W=NULL, smooth.line=FALSE, pred.pexp
             ## facet_grid( W ~ Parameter.facet ,  scales='free_x',labeller=label_parsed ) +
             ggplot2::facet_wrap( ~  Parameter.facet , ncol=ncol.beta, scales='free',labeller=ggplot2::label_parsed ) +
             ggplot2::scale_colour_brewer(palette='BrBG', name="Cluster") +
-            ggplot2::ylab(bquote(E(beta~"|"~ .)~"(Posterior expectation of "~beta~")")) +
             ggplot2::theme_bw()+
             ggplot2::theme(strip.background = ggplot2::element_rect(colour="white", fill="white"),
                            strip.text.x = ggplot2::element_text(size=12, face='bold', hjust=0),
                            strip.text.y = ggplot2::element_text(size=12, face="bold", vjust=0)) 
+        if (is.null(ylab)) {
+            plots[[i]] = plots[[i]] +
+                ## ggplot2::ylab(bquote(E(beta~"|"~ .)~"(Posterior expectation of "~beta~")")) 
+                ggplot2::ylab("Posterior expectation") 
+        }
         if (smooth.line) {
             plots[[i]] = plots[[i]] + ggplot2::geom_smooth(ggplot2::aes_string(x=w, y="Mean"), colour='grey40', size=.5, fill='grey80', method="lm") 
         }
@@ -1041,7 +1114,9 @@ plot_pexp_beta <- function(samples, X=NULL, W=NULL, smooth.line=FALSE, pred.pexp
                 dplyr::left_join(., betas %>% dplyr::select(Parameter, Parameter.facet, term) , by=c("beta"="Parameter")) %>%
                 dplyr::filter(term %in% X) 
             plots[[i]] = plots[[i]] +
-                ggplot2::geom_line(data= pred, ggplot2::aes_string(x=w, y="E.beta.pred", group="beta", colour=NULL)) 
+                ggplot2::geom_line(data= pred %>% dplyr::mutate(linetype="Fitted line using posterior \nexpectation of context effect") ,
+                                   ggplot2::aes_string(x=w, y="E.beta.pred", group="beta", colour=NULL, linetype="linetype")) +
+                ggplot2::scale_linetype_manual(values = "solid", name="") 
         }
     }
     g = ggpubr::ggarrange(plotlist=plots, nrow=nrow.w, ncol=ncol.w, common.legend=T)
@@ -1157,6 +1232,7 @@ hdpglm_get_new_data          <- function(data, n, x, cat.values=NULL)
 #' @param ncol.betas integer with the number of columns of the posterior expectation of betas as function of context-level features
 #' @param ncol.w integer with the number of columns to use to diaplay the different context-level covariates
 #' @param nrow.w integer with the number of rows to use to diaplay the different context-level covariates
+#' @param title.tau string, the title for the posterior distribution of the context effects
 #'
 #' set.seed(66)
 #' n = 20    # sample size
@@ -1182,13 +1258,13 @@ hdpglm_get_new_data          <- function(data, n, x, cat.values=NULL)
 #'
 #' @export
 ## }}}
-plot_hdpglm <- function(samples, X=NULL, W=NULL, ncol.taus=1, ncol.betas=NULL, ncol.w=NULL, nrow.w=NULL, smooth.line=FALSE, pred.pexp.beta=FALSE)
+plot_hdpglm <- function(samples, X=NULL, W=NULL, ncol.taus=1, ncol.betas=NULL, ncol.w=NULL, nrow.w=NULL, smooth.line=FALSE, pred.pexp.beta=FALSE, title.tau=NULL, true.tau=NULL)
 {
     
     ## Debug/Monitoring message --------------------------
     msg <- paste0('\n','\nPlot being generated ...\n',  '\n'); cat(msg)
     ## ---------------------------------------------------
-    g1 = plot_tau(samples, X=X, W=W, ncol=ncol.taus)
+    g1 = plot_tau(samples, X=X, W=W, ncol=ncol.taus, title=title.tau, true.tau=true.tau)
     g2 = plot_pexp_beta(samples, X=X, W=W, ncol.beta=ncol.betas, ncol.w=ncol.w, nrow.w=nrow.w, smooth.line=smooth.line, pred.pexp.beta= pred.pexp.beta) 
     
     g = ggpubr::ggarrange(plotlist=list(g2,g1), nrow=2)

@@ -4,9 +4,9 @@
 \alias{plot_pexp_beta}
 \title{Plot posterior expectation of beta in each context}
 \usage{
-plot_pexp_beta(samples, X = NULL, W = NULL, smooth.line = FALSE,
-  pred.pexp.beta = FALSE, ncol.beta = NULL, nrow.w = NULL,
-  ncol.w = NULL)
+plot_pexp_beta(samples, X = NULL, W = NULL, pred.pexp.beta = FALSE,
+  ncol.beta = NULL, ylab = NULL, nrow.w = NULL, ncol.w = NULL,
+  smooth.line = FALSE)
 }
 \arguments{
 \item{samples}{an output of the function \code{\link{hdpGLM}}}
@@ -15,15 +15,17 @@ plot_pexp_beta(samples, X = NULL, W = NULL, smooth.line = FALSE,
 
 \item{W}{a string vector with the name of a context-level covariate(s) whose linear effect will be displayed. If \code{NULL}, the linear effect tau of all context-level covariates are displayed. Note: the context-level covariate must have been included in the estimation of the model.}
 
-\item{smooth.line}{boolean, if \code{TRUE} the plot will display a regression line representing the regression of the posterior expectation of the linear coefficients betas on the context-level covariates. Default \code{FALSE}}
-
 \item{pred.pexp.beta}{boolean, if \code{TRUE} the plots will display a line with the predicted posterior expectation of betas obtained using the posterior expectation of taus, the linear coefficients of the expectation of beta}
 
 \item{ncol.beta}{integer with number of rows of the grid used for each group of context-level covariates}
 
+\item{ylab}{string, the label of the y-axis}
+
 \item{nrow.w}{integer with the number of rows of the grid}
 
 \item{ncol.w}{integer with the number of columns of the grid}
+
+\item{smooth.line}{boolean, if \code{TRUE} the plot will display a regression line representing the regression of the posterior expectation of the linear coefficients betas on the context-level covariates. Default \code{FALSE}}
 }
 \description{
 This function plots the posterior expectation of beta, the linear effect of the individual level covariates, as function of the context-level covariates

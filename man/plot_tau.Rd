@@ -4,7 +4,7 @@
 \alias{plot_tau}
 \title{Plot tau}
 \usage{
-plot_tau(samples, X = NULL, W = NULL, true.tau = NULL,
+plot_tau(samples, X = NULL, W = NULL, title = NULL, true.tau = NULL,
   show.all.taus = FALSE, show.all.betas = FALSE, ncol = NULL)
 }
 \arguments{
@@ -13,6 +13,8 @@ plot_tau(samples, X = NULL, W = NULL, true.tau = NULL,
 \item{X}{a string vector with the name of the first-level covariates whose associated tau should be displayed}
 
 \item{W}{a string vector with the name of a context-level covariate(s) whose linear effect will be displayed. If \code{NULL}, the linear effect tau of all context-level covariates are displayed. Note: the context-level covariate must have been included in the estimation of the model.}
+
+\item{title}{string, title of the plot}
 
 \item{true.tau}{a \code{data.frame} with four columns. The first must be named \code{w} and it indicates the index of each context-level covariate, starting with 0 for the intercept term. The second column named \code{beta} must contain the indexes of the betas of individual-level covariates, starting with 0 for the intercept term. The third column named \code{Parameter} must be named \code{tau<w><beta>}, where \code{w} and \code{beta} must be the actual values displayed in the columns \code{w} and \code{beta}. Finally, it must have a column named \code{True} with the true value of the parameter.}
 

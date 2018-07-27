@@ -181,33 +181,98 @@ arma::mat hdpGLM_update_theta(arma::colvec y, arma::mat X, arma::mat W, arma::co
 
 // tau
 // ---
-arma::mat hdpGLM_update_tau(arma::mat W, int K, int Dx, arma::mat theta, List fix)
-{
-  int Dw = W.n_cols -1;
-  arma::mat Sigma_tau  = fix["Sigma_tau"];
-  arma::mat Sigma_beta = fix["Sigma_beta"];
-  double    sigma_beta = Sigma_beta(0,0);
-  arma::mat tau = arma::zeros(Dw+1, Dx+1);
-  arma::mat muAk(Dw+1, K);
+// arma::mat hdpGLM_update_tau(arma::mat W, int K, int Dx, arma::mat theta, List fix)
+// {
+//   int Dw = W.n_cols -1;
+//   arma::mat Sigma_tau  = fix["Sigma_tau"];
+//   arma::mat Sigma_beta = fix["Sigma_beta"];
+//   double    sigma_beta = Sigma_beta(0,0);
+//   arma::mat tau = arma::zeros(Dw+1, Dx+1);
+//   arma::mat muAk(Dw+1, K);
 
-  arma::mat SA = ( Sigma_tau.i() * pow(sigma_beta,2) + W.t()*W ).i();
-  arma::mat SigmaA = SA * pow(sigma_beta, 2);
-  arma::mat Sigma_bar_tau_d = (1.0/K) * SigmaA;
+//   arma::mat SA = ( Sigma_tau.i() * pow(sigma_beta,2) + W.t()*W ).i();
+//   arma::mat SigmaA = SA * pow(sigma_beta, 2);
+//   arma::mat Sigma_bar_tau_d = (1.0/K) * SigmaA;
+
+//   for(int d = 0; d < Dx+1; d++){
+//     arma::colvec betadk;
+//     arma::colvec mu_tau_d(Dw+1);
+//     for(int k = 1; k <= K; k++){
+//       arma::uvec idx_k = find(theta.col(0) == k);
+//       arma::colvec betad = theta.col(d+2);
+//       betadk = betad(idx_k);
+//       muAk.col(k-1) = SA * W.t() * betadk;
+//     }
+//     mu_tau_d   = (1.0/K) * sum(muAk, 1);
+//     tau.col(d) = rmvnormArma(1, mu_tau_d, Sigma_bar_tau_d).t();
+//   }
+//   return(tau);
+// }
+
+arma::mat hdpGLM_update_tau(arma::mat W, arma::colvec C, arma::colvec Z, int K, int Dx, arma::mat theta, List fix)
+{
+  // constants
+  // ---------
+  int J  = W.n_rows;
+  int Dw = W.n_cols - 1;
+  arma::uvec idx_cols_theta = arma::linspace<arma::uvec>(0, Dx+2, Dx+1+2);// 1st col of theta k (index 0), second j (index 1), third beta0 (idx 2=0+2), beta1 (idx 3=1+2) and lastly betaDx (idx Dx+2), Dx+1 cols of betas +2 (j and k)
+  arma::uvec idx_cols_beta = arma::linspace<arma::uvec>(2, Dx+2, Dx+1); // 1st col of theta k (index 0), second j (index 1), third beta0 (idx 2=0+2), beta1 (idx 3=1+2) and lastly betaDx (idx Dx+2), Dx+1 cols of betas +2 (j and k)
+
+  arma::mat Sigma_tau	= fix["Sigma_tau"];
+  arma::mat Sigma_beta	= fix["Sigma_beta"];
+  double    sigma_beta	= Sigma_beta(0,0);
+  arma::mat tau		= arma::zeros(Dw+1, Dx+1);
+  
+  // get J_star, beta_star, and W_star
+  arma::mat J_star	= arma::zeros(0, 3);
+  arma::mat beta_star	= arma::zeros(0, Dx+1);
+  arma::mat W_star	= arma::zeros(0, Dw+1);
+  int m = 1;
+  // get active cluster for each context
+  for(int j = 1; j <= J; j++){
+    arma::uvec    idx_j = find(C == j);
+    arma::colvec Zjstar = unique(Z.elem(idx_j));
+    // resize and add Zjstar elements to J_star given the current context j
+    J_star.resize(J_star.n_rows + Zjstar.n_rows, J_star.n_cols);
+    beta_star.resize(beta_star.n_rows + Zjstar.n_rows, beta_star.n_cols);
+    W_star.resize(W_star.n_rows + Zjstar.n_rows, W_star.n_cols);
+    for(int Z_idx = 0; Z_idx < Zjstar.n_rows; Z_idx++){
+      int k_star = Zjstar(Z_idx);
+      // J_star
+      J_star(m-1, 0) = k_star;
+      J_star(m-1, 1) = j;
+      J_star(m-1, 2) = m;
+      // beta_star
+      arma::uvec idx_j   = find(theta.col(1) == j);  // select first thetaj
+      arma::mat  thetaj  = theta.submat(idx_j, idx_cols_theta);
+      arma::uvec idx_kj  = find(thetaj.col(0) == k_star); // then theta_kj from thetaj 
+      beta_star.row(m-1) = thetaj.submat(idx_kj, idx_cols_beta);
+      // W_star
+      W_star.row(m-1) = W.row(j-1);
+      m+=1;
+    }
+  }
+  // Rcpp::Rcout << "Z\n" << Z.t() << std::endl;
+  // Rcpp::Rcout << "C\n" << C.t() << std::endl;
+  // Rcpp::Rcout << "J_star: \n" << J_star << std::endl;
+  // Rcpp::Rcout << "theta\n" << theta << std::endl;
+  // Rcpp::Rcout << "beta_star\n" << beta_star << std::endl;
+  // Rcpp::Rcout << "W\n" << W << std::endl;
+  // Rcpp::Rcout << "W_star\n" << W_star << std::endl;
+  // Rcpp::Rcout << "J_star: \n" << J_star << std::endl;
+  // stop("Stopping here...");
+
+  // posterior parameters
+  arma::mat Stau          = ( Sigma_tau.i() * pow(sigma_beta,2) + W_star.t()*W_star ).i();
+  arma::mat Sigma_bar_tau = Stau * pow(sigma_beta, 2);
 
   for(int d = 0; d < Dx+1; d++){
-    arma::colvec betadk;
-    arma::colvec mu_tau_d(Dw+1);
-    for(int k = 1; k <= K; k++){
-      arma::uvec idx_k = find(theta.col(0) == k);
-      arma::colvec betad = theta.col(d+2);
-      betadk = betad(idx_k);
-      muAk.col(k-1) = SA * W.t() * betadk;
-    }
-    mu_tau_d   = (1.0/K) * sum(muAk, 1);
-    tau.col(d) = rmvnormArma(1, mu_tau_d, Sigma_bar_tau_d).t();
+    arma::mat mu_bar_tau_d   = Stau * W_star.t() * beta_star.col(d);
+    tau.col(d)               = rmvnormArma(1, mu_bar_tau_d, Sigma_bar_tau).t();
   }
   return(tau);
 }
+
 
 // }}}
 
@@ -259,7 +324,7 @@ List hdpGLM_mcmc(arma::colvec y, arma::mat X, arma::mat W, arma::colvec C, arma:
     pi	     = hdpGLM_update_pi(Z, C, K, fix);
     Z	     = hdpGLM_update_Z(y, X, W, C, pi, K, theta, family);
     theta    = hdpGLM_update_theta(y, X, W, C, Z, K, tau, theta,  fix, family, epsilon, leapFrog, hmc_iter);
-    tau      = hdpGLM_update_tau(W, K, d, theta, fix);
+    tau      = hdpGLM_update_tau(W, C, Z, K, d, theta, fix);
 
 
     // saving samples
