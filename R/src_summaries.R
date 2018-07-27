@@ -271,6 +271,7 @@ summary.hdpGLM <- function(object, ...)
 #' @param colour = string with color to fill the density plot
 #' @param alpha number between 0 and 1 indicating the degree of transparency of the density 
 #' @param display.terms boolean, if \code{TRUE} (default), the covariate name is displayed in the plot
+#' @param plot.mean boolean, if \code{TRUE} the posterior mean of every cluster is displayed 
 #' @param ... ignored 
 #'
 #'
@@ -283,14 +284,29 @@ summary.hdpGLM <- function(object, ...)
 #' 
 #' @export
 ## }}}
-plot.dpGLM    <- function(x, terms=NULL, separate=FALSE, hpd=TRUE, true.beta=NULL, title=NULL, subtitle=NULL, adjust=.3, ncols=NULL, only.occupied.clusters=TRUE, focus.hpd=FALSE, legend.position="top", colour='grey', alpha=.4, display.terms=TRUE, ...)
+plot.dpGLM    <- function(x, terms=NULL, separate=FALSE, hpd=TRUE, true.beta=NULL, title=NULL, subtitle=NULL, adjust=1, ncols=NULL, only.occupied.clusters=TRUE, focus.hpd=FALSE, legend.position="top", colour='grey', alpha=.4, display.terms=TRUE, plot.mean=TRUE, ...)
 {
+    ## keep all default options
+    op.default <- options()
+    on.exit(options(op.default), add=TRUE)
+    ## keep current working folder on exit
+    dir.default <- getwd()
+    on.exit(setwd(dir.default), add=TRUE)
+    ## no warning messages
+    options(warn=-1)
+    on.exit(options(warn=0))
+
+    ## Debug/Monitoring message --------------------------
+    msg <- paste0('\n','\nGenerating plot...\n',  '\n'); cat(msg)
+    ## ---------------------------------------------------
+
     x = dpGLM_get_occupied_clusters(x)
     tab = x$samples %>%
         tibble::as_data_frame(.) %>%
         dplyr::select(-dplyr::contains("sigma"))  %>%
         tidyr::gather(key = Parameter, value=values, -k) %>%
-        dplyr::full_join(., summary(x) %>% dplyr::select(term, Parameter) %>% dplyr::filter(Parameter!='sigma')   , by=c('Parameter'))  %>% 
+        dplyr::left_join(., summary(x) %>% dplyr::select(k, Parameter, term, Mean, dplyr::contains("HPD")) , by=c("k", "Parameter"))  %>% 
+        ## dplyr::full_join(., summary(x) %>% dplyr::select(term, Parameter) %>% dplyr::filter(Parameter!='sigma')   , by=c('Parameter'))  %>% 
         dplyr::mutate(Parameter = paste0(stringr::str_extract(Parameter, 'beta') , '[', stringr::str_extract(Parameter, '[0-9]+') ,']'),
                       k = paste0("Cluster~", k, sep='')) 
     if (!is.null(terms)) 
@@ -302,7 +318,7 @@ plot.dpGLM    <- function(x, terms=NULL, separate=FALSE, hpd=TRUE, true.beta=NUL
             dplyr::mutate(Parameter = paste0(stringr::str_extract(Parameter, 'beta') , '[', stringr::str_extract(Parameter, '[0-9]+') ,']'),
                           Cluster = paste0("Cluster~", k, sep=''))
         tab = tab %>%
-            dplyr::left_join(., true , by=c("Parameter", "k"="Cluster"))
+            dplyr::left_join(., true  %>% dplyr::select(-dplyr::contains("HPD"), -dplyr::contains("Mean")) , by=c("Parameter", "k"="Cluster"))
     }
     if (focus.hpd) {
         tab = tab %>%
@@ -321,11 +337,11 @@ plot.dpGLM    <- function(x, terms=NULL, separate=FALSE, hpd=TRUE, true.beta=NUL
         ## geom_line(aes(x=values, group=Parameter), colour="#00000044", stat='density', alpha=1) +
         ## ggplot2::geom_density(ggplot2::aes(x=values, group=Parameter), fill="#00000028", adjust=adjust) +
         ggplot2::geom_density(ggplot2::aes(x=values, group=Parameter), fill=colour, adjust=adjust, alpha=alpha) +
-        ## geom_vline(data=tab, aes(xintercept=Mean,  linetype='solid', col="black")) +
+        ## ggplot2::geom_vline(data=tab, ggplot2::aes(xintercept=Mean,  linetype='solid', col="black")) +
         ## geom_vline(data=tab, aes(xintercept=HPD.lower,  linetype='dashed'), col="black") +
         ## geom_vline(data=tab, aes(xintercept=HPD.upper,  linetype='dashed'), col="black") +
         ## scale_linetype_manual(values=c('solid', 'dashed'), labels=c("True", "95% HPDI"), name='') +
-        ggplot2::scale_colour_manual(values = "red", name='', labels='True') +
+        ## ggplot2::scale_colour_manual(values = "red", name='', labels='True') +
         ggplot2::ylab('Density') +
         ggplot2::theme_bw()+
         ggplot2::scale_x_continuous(expand = c(0, 0)) +
@@ -335,22 +351,87 @@ plot.dpGLM    <- function(x, terms=NULL, separate=FALSE, hpd=TRUE, true.beta=NUL
                        strip.text.y = ggplot2::element_text(size=12, face="bold", vjust=0)) +
         ggplot2::theme(legend.position = legend.position) 
 
-    ## separate betas by cluster ?
-    if(!separate){
-        g = g + ggplot2::facet_wrap( ~ Parameter, ncol = ncols, scales='free', labeller=ggplot2::label_parsed)
-    }else{
-        if(!is.null(true.beta) & !focus.hpd){
-            g = g + ggplot2::facet_wrap(~  k + Parameter , ncol=ncols,  scales='free', labeller=ggplot2::label_parsed) +
-                ggplot2::geom_vline(data=tab, ggplot2::aes(xintercept=HPD.lower,  linetype='dashed'), col="black") +
-                ggplot2::geom_vline(data=tab, ggplot2::aes(xintercept=HPD.upper,  linetype='dashed'), col="black")  +
-                ggplot2::scale_linetype_manual(values='dashed', name='', labels="95% HPD")
-        }else{
-            g = g + ggplot2::facet_wrap(~  k + Parameter , ncol=ncols,  scales='free', labeller=ggplot2::label_parsed) 
+    if (!is.null(true.beta)) {
+        if( plot.mean & separate){
+            g = g +
+                ggplot2::geom_vline(data=tab, ggplot2::aes(xintercept=True, col="True",  linetype='True')) +
+                ggplot2::geom_vline(data=tab, ggplot2::aes(xintercept=Mean,  linetype='Mean', col="Mean")) +
+                ggplot2::geom_vline(data=tab, ggplot2::aes(xintercept=HPD.lower,  linetype='95% HPD', col="95% HPD")) +
+                ggplot2::geom_vline(data=tab, ggplot2::aes(xintercept=HPD.upper,  linetype='95% HPD', col="95% HPD"))  +
+                ggplot2::scale_linetype_manual(values=c('dashed', "solid", "solid"), name='', labels=c( "95% HPD", "Mean", "True"))+
+                ggplot2::scale_color_manual   (values=c('black', "black", "red"), name='', labels=c( "95% HPD", "Mean", "True")) +
+                ggplot2::facet_wrap(~  k + Parameter , ncol=ncols,  scales='free', labeller=ggplot2::label_parsed) 
         }
-    }
-    ## true beta
-    if(!is.null(true.beta)){
-        g = g + ggplot2::geom_vline(data=tab, ggplot2::aes(xintercept=True, col="red"),  linetype='solid') 
+        if( !plot.mean & separate){
+            g = g +
+                ggplot2::geom_vline(data=tab, ggplot2::aes(xintercept=True, col="True",  linetype='True')) +
+                ## ggplot2::geom_vline(data=tab, ggplot2::aes(xintercept=Mean,  linetype='Mean', col="Mean")) +
+                ggplot2::geom_vline(data=tab, ggplot2::aes(xintercept=HPD.lower,  linetype='95% HPD', col="95% HPD")) +
+                ggplot2::geom_vline(data=tab, ggplot2::aes(xintercept=HPD.upper,  linetype='95% HPD', col="95% HPD"))  +
+                ggplot2::scale_linetype_manual(values=c('dashed',  "solid"), name='', labels=c( "95% HPD",  "True"))+
+                ggplot2::scale_color_manual   (values=c('black',  "red"), name='', labels=c( "95% HPD", "True")) +
+                ggplot2::facet_wrap(~  k + Parameter , ncol=ncols,  scales='free', labeller=ggplot2::label_parsed) 
+        } 
+        if( plot.mean & !separate){
+            g = g +
+                ggplot2::geom_vline(data=tab, ggplot2::aes(xintercept=True, col="True",  linetype='True')) +
+                ggplot2::geom_vline(data=tab, ggplot2::aes(xintercept=Mean,  linetype='Mean', col="Mean")) +
+                ## ggplot2::geom_vline(data=tab, ggplot2::aes(xintercept=HPD.lower,  linetype='95% HPD', col="95% HPD")) +
+                ## ggplot2::geom_vline(data=tab, ggplot2::aes(xintercept=HPD.upper,  linetype='95% HPD', col="95% HPD"))  +
+                ggplot2::scale_linetype_manual(values=c('solid',  "solid"), name='', labels=c( "Cluster Mean",  "True"))+
+                ggplot2::scale_color_manual   (values=c('black',  "red"), name='', labels=c( "Cluster Mean", "True")) +
+                ggplot2::facet_wrap( ~ Parameter, ncol = ncols, scales='free', labeller=ggplot2::label_parsed)
+        } 
+        if( !plot.mean & !separate){
+            g = g +
+                ggplot2::geom_vline(data=tab, ggplot2::aes(xintercept=True, col="True",  linetype='True')) +
+                ## ggplot2::geom_vline(data=tab, ggplot2::aes(xintercept=Mean,  linetype='Mean', col="Mean")) +
+                ## ggplot2::geom_vline(data=tab, ggplot2::aes(xintercept=HPD.lower,  linetype='95% HPD', col="95% HPD")) +
+                ## ggplot2::geom_vline(data=tab, ggplot2::aes(xintercept=HPD.upper,  linetype='95% HPD', col="95% HPD"))  +
+                ggplot2::scale_linetype_manual(values=c(  "solid"), name='', labels=c(   "True"))+
+                ggplot2::scale_color_manual   (values=c(  "red"), name='', labels=c(  "True")) +
+                ggplot2::facet_wrap( ~ Parameter, ncol = ncols, scales='free', labeller=ggplot2::label_parsed)
+        } 
+    }else{## no true.beta
+        if( plot.mean & separate){
+            g = g +
+                ggplot2::geom_vline(data=tab, ggplot2::aes(xintercept=Mean,  linetype='Mean', col="Mean")) +
+                ggplot2::geom_vline(data=tab, ggplot2::aes(xintercept=HPD.lower,  linetype='95% HPD', col="95% HPD")) +
+                ggplot2::geom_vline(data=tab, ggplot2::aes(xintercept=HPD.upper,  linetype='95% HPD', col="95% HPD"))  +
+                ggplot2::scale_linetype_manual(values=c('dashed', "solid"), name='', labels=c( "95% HPD", "Mean"))+
+                ggplot2::scale_color_manual   (values=c('black', "black"), name='', labels=c( "95% HPD", "Mean")) +
+                ggplot2::facet_wrap(~  k + Parameter , ncol=ncols,  scales='free', labeller=ggplot2::label_parsed) 
+        }
+        if( !plot.mean & separate){
+            g = g +
+                ## ggplot2::geom_vline(data=tab, ggplot2::aes(xintercept=True, col="True",  linetype='True')) +
+                ## ggplot2::geom_vline(data=tab, ggplot2::aes(xintercept=Mean,  linetype='Mean', col="Mean")) +
+                ggplot2::geom_vline(data=tab, ggplot2::aes(xintercept=HPD.lower,  linetype='95% HPD', col="95% HPD")) +
+                ggplot2::geom_vline(data=tab, ggplot2::aes(xintercept=HPD.upper,  linetype='95% HPD', col="95% HPD"))  +
+                ggplot2::scale_linetype_manual(values=c('dashed'  ), name='', labels=c( "95% HPD"  ))+
+                ggplot2::scale_color_manual   (values=c('black' ), name='', labels=c( "95% HPD" )) +
+                ggplot2::facet_wrap(~  k + Parameter , ncol=ncols,  scales='free', labeller=ggplot2::label_parsed) 
+        } 
+        if( plot.mean & !separate){
+            g = g +
+                ## ggplot2::geom_vline(data=tab, ggplot2::aes(xintercept=True, col="True",  linetype='True')) +
+                ggplot2::geom_vline(data=tab, ggplot2::aes(xintercept=Mean,  linetype='Mean', col="Mean")) +
+                ## ggplot2::geom_vline(data=tab, ggplot2::aes(xintercept=HPD.lower,  linetype='95% HPD', col="95% HPD")) +
+                ## ggplot2::geom_vline(data=tab, ggplot2::aes(xintercept=HPD.upper,  linetype='95% HPD', col="95% HPD"))  +
+                ggplot2::scale_linetype_manual(values=c('solid'), name='', labels=c( "Cluster Mean"))+
+                ggplot2::scale_color_manual   (values=c('black'), name='', labels=c( "Cluster Mean")) +
+                ggplot2::facet_wrap( ~ Parameter, ncol = ncols, scales='free', labeller=ggplot2::label_parsed)
+        } 
+        if( !plot.mean & !separate){
+            g = g +
+                ## ggplot2::geom_vline(data=tab, ggplot2::aes(xintercept=True, col="True",  linetype='True')) +
+                ## ggplot2::geom_vline(data=tab, ggplot2::aes(xintercept=Mean,  linetype='Mean', col="Mean")) +
+                ## ggplot2::geom_vline(data=tab, ggplot2::aes(xintercept=HPD.lower,  linetype='95% HPD', col="95% HPD")) +
+                ## ggplot2::geom_vline(data=tab, ggplot2::aes(xintercept=HPD.upper,  linetype='95% HPD', col="95% HPD"))  +
+                ## ggplot2::scale_linetype_manual(values=c(  "solid"), name='', labels=c(   "True"))+
+                ## ggplot2::scale_color_manual   (values=c(  "red"), name='', labels=c(  "True")) +
+                ggplot2::facet_wrap( ~ Parameter, ncol = ncols, scales='free', labeller=ggplot2::label_parsed)
+        } 
     }
     ## title and subtitle
     if (!is.null(title)) {
