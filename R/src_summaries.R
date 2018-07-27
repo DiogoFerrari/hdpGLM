@@ -525,8 +525,8 @@ plot.hdpGLM <- function(x, terms=NULL, title=NULL, subtitle=NULL, true.beta=NULL
             ggplot2::ylab('Context Index') +
             ggplot2::theme_bw()+
             ggplot2::theme(strip.background = ggplot2::element_rect(colour="white", fill="white"),
-                           strip.text.x = ggplot2::element_text(size=12, face='bold'),
-                           strip.text.y = ggplot2::element_text(size=12, face="bold")) +
+                           strip.text.x = ggplot2::element_text(size=12, face='bold', hjust=0),
+                           strip.text.y = ggplot2::element_text(size=12, face="bold", vjust=0)) +
             ggplot2::scale_colour_manual(values = c("red", "black"), name="", labels=c('True', "MCMC Cluster Mean")) +
             ggplot2::theme(legend.position = legend.position) +
             ggplot2::xlim(xlim)
@@ -556,8 +556,8 @@ plot.hdpGLM <- function(x, terms=NULL, title=NULL, subtitle=NULL, true.beta=NULL
             ggplot2::facet_wrap( ~ Parameter, ncol = ncol, scales='free', labeller=ggplot2::label_parsed) +
             ggplot2::theme_bw()+
             ggplot2::theme(strip.background = ggplot2::element_rect(colour="white", fill="white"),
-                           strip.text.x = ggplot2::element_text(size=12, face='bold'),
-                           strip.text.y = ggplot2::element_text(size=12, face="bold")) +
+                           strip.text.x = ggplot2::element_text(size=12, face='bold', hjust=0),
+                           strip.text.y = ggplot2::element_text(size=12, face="bold", vjust=0)) +
             ggplot2::xlim(xlim)
 
     }
@@ -574,6 +574,7 @@ plot.hdpGLM <- function(x, terms=NULL, title=NULL, subtitle=NULL, true.beta=NULL
             ggplot2::scale_y_discrete(breaks = context.labels$C, labels = context.labels[,context.label], limits=context.labels$C) +
             ggplot2::ylab(context.label) 
     }
+    
     return(g)
 }
 ## =====================================================
@@ -1007,9 +1008,10 @@ plot_tau <- function(samples, X=NULL, W=NULL, title=NULL, true.tau=NULL, show.al
                       term.tau  = stringr::str_replace(string=term.tau, pattern="\\)", replacement=""),
                       facet     = dplyr::case_when(term.tau == 'Intercept' & term.beta == "Intercept" ~ paste0(Parameter, "~(Intercept~of~expectation~of~", beta.label,")"),
                                                    term.tau == 'Intercept' & term.beta != "Intercept" ~ paste0(Parameter, "~(Intercept~of~expectation~of~", beta.label,")"),
-                                                   term.tau != 'Intercept'  ~ paste0(Parameter, "~(effect~of~", term.tau, "~on~expectation~of~the~",term.beta,"~effect~(", beta.label,"))")
+                                                   term.tau != 'Intercept'  ~ paste0("atop(",Parameter, "(~effect~of~",term.tau, "~on~expectation~of~effect~of~",term.beta,"(", beta.label,")))")
                                                    )
                       )
+    
     ## select parameters to display in the plot
     if (!show.all.taus) tab = tab %>% dplyr::filter(!stringr::str_detect(Parameter, pattern="^tau\\[~o")) 
     if (!show.all.betas) tab = tab %>% dplyr::filter(beta.label != "beta[0]") 
@@ -1039,7 +1041,7 @@ plot_tau <- function(samples, X=NULL, W=NULL, title=NULL, true.tau=NULL, show.al
         ggplot2::theme(legend.position = "top") +
         ggplot2::scale_x_continuous(expand = c(0.0001, 0.0001)) +
         ggplot2::scale_y_continuous(expand = c(0, 0)) +
-        ggplot2::facet_wrap( ~ facet , ncol=ncol, scales='free',labeller = ggplot2::labeller(.cols = ggplot2::label_parsed))  
+        ggplot2::facet_wrap( ~ facet , ncol=ncol, scales='free',labeller = ggplot2::label_parsed)  
  
     
     if (!is.null(true.tau)) {
@@ -1075,7 +1077,8 @@ plot_tau <- function(samples, X=NULL, W=NULL, title=NULL, true.tau=NULL, show.al
 #' @param ncol.beta integer with number of rows of the grid used for each group of context-level covariates
 #' @param nrow.w integer with the number of rows of the grid
 #' @param ncol.w integer with the number of columns of the grid
-#' @param ylab string, the label of the y-axis 
+#' @param ylab string, the label of the y-axis
+#' @param title string, title of the plot 
 #'
 #' @examples
 #' set.seed(66)
@@ -1111,7 +1114,7 @@ plot_tau <- function(samples, X=NULL, W=NULL, title=NULL, true.tau=NULL, show.al
 #' 
 #' @export
 ## }}}
-plot_pexp_beta <- function(samples, X=NULL, W=NULL, pred.pexp.beta=FALSE, ncol.beta=NULL, ylab=NULL, nrow.w=NULL, ncol.w=NULL, smooth.line=FALSE)
+plot_pexp_beta <- function(samples, X=NULL, W=NULL, pred.pexp.beta=FALSE, ncol.beta=NULL, ylab=NULL, nrow.w=NULL, ncol.w=NULL, smooth.line=FALSE, title=NULL)
 {
     ## Debug/Monitoring message --------------------------
     msg <- paste0('\n','\nGeneting plots ...\n',  '\n'); cat(msg)
@@ -1200,7 +1203,13 @@ plot_pexp_beta <- function(samples, X=NULL, W=NULL, pred.pexp.beta=FALSE, ncol.b
                 ggplot2::scale_linetype_manual(values = "solid", name="") 
         }
     }
-    g = ggpubr::ggarrange(plotlist=plots, nrow=nrow.w, ncol=ncol.w, common.legend=T)
+    if (!is.null(title)) {
+        g = ggpubr::ggarrange(plotlist=plots, nrow=nrow.w, ncol=ncol.w, common.legend=T) %>%
+            ggpubr::annotate_figure(., top = ggpubr::text_grob(title, color = "black", size = 14))
+    }else{
+        g = ggpubr::ggarrange(plotlist=plots, nrow=nrow.w, ncol=ncol.w, common.legend=T)
+    }
+    
     return(g)
 }
 fit_pexp_beta <- function(samples, W=NULL)
@@ -1314,6 +1323,7 @@ hdpglm_get_new_data          <- function(data, n, x, cat.values=NULL)
 #' @param ncol.w integer with the number of columns to use to diaplay the different context-level covariates
 #' @param nrow.w integer with the number of rows to use to diaplay the different context-level covariates
 #' @param title.tau string, the title for the posterior distribution of the context effects
+#' @param title.beta string, the title for the posterior expectation of beta as function of context-level covariate
 #'
 #' set.seed(66)
 #' n = 20    # sample size
@@ -1339,14 +1349,14 @@ hdpglm_get_new_data          <- function(data, n, x, cat.values=NULL)
 #'
 #' @export
 ## }}}
-plot_hdpglm <- function(samples, X=NULL, W=NULL, ncol.taus=1, ncol.betas=NULL, ncol.w=NULL, nrow.w=NULL, smooth.line=FALSE, pred.pexp.beta=FALSE, title.tau=NULL, true.tau=NULL)
+plot_hdpglm <- function(samples, X=NULL, W=NULL, ncol.taus=1, ncol.betas=NULL, ncol.w=NULL, nrow.w=NULL, smooth.line=FALSE, pred.pexp.beta=FALSE, title.tau=NULL, true.tau=NULL, title.beta=NULL)
 {
     
     ## Debug/Monitoring message --------------------------
     msg <- paste0('\n','\nPlot being generated ...\n',  '\n'); cat(msg)
     ## ---------------------------------------------------
     g1 = plot_tau(samples, X=X, W=W, ncol=ncol.taus, title=title.tau, true.tau=true.tau)
-    g2 = plot_pexp_beta(samples, X=X, W=W, ncol.beta=ncol.betas, ncol.w=ncol.w, nrow.w=nrow.w, smooth.line=smooth.line, pred.pexp.beta= pred.pexp.beta) 
+    g2 = plot_pexp_beta(samples, X=X, W=W, ncol.beta=ncol.betas, ncol.w=ncol.w, nrow.w=nrow.w, smooth.line=smooth.line, pred.pexp.beta= pred.pexp.beta, title=title.beta) 
     
     g = ggpubr::ggarrange(plotlist=list(g2,g1), nrow=2)
     return(g)
