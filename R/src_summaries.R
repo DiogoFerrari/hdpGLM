@@ -518,7 +518,8 @@ plot.hdpGLM <- function(x, terms=NULL, title=NULL, subtitle=NULL, true.beta=NULL
         }        
         g = tab2 %>%
             ggplot2::ggplot(.) +
-            ggjoy::geom_joy(ggplot2::aes(x=values, y=j, group=j), fill="#00000044") +
+            ## ggjoy::geom_joy(ggplot2::aes(x=values, y=j, group=j), fill="#00000044") +
+            ggridges::geom_density_ridges(ggplot2::aes(x=values, y=j, group=j), fill="#00000044", colour='white', rel_min_height = 0.05) +
             ggplot2::geom_segment(data=tab , ggplot2::aes(x=True, xend=True, y=j, yend=jnext, col='red')) +
             ## ggplot2::geom_segment(data=tab , ggplot2::aes(x=Mean, xend=Mean, y=j, yend=jnext, col='black')) +
             ggplot2::facet_wrap( ~ Parameter, ncol = ncol, scales='free', labeller=ggplot2::label_parsed) +
@@ -551,7 +552,8 @@ plot.hdpGLM <- function(x, terms=NULL, title=NULL, subtitle=NULL, true.beta=NULL
                 tidyr::unite(., Parameter, Parameter, term, sep='~')
         g = tab %>%
             ggplot2::ggplot(.) +
-            ggjoy::geom_joy(ggplot2::aes(x=values, y=j, group=j), fill="#00000044") +
+            ## ggjoy::geom_joy(ggplot2::aes(x=values, y=j, group=j), fill="#00000044") +
+            ggridges::geom_density_ridges(ggplot2::aes(x=values, y=j, group=j), fill="#00000044", colour='white', rel_min_height = 0.05) +
             ggplot2::ylab('Context Index') +
             ggplot2::facet_wrap( ~ Parameter, ncol = ncol, scales='free', labeller=ggplot2::label_parsed) +
             ggplot2::theme_bw()+
