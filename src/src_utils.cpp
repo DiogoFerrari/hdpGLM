@@ -29,7 +29,7 @@ void progress_bar(int t, int T)
       Rcpp::Rcout << " ";
     }
   }
-  Rcpp::Rcout << "] " << int((pos/barWidth)*100.0)<<" %\r";
+  Rcpp::Rcout << "] " << int(fmin((pos/barWidth),1.0)*100.0)<<" %\r";
   Rcpp::Rcout.flush();
 
 }
