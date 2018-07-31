@@ -163,6 +163,7 @@ summary.dpGLM <- function(object, ...)
 ## }}}
 summary.hdpGLM <- function(object, ...)
 {
+
     x = object
     ## get additional parameters ...
     args = as.list(match.call())
@@ -180,11 +181,12 @@ summary.hdpGLM <- function(object, ...)
     Dw = x$context.cov %>% ncol - 1
     Dx = x$samples %>% colnames %>% stringr::str_detect(., pattern="beta") %>% sum - 1
     only.occupied.clusters.in.contexts=TRUE
+    ## summarise beta
+    ## --------------
     if(only.occupied.clusters.in.contexts)   x = hdpGLM_get_occupied_clusters(x)
     if(!is.null(true.beta)){
         ## first we need to match the index of the contexts provided by the user and the one used by the algorithm (see details in the function help)
-        c.covars.names = true.beta %>% dplyr::select(-j,-k, -Parameter, -True) %>% names 
-        true.beta      = true.beta  %>% dplyr::full_join(.,  x$context.cov, by=c.covars.names) %>% dplyr::rename(j.user.provided=j, j=C) 
+        true.beta      = true.beta  %>% dplyr::full_join(.,  x$context.cov, by=c("j"='C')) 
         ## then for each context, we match the clusters based on smaller distance
         betas          = hdpGLM_match_clusters(x, true=true.beta)
     }else{
@@ -197,21 +199,36 @@ summary.hdpGLM <- function(object, ...)
             dplyr::summarize_all(.funs=list(Mean="mean", Median="median", SD="sd", "HPD.lower", "HPD.upper")) %>%
             dplyr::ungroup(.)
     }
-    taus = x$tau %>%
-        summary(.) %>% 
-        .[[1]] %>% 
-        base::data.frame(Parameter=rownames(.), .) %>%
-        dplyr::full_join(., x$tau %>% 
-                            summary(.) %>% .[[2]] %>% 
-                            base::data.frame(Parameter=rownames(.), .)  %>% 
-                            dplyr::select(Parameter, X2.5., X97.5.), by="Parameter") %>% 
-        dplyr::rename(HPD.lower=X2.5., HPD.upper=X97.5.) %>%
+    ## include terms column (var names) if not already present
+    if (!"term" %in% names(betas)) {
+        n.clusters = betas$k %>% unique %>% length
+        covariates = attr(x$samples, "terms")
+        betas = betas %>% dplyr::left_join(., covariates %>% dplyr::mutate_if(is.factor, as.character), by=c("Parameter")) 
+    }
+    if(is.null(true.beta)){
+        betas = betas %>%
+            dplyr::select(k, j, Parameter, term, Mean, Median, SD, dplyr::contains("HPD")) 
+    }else{
+        betas = betas %>%
+            dplyr::select(k, j, Parameter, term, True, Mean, Median, SD, dplyr::contains("HPD")) 
+    }
+
+    ## summarise tau
+    ## -------------
+    tau.summ = x$tau %>% summary(.)
+    tau.summ[[1]] = tau.summ[[1]] %>% base::data.frame(Parameter=rownames(.), ., row.names=1:nrow(.)) %>% tibble::as_data_frame()
+    ## using interval from summary
+    tau.summ[[2]] = tau.summ[[2]] %>% base::data.frame(Parameter=rownames(.), ., row.names=1:nrow(.)) %>% tibble::as_data_frame() %>% dplyr::select(Parameter, X2.5., X97.5.) %>% dplyr::rename(HPD.lower=X2.5., HPD.upper=X97.5.)
+    ## using HPD from coda
+    ## tau.summ[[2]] = x$tau %>% coda::HPDinterval(.) %>% base::data.frame(Parameter=rownames(.), ., row.names=1:nrow(.) ) %>% tibble::as_data_frame()  %>% dplyr::rename(HPD.lower=lower, HPD.upper=upper) 
+    taus =  tau.summ[[1]] %>% 
+        dplyr::full_join(., tau.summ[[2]] , by="Parameter") %>% 
         dplyr::select(Parameter, Mean, SD, dplyr::contains("HPD"), -dplyr::contains("Naive"), -dplyr::contains("Time")) %>%
-        tibble::as_data_frame(.)  %>%
         dplyr::left_join(., attr(x$tau, "terms"), by=c("Parameter")) %>%
         dplyr::mutate(Description = dplyr::case_when(term.tau == '(Intercept)' ~ paste0("Intercept of ", beta) ,
-                                                     term.tau != '(Intercelt)' ~  paste0("Effect of ", term.tau, " on ", beta)) ) %>%
+                                                     term.tau != '(Intercept)' ~  paste0("Effect of ", term.tau, " on ", beta)) ) %>%
         dplyr::select(-term.tau, -term.beta) 
+
     if(!is.null(true.tau)){
         taus = taus %>%
             dplyr::mutate(Parameter=as.character(Parameter)) %>% 
@@ -225,25 +242,12 @@ summary.hdpGLM <- function(object, ...)
         ## include columns with indexes of beta and W for each tau
         taus = taus %>%
             dplyr::arrange(Parameter)  %>%
-            dplyr::mutate(beta = rep(0:Dx, times=(Dw+1)),
-                          w    = rep(0:Dw, times=(Dx+1)) %>% sort )  %>%
-            dplyr::select(w, beta, Parameter, Description, dplyr::everything()) 
+            dplyr::mutate(beta = stringr::str_extract(string=Parameter, pattern="\\[[0-9]*\\]$") %>% stringr::str_replace_all(string=., pattern="\\[|\\]", replacement="") %>% as.integer,
+                          w    = stringr::str_extract(string=Parameter, pattern="tau\\[[0-9]*\\]") %>% stringr::str_replace_all(string=., pattern="tau|\\[|\\]", replacement="") %>% as.integer)  %>%
+            dplyr::select(w, beta, Parameter, Description, dplyr::everything())  %>%
+            dplyr::arrange(w, beta) 
     }
     
-    ## include terms column (var names) if not already present
-    if (!"term" %in% names(betas)) {
-        n.clusters = betas$k %>% unique %>% length
-        covariates = attr(x$samples, "terms")
-        betas = betas %>% dplyr::left_join(., covariates %>% dplyr::mutate_if(is.factor, as.character), by=c("Parameter")) 
-    }
-
-    if(is.null(true.beta)){
-        betas = betas %>%
-            dplyr::select(k, j, Parameter, term, Mean, Median, SD, dplyr::contains("HPD")) 
-    }else{
-        betas = betas %>%
-            dplyr::select(k, j, Parameter, term, True, Mean, Median, SD, dplyr::contains("HPD")) 
-    }
     return(list(beta=betas, tau=taus))
 }
 ## =====================================================
@@ -336,7 +340,7 @@ plot.dpGLM    <- function(x, terms=NULL, separate=FALSE, hpd=TRUE, true.beta=NUL
         ggplot2::ggplot(.) +
         ## geom_line(aes(x=values, group=Parameter), colour="#00000044", stat='density', alpha=1) +
         ## ggplot2::geom_density(ggplot2::aes(x=values, group=Parameter), fill="#00000028", adjust=adjust) +
-        ggplot2::geom_density(ggplot2::aes(x=values, group=Parameter), fill=colour, adjust=adjust, alpha=alpha) +
+        ggplot2::geom_density(ggplot2::aes(x=values, group=Parameter), fill=colour, adjust=adjust, alpha=alpha, colour='white') +
         ## ggplot2::geom_vline(data=tab, ggplot2::aes(xintercept=Mean,  linetype='solid', col="black")) +
         ## geom_vline(data=tab, aes(xintercept=HPD.lower,  linetype='dashed'), col="black") +
         ## geom_vline(data=tab, aes(xintercept=HPD.upper,  linetype='dashed'), col="black") +
@@ -449,35 +453,42 @@ plot.dpGLM    <- function(x, terms=NULL, separate=FALSE, hpd=TRUE, true.beta=NUL
 #' Generic function to plot the posterior density estimation produced by the function \code{hdpGLM}
 #'
 #' @param x an object of the class \code{hdpGLM} generted by the function \link{hdpGLM}
-#' @param terms string vector with the name of covariates to plot. If \code{NULL} (default), all covariates are plotted.
+#' @param terms string vector with the name of the individual-level covariates to plot. If \code{NULL} (default), all covariates are plotted.
+#' @param j.idx integer vector with the index of the contexts to plot. An alterntive is to use the context labels with the parameter \code{j.label} instead of the indexes. If \code{NULL} (default) and j.label is also \code{NULL}, the posterior distribution of all contexts are plotted
+#' @param j.label string vector with the names of the contexts to plot. An alterntive is to use the context indexes with the parameter \code{j.idx} instead of the context labels. If \code{NULL} (default) and j.idx is also \code{NULL}, the posterior distribution of all contexts are plotted. Note: if contexts to plot are selected using \code{j.label}, the parameter \code{context.id} must also be provided.
 #' @param title  string, the title of the plot
 #' @param subtitle  string, the subtitle of the plot
-#' @param  true.beta a \code{data.frame} with the true values of the linear coefficients \code{beta} if they are known. The \code{data.frame} must contain a column named \code{j} with the index of the context associated with that particular linear coefficient \code{beta}. It must match the indexes used in the data set for each context. Another column named \code{k} must be provided, indicating the cluster of \code{beta}, and a column named \code{Parameter} with the name of the linear coefficients (\code{beta1}, \code{beta2}, ..., \code{beta_dx}, where \code{dx} is the number of covariates at the individual level, and beta1 is the coefficient of the intercept term). It must contain a column named \code{True} with the true value of the \code{betas}. Finally, the \code{data.frame} must contain columns with the context-level covariates as used in the estimation of the \link{hdpGLM} function (see Details below).
+#' @param true.beta a \code{data.frame} with the true values of the linear coefficients \code{beta} if they are known. The \code{data.frame} must contain a column named \code{j} with the index of the context associated with that particular linear coefficient \code{beta}. It must match the indexes used in the data set for each context. Another column named \code{k} must be provided, indicating the cluster of \code{beta}, and a column named \code{Parameter} with the name of the linear coefficients (\code{beta1}, \code{beta2}, ..., \code{beta_dx}, where \code{dx} is the number of covariates at the individual level, and beta1 is the coefficient of the intercept term). It must contain a column named \code{True} with the true value of the \code{betas}. Finally, the \code{data.frame} must contain columns with the context-level covariates as used in the estimation of the \link{hdpGLM} function (see Details below).
 #' @param ncol interger, the number of columns in the plot
 #' @param legend.position one of four options: "bottom" (default), "top", "left", or "right". It indicates the position of the legend
 #' @param display.terms boolean, if \code{TRUE} (default), the covariate name is displayed in the plot
-#' @param context.label string with the name of the column containing the labels identifying the contexts. The data must also be provided.
-#' @param data the data.frame used to estimate the model. It must contain the column with the context labels. Only used if \code{context.labels} is also provided
+#' @param context.id string with the name of the column containing the labels identifying the contexts. This variable should have been specified when the estimation was conducted using the function \code{\link{hdpGLM}}.
+#' @param ylab string, the label of the y-axis
+#' @param xlab string, the label of the x-axis
 #' @inheritParams summary.hdpGLM
 #' 
 #' @export
 ## }}}
-plot.hdpGLM <- function(x, terms=NULL, title=NULL, subtitle=NULL, true.beta=NULL, ncol=NULL,  legend.position="bottom", display.terms=TRUE, context.label=NULL, data=NULL,...)
+plot.hdpGLM <- function(x, terms=NULL, j.label=NULL, j.idx=NULL, title=NULL, subtitle=NULL, true.beta=NULL, ncol=NULL,  legend.position="bottom", display.terms=TRUE, context.id=NULL, ylab=NULL, xlab=NULL, ...)
 {
-    x = hdpGLM_get_occupied_clusters(x)
-    if (!is.null(context.label) & !is.null(data)) {
-        context.labels = data %>%
-            dplyr::select(c(x$context.cov %>% dplyr::select(-C) %>% names, context.label) )  %>%
-            dplyr::filter(!duplicated(.)) %>%
-            dplyr::left_join(., x$context.cov ) 
+    if (is.null(j.idx) & is.null(j.label)) {
+        j = x$context.cov$C 
     }else{
-        context.labels = NULL 
+        if (!is.null(j.idx)) {
+            j = j.idx
+        }
+        if (!is.null(j.label)) {
+            if (!is.null(context.id)) {
+                j = x$context.cov %>% dplyr::filter(x$context.cov[,context.id] %>% dplyr::pull(.) %in% j.label)  %>% dplyr::select(C)  %>% dplyr::pull(.)
+            }else{
+                stop("\n\nThe \'context.id\' must also be provided if \'j.label\' is used.\n\n")
+            }
+        }
     }
-
+    x = hdpGLM_get_occupied_clusters(x)
     if (!is.null(true.beta)) {
         ## first we need to match the index of the contexts provided by the user and the one used by the algorithm (see details in the function help)
-        c.covars.names = true.beta %>% dplyr::select(-j,-k, -Parameter, -True) %>% names
-        true.beta      = true.beta  %>% dplyr::full_join(.,  x$context.cov, by=c.covars.names) %>% dplyr::rename(j.user.provided=j, j=C) 
+        true.beta      = true.beta  %>% dplyr::full_join(.,  x$context.cov, by=c("j"="C"))
         ## then for each context, we match the clusters based on smaller distance and prepare the table for plotting
         tab =  hdpGLM_match_clusters(x, true=true.beta) %>%
             dplyr::mutate(jnext = j+1) %>%
@@ -517,10 +528,11 @@ plot.hdpGLM <- function(x, terms=NULL, title=NULL, subtitle=NULL, true.beta=NULL
                 tidyr::unite(., Parameter, Parameter, term, sep='~')
         }        
         g = tab2 %>%
+            dplyr::filter(j %in% !!j)  %>% 
             ggplot2::ggplot(.) +
             ## ggjoy::geom_joy(ggplot2::aes(x=values, y=j, group=j), fill="#00000044") +
             ggridges::geom_density_ridges(ggplot2::aes(x=values, y=j, group=j), fill="#00000044", colour='white', rel_min_height = 0.05) +
-            ggplot2::geom_segment(data=tab , ggplot2::aes(x=True, xend=True, y=j, yend=jnext, col='red')) +
+            ggplot2::geom_segment(data=tab  %>% dplyr::filter(j %in% !!j), ggplot2::aes(x=True, xend=True, y=j, yend=jnext, col='red')) +
             ## ggplot2::geom_segment(data=tab , ggplot2::aes(x=Mean, xend=Mean, y=j, yend=jnext, col='black')) +
             ggplot2::facet_wrap( ~ Parameter, ncol = ncol, scales='free', labeller=ggplot2::label_parsed) +
             ggplot2::ylab('Context Index') +
@@ -551,6 +563,7 @@ plot.hdpGLM <- function(x, terms=NULL, title=NULL, subtitle=NULL, true.beta=NULL
                               )  %>% 
                 tidyr::unite(., Parameter, Parameter, term, sep='~')
         g = tab %>%
+            dplyr::filter(j %in% !!j)  %>% 
             ggplot2::ggplot(.) +
             ## ggjoy::geom_joy(ggplot2::aes(x=values, y=j, group=j), fill="#00000044") +
             ggridges::geom_density_ridges(ggplot2::aes(x=values, y=j, group=j), fill="#00000044", colour='white', rel_min_height = 0.05) +
@@ -571,10 +584,17 @@ plot.hdpGLM <- function(x, terms=NULL, title=NULL, subtitle=NULL, true.beta=NULL
             g = g + ggplot2::ggtitle(title)
         }
     }
-    if (!is.null(context.labels)) {
+    if (!is.null(context.id)) {
+        contexts = x$context.cov %>% dplyr::filter(C %in% !!j) 
         g = g +
-            ggplot2::scale_y_discrete(breaks = context.labels$C, labels = context.labels[,context.label], limits=context.labels$C) +
-            ggplot2::ylab(context.label) 
+            ggplot2::scale_y_discrete(breaks = contexts$C, labels = contexts[,context.id] %>% dplyr::pull(.) %>% as.character, limits=contexts$C) +
+            ggplot2::ylab(context.id) 
+    }
+    if (!is.null(ylab )) {
+        g = g + ggplot2::ylab(ylab) 
+    }
+    if (!is.null(xlab )) {
+        g = g + ggplot2::xlab(xlab) 
     }
     
     return(g)
@@ -761,13 +781,15 @@ summary.hdpGLM_data <- function(object, ...)
         dplyr::as_data_frame(.)  %>%
         dplyr::mutate(Parameter = paste0(
                           stringr::str_replace(string=Parameter, pattern="[0-9]*$", replacement=""),
-                          as.numeric(stringr::str_replace(string=Parameter, pattern="beta", replacement=""))-1 ) 
+                          "[",
+                          as.numeric(stringr::str_replace(string=Parameter, pattern="beta", replacement=""))-1 ,
+                      "]" )
                       )
     taus = x$parameters$tau %>%
         base::data.frame(dw = rownames(.), .) %>%
         tidyr::gather(key=dx, value=True, -dw) %>%
         dplyr::mutate_all(dplyr::funs(as.numeric(gsub(., pattern='[a-z]', replacement=''))) ) %>%
-        dplyr::mutate(Parameter = paste0('tau', dw,dx, sep='') )  %>%
+        dplyr::mutate(Parameter = paste0('tau[', dw,"][",dx,"]", sep='') )  %>%
         dplyr::select(dw,dx,Parameter, True)  %>%
         dplyr::rename(w = dw, beta = dx) 
     return(list(data = summary(x$data),beta=betas, tau=taus))
@@ -800,7 +822,7 @@ plot_beta_sim <- function(data, w.idx, ncol=NULL)
                                      beta.exp.values = paste0(paste0(round(True, 2), "~", w.label), collapse="~+~"),
                                      )  %>%
                        dplyr::ungroup(.)  %>%
-                       dplyr::mutate(beta.exp = stringr::str_replace(string=beta.exp, pattern="W\\[0\\]", replacement=""),
+                       dplyr::mutate(beta.exp        = stringr::str_replace(string=beta.exp, pattern="W\\[0\\]", replacement=""),
                                      beta.exp.values = stringr::str_replace(string=beta.exp.values, pattern="W\\[0\\]", replacement=""),
                                      ) 
     betas = summary(data)$beta %>%
@@ -987,9 +1009,7 @@ plot_tau <- function(samples, X=NULL, W=NULL, title=NULL, true.tau=NULL, show.al
 
     Dw = samples$context.cov %>% ncol - 1
     Dx = samples$samples %>% colnames %>% stringr::str_detect(., pattern="beta") %>% sum - 1
-    terms = attr(samples$tau, "terms")   %>% 
-        dplyr::rename(beta.label = beta)  %>%
-        dplyr::mutate(beta.label = stringr::str_replace_all(string=beta.label, pattern="[0-9]*", replacement="") %>% paste0("[",stringr::str_replace(string=beta.label, pattern="beta", replacement=""), "]") ) 
+    terms = attr(samples$tau, "terms")   %>% dplyr::rename(beta.label = beta)
     summary.tau = summary(samples)$tau
     if (!is.null(true.tau)) {
         summary.tau = summary.tau %>%
@@ -1001,21 +1021,23 @@ plot_tau <- function(samples, X=NULL, W=NULL, title=NULL, true.tau=NULL, show.al
         tidyr::gather(key = Parameter, value=value)  %>% 
         dplyr::mutate(Parameter = as.character(Parameter)) %>%  
         dplyr::left_join(., summary.tau %>% dplyr::mutate(Parameter = as.character(Parameter)), by=c("Parameter"))  %>%
-        dplyr::left_join(., terms, by=c("Parameter"))  %>%
-        dplyr::mutate(Parameter = stringr::str_replace(string=Parameter, pattern="[0-9]*$", replacement="") %>% paste0("",.,'[',stringr::str_replace(string=Parameter, pattern="tau", replacement=""),"]"),
-                      Parameter = stringr::str_replace_all(string=Parameter, pattern="0", replacement="~o"),
+        dplyr::left_join(., terms %>% dplyr::mutate_if(is.factor, as.character), by=c("Parameter"))  %>%
+        dplyr::mutate(#Parameter = stringr::str_replace(string=Parameter, pattern="[0-9]*$", replacement="") %>% paste0("",.,'[',stringr::str_replace(string=Parameter, pattern="tau", replacement=""),"]"),
+                      ## Parameter = stringr::str_replace_all(string=Parameter, pattern="0", replacement="~o"),
                       term.beta = stringr::str_replace(string=term.beta, pattern="\\(", replacement=""),
                       term.beta = stringr::str_replace(string=term.beta, pattern="\\)", replacement=""),
                       term.tau  = stringr::str_replace(string=term.tau, pattern="\\(", replacement=""),
                       term.tau  = stringr::str_replace(string=term.tau, pattern="\\)", replacement=""),
                       facet     = dplyr::case_when(term.tau == 'Intercept' & term.beta == "Intercept" ~ paste0(Parameter, "~(Intercept~of~expectation~of~", beta.label,")"),
                                                    term.tau == 'Intercept' & term.beta != "Intercept" ~ paste0(Parameter, "~(Intercept~of~expectation~of~", beta.label,")"),
-                                                   term.tau != 'Intercept'  ~ paste0("atop(",Parameter, "(~effect~of~",term.tau, "~on~expectation~of~effect~of~",term.beta,"(", beta.label,")))")
+                                                   term.tau != 'Intercept'  ~ paste0("atop(",Parameter, "(~effect~of~",
+                                                                                     stringr::str_replace_all(string=term.tau, pattern=" ", replacement="~")  , "~on~expectation~of~effect~of~",
+                                                                                     stringr::str_replace_all(string=term.beta, pattern=" ", replacement="~") ,"(", beta.label,")))")
                                                    )
                       )
     
     ## select parameters to display in the plot
-    if (!show.all.taus) tab = tab %>% dplyr::filter(!stringr::str_detect(Parameter, pattern="^tau\\[~o")) 
+    if (!show.all.taus) tab = tab %>% dplyr::filter(!stringr::str_detect(Parameter, pattern="^tau\\[0")) 
     if (!show.all.betas) tab = tab %>% dplyr::filter(beta.label != "beta[0]") 
     ## select taus for beta_i
     if (!is.null(X)) {
@@ -1131,6 +1153,7 @@ plot_pexp_beta <- function(samples, X=NULL, W=NULL, pred.pexp.beta=FALSE, ncol.b
     options(warn=-1)
     on.exit(options(warn=0))
 
+    samples = hdpGLM_get_occupied_clusters(samples)
     ## get context-level covariates to plot
     Ws = samples$context.cov  %>% dplyr::select(-C) %>% names
     if (is.null(W)) {
@@ -1149,7 +1172,7 @@ plot_pexp_beta <- function(samples, X=NULL, W=NULL, pred.pexp.beta=FALSE, ncol.b
                            dplyr::filter(Parameter != 'sigma')  %>%
                            dplyr::mutate(Parameter.label = paste0(stringr::str_extract(Parameter, 'beta') , '[', stringr::str_extract(Parameter, '[0-9]+') ,']'),
                                          term.label = stringr::str_replace_all(string=term, pattern="\\)|\\(", replacement=""),
-                                         term.label = paste0("(", term.label, ")") )  %>%
+                                         term.label = paste0("(", stringr::str_replace_all(string=term.label, pattern=" ", replacement="~") , ")") )  %>%
                            tidyr::unite(Parameter.facet, Parameter.label, term.label, sep="~", remove=FALSE) %>%
                            dplyr::left_join(., samples$context.cov, by=c('j' = 'C')) 
                            

@@ -4,9 +4,10 @@
 \alias{hdpGLM}
 \title{Hierarchical Dirichlet Process GLM}
 \usage{
-hdpGLM(formula1, formula2 = NULL, data, weights = NULL, mcmc, K = 100,
-  fix = NULL, family = "gaussian", epsilon = 0.01, leapFrog = 40,
-  n.display = 1000, hmc_iter = 1, imp.bin = "R")
+hdpGLM(formula1, formula2 = NULL, data, context.id = NULL, weights = NULL,
+  mcmc, K = 100, fix = NULL, family = "gaussian", epsilon = 0.01,
+  leapFrog = 40, n.display = 1000, hmc_iter = 1, imp.bin = "R",
+  na.action = "exclude")
 }
 \arguments{
 \item{formula1}{a single symbolic description of the linear model of the
@@ -20,8 +21,9 @@ of the Dirichlet Process Prior varies linearly as a function
 of group level covariates. If \code{NULL}, it will use
 a single base measure to the DPP mixture model.}
 
-\item{data}{a data.frame with all the variables specified in \code{formula1}
-and \code{formula2}. Note: it is advisable to scale the variables before the estimation}
+\item{data}{a data.frame with all the variables specified in \code{formula1} and \code{formula2}. Note: it is advisable to scale the variables before the estimation}
+
+\item{context.id}{string with the name of the column in the data that identify uniquely the contexts. If \code{NULL} (default) contexts will be identified by numerical indexes and unique context-level variables.}
 
 \item{weights}{numeric vector with the same size as the number of rows of the data. It must contains the weights of the observations in the data set. NOTE: FEATURE NOT IMPLEMENTED YET}
 
@@ -68,6 +70,8 @@ It indicates the number of HMC interation for each Gibbs iteration.
 Default is 1.}
 
 \item{imp.bin}{string, either "R" or "Cpp" indicating the language of the implementation of the binomial model.}
+
+\item{na.action}{string with action to be taken for the \code{NA} values. (currently, only \code{exclude} is available)}
 }
 \value{
 The function returns a list with elements \code{samples}, \code{pik}, \code{max_active},

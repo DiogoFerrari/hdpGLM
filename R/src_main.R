@@ -108,13 +108,17 @@
 
 getContextIndices <- function(W)
 {
-    return (
-        W %>%
-        tibble::as_data_frame(.) %>%  
-        dplyr::select(-dplyr::contains('Intercept')) %>% 
-        dplyr::group_by_(., names(.)) %>%
-        dplyr::group_indices(.)
-    )
+    options(warn=-1)
+    on.exit(options(warn=0))
+    W = W %>% tibble::as_data_frame(.)
+    cols = names(W)
+    C = W %>%  
+        dplyr::distinct(.) %>%
+        dplyr::mutate(C = 1:nrow(.))  %>%
+        dplyr::right_join(., W, by=cols)  %>%
+        dplyr::select(C)  %>%
+        dplyr::pull(.)
+    return (C)
 
 }
 getUniqueW <- function(W, C)
@@ -128,7 +132,16 @@ getUniqueW <- function(W, C)
         as.matrix
     )
 }
-
+hdpglm_exclude_nas <- function(data, formula1, formula2)
+{
+    ## vars = c(all.vars(formula1), all.vars(formula2))
+    if (is.null(formula2)) {
+        vars = c(formula.tools::get.vars(formula1, data=data))
+    }else{
+        vars = c(formula.tools::get.vars(formula1, data=data), formula.tools::get.vars(formula2, data=data))
+    }
+    return(data %>% dplyr::select(vars)  %>% dplyr::filter(stats::complete.cases(.)))
+}
 
 ## {{{ doc }}}
 
@@ -147,8 +160,8 @@ getUniqueW <- function(W, C)
 #'                 of the Dirichlet Process Prior varies linearly as a function
 #'                 of group level covariates. If \code{NULL}, it will use
 #'                 a single base measure to the DPP mixture model.
-#' @param data a data.frame with all the variables specified in \code{formula1}
-#'             and \code{formula2}. Note: it is advisable to scale the variables before the estimation
+#' @param data a data.frame with all the variables specified in \code{formula1} and \code{formula2}. Note: it is advisable to scale the variables before the estimation
+#' @param context.id string with the name of the column in the data that identify uniquely the contexts. If \code{NULL} (default) contexts will be identified by numerical indexes and unique context-level variables. 
 #' @param weights numeric vector with the same size as the number of rows of the data. It must contains the weights of the observations in the data set. NOTE: FEATURE NOT IMPLEMENTED YET
 #' @param mcmc a list containing elements named \code{burn.in} (required, an
 #'             integer greater or equal to 0 indicating the number iterations used in the
@@ -185,6 +198,7 @@ getUniqueW <- function(W, C)
 #'                 It indicates the number of HMC interation for each Gibbs iteration.
 #'                 Default is 1.
 #' @param imp.bin string, either "R" or "Cpp" indicating the language of the implementation of the binomial model.
+#' @param na.action string with action to be taken for the \code{NA} values. (currently, only \code{exclude} is available)
 #' @return The function returns a list with elements \code{samples}, \code{pik}, \code{max_active},
 #'         \code{n.iter}, \code{burn.in}, and \code{time.elapsed}. The \code{samples} element
 #'         contains a MCMC object (from \pkg{coda} package) with the samples from the posterior
@@ -219,8 +233,11 @@ getUniqueW <- function(W, C)
 #' @export
 
 ## }}}
-hdpGLM <- function(formula1, formula2=NULL, data, weights=NULL, mcmc, K=100, fix=NULL, family='gaussian', epsilon=0.01, leapFrog=40, n.display=1000, hmc_iter=1, imp.bin="R")
+hdpGLM <- function(formula1, formula2=NULL, data, context.id=NULL, weights=NULL, mcmc, K=100, fix=NULL, family='gaussian', epsilon=0.01, leapFrog=40, n.display=1000, hmc_iter=1, imp.bin="R", na.action = "exclude")
 {
+    if (!is.null(weights)) {
+        stop("\n\nNote: weights are not implemented yet. Leave \'weights=NULL.\'\n\n")
+    }
     ## other options
     ## par.default <- par(no.readonly = TRUE)
     ## on.exit(par(par.default), add=TRUE)
@@ -238,8 +255,18 @@ hdpGLM <- function(formula1, formula2=NULL, data, weights=NULL, mcmc, K=100, fix
         stop(paste0('Error: Parameter -family- must be a string with one of the following options : \"gaussian\", \"binomial\", or \"multinomial\"'))
 
     ## Debug/Monitoring message --------------------------
-    msg <- paste0('\n\n','Starting Estimation ...',  '\n\n'); cat(msg)
+    msg <- paste0('\n\n','Preparing for estimation ...',  '\n\n'); cat(msg)
     ## ---------------------------------------------------
+
+    ## Exclude NA values
+    ## -----------------
+    if (na.action == 'exclude') {
+        data    = hdpglm_exclude_nas(data, formula1, formula2)
+    }else{
+        ## Debug/Monitoring message --------------------------
+        msg <- paste0('\n','Note: only action currently available to deal with NA\'s is \'exclude\'',  '\n'); cat(msg)
+        ## ---------------------------------------------------
+    }
 
     ## ## construct the regression matrices (data.frames) based on the formula provided
     ## ## -----------------------------------------------------------------------------
@@ -269,6 +296,7 @@ hdpGLM <- function(formula1, formula2=NULL, data, weights=NULL, mcmc, K=100, fix
         .dphGLM_check_constants(family=family, d=d, Dw=Dw, fix=fix)
     }
     
+
     ## get the samples from posterior
     ## ------------------------------
     T.mcmc  = Sys.time()
@@ -285,7 +313,7 @@ hdpGLM <- function(formula1, formula2=NULL, data, weights=NULL, mcmc, K=100, fix
         }
     }else
     {
-        samples        =  hdpGLM_mcmc(y, X, W, C, weights, K, fix, family, mcmc, epsilon, leapFrog, n.display, hmc_iter)
+        samples            =  hdpGLM_mcmc(y, X, W, C, weights, K, fix, family, mcmc, epsilon, leapFrog, n.display, hmc_iter)
     }
     T.mcmc  = Sys.time() - T.mcmc
 
@@ -299,12 +327,11 @@ hdpGLM <- function(formula1, formula2=NULL, data, weights=NULL, mcmc, K=100, fix
             colnames(samples$samples)  <- c('k', paste0('beta',1:(ncol(samples$samples)-1),  sep=''))
         }
     }else{
+        colnames(samples$tau)      <- paste0(rep(paste0('tau[', 0:(Dw)), d+1), "][", unlist(lapply(0:(d), function(d) rep(d, Dw+1))), ']',sep='')
         if(family=='gaussian'){
-            colnames(samples$samples)  <- c('k', 'j', paste0('beta',0:(d),  sep=''), 'sigma')
-            colnames(samples$tau)      <- paste0(rep(paste0('tau', 0:(Dw)), d+1), unlist(lapply(0:(d), function(d) rep(d, Dw+1))),sep='')
+            colnames(samples$samples)  <- c('k', 'j', paste0('beta[',0:(d), "]",  sep=''), 'sigma')
         }else{
-            colnames(samples$samples)  <- c('k', 'j', paste0('beta',0:(d),  sep=''))
-            colnames(samples$tau)      <- paste0(rep(paste0('tau', 0:(Dw)), d+1), unlist(lapply(0:(d), function(d) rep(d, Dw+1))),sep='')
+            colnames(samples$samples)  <- c('k', 'j', paste0('beta[',0:(d), "]", sep=''))
         }
     }
 
@@ -312,22 +339,28 @@ hdpGLM <- function(formula1, formula2=NULL, data, weights=NULL, mcmc, K=100, fix
     if (!is.null(W)){
         samples$tau                       = coda::as.mcmc(samples$tau)
         samples$context.index             = C
-        samples$context.cov               = tibble::as_data_frame(cbind(C=sort(unique(C)), W))  %>% dplyr::select(-dplyr::contains("Intercept")) 
+        samples$context.cov               = tibble::as_data_frame(cbind(C=sort(unique(C)), W))  %>% dplyr::select(-dplyr::contains("Intercept"))
+        if (!is.null(context.id)) {
+            context = cbind(C=C, data %>% dplyr::select(context.id) )  %>% dplyr::filter(!duplicated(.))
+            samples$context.cov = samples$context.cov %>% dplyr::left_join(., context, by=c("C")) 
+        }
     }
     if(family=='gaussian') attr(samples$samples, 'terms') = data.frame(term = c(colnames(X), 'sigma') , Parameter=c(stringr::str_subset(colnames(samples$samples), pattern="beta"), "sigma") )
     if(family=='binomial') attr(samples$samples, 'terms') = data.frame(term = c(colnames(X)         ) , Parameter=c(stringr::str_subset(colnames(samples$samples), pattern="beta")) )
     attr(samples$samples, 'mcpar')[2] = mcmc$n.iter
     class(samples)                    = ifelse(is.null(W), 'dpGLM', 'hdpGLM')
+    ## include context-level term names
     if (class(samples) == 'hdpGLM') {
-        attr(samples$tau, "terms")  = data.frame(Parameter = samples$tau %>% colnames %>% sort,
-                                                 beta = paste0("beta",rep(0:d, Dw+1))) %>%
-            dplyr::mutate(beta = as.character(beta))  %>%
-            dplyr::left_join(., attr(samples$samples, "terms") %>%
-                                dplyr::rename(beta = Parameter)  %>%
-                                dplyr::mutate(beta = as.character(beta))
+        tau.name = samples$tau %>% colnames
+        tau.idx  = tau.name  %>% stringr::str_extract(string=., pattern="tau\\[.*\\]\\[") %>% stringr::str_replace_all(string=., pattern="tau|\\[|\\]", replacement="")  %>% as.integer 
+        attr(samples$tau, "terms")  = data.frame(Parameter = tau.name,
+                                                 tau.idx = tau.idx) %>%
+            dplyr::mutate(beta = paste0("beta", stringr::str_extract(Parameter, pattern="\\[[0-9]*\\]$") ) %>% as.character ) %>% 
+            dplyr::left_join(., attr(samples$samples, "terms") %>% dplyr::rename(beta = Parameter)  %>% dplyr::mutate(beta = as.character(beta))
                            , by=c('beta')) %>%
             dplyr::rename(term.beta = term) %>%
-            dplyr::bind_cols(., data.frame(term.tau = lapply(colnames(W), function(x) rep(x, times=d+1) ) %>% unlist)) 
+            dplyr::arrange(tau.idx)  %>% 
+            dplyr::bind_cols(., data.frame(term.tau = lapply(colnames(W), function(x) rep(x, times=d+1) ) %>% unlist) ) 
     }
 
     samples$time_elapsed = T.mcmc

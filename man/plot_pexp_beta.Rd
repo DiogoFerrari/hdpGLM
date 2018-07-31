@@ -6,7 +6,7 @@
 \usage{
 plot_pexp_beta(samples, X = NULL, W = NULL, pred.pexp.beta = FALSE,
   ncol.beta = NULL, ylab = NULL, nrow.w = NULL, ncol.w = NULL,
-  smooth.line = FALSE)
+  smooth.line = FALSE, title = NULL)
 }
 \arguments{
 \item{samples}{an output of the function \code{\link{hdpGLM}}}
@@ -26,6 +26,8 @@ plot_pexp_beta(samples, X = NULL, W = NULL, pred.pexp.beta = FALSE,
 \item{ncol.w}{integer with the number of columns of the grid}
 
 \item{smooth.line}{boolean, if \code{TRUE} the plot will display a regression line representing the regression of the posterior expectation of the linear coefficients betas on the context-level covariates. Default \code{FALSE}}
+
+\item{title}{string, title of the plot}
 }
 \description{
 This function plots the posterior expectation of beta, the linear effect of the individual level covariates, as function of the context-level covariates

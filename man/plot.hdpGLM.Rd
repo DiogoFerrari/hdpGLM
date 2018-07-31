@@ -4,14 +4,19 @@
 \alias{plot.hdpGLM}
 \title{Plot}
 \usage{
-\method{plot}{hdpGLM}(x, terms = NULL, title = NULL, subtitle = NULL,
-  true.beta = NULL, ncol = NULL, legend.position = "bottom",
-  display.terms = TRUE, context.label = NULL, data = NULL, ...)
+\method{plot}{hdpGLM}(x, terms = NULL, j.label = NULL, j.idx = NULL,
+  title = NULL, subtitle = NULL, true.beta = NULL, ncol = NULL,
+  legend.position = "bottom", display.terms = TRUE, context.id = NULL,
+  ylab = NULL, xlab = NULL, ...)
 }
 \arguments{
 \item{x}{an object of the class \code{hdpGLM} generted by the function \link{hdpGLM}}
 
-\item{terms}{string vector with the name of covariates to plot. If \code{NULL} (default), all covariates are plotted.}
+\item{terms}{string vector with the name of the individual-level covariates to plot. If \code{NULL} (default), all covariates are plotted.}
+
+\item{j.label}{string vector with the names of the contexts to plot. An alterntive is to use the context indexes with the parameter \code{j.idx} instead of the context labels. If \code{NULL} (default) and j.idx is also \code{NULL}, the posterior distribution of all contexts are plotted. Note: if contexts to plot are selected using \code{j.label}, the parameter \code{context.id} must also be provided.}
+
+\item{j.idx}{integer vector with the index of the contexts to plot. An alterntive is to use the context labels with the parameter \code{j.label} instead of the indexes. If \code{NULL} (default) and j.label is also \code{NULL}, the posterior distribution of all contexts are plotted}
 
 \item{title}{string, the title of the plot}
 
@@ -25,9 +30,11 @@
 
 \item{display.terms}{boolean, if \code{TRUE} (default), the covariate name is displayed in the plot}
 
-\item{context.label}{string with the name of the column containing the labels identifying the contexts. The data must also be provided.}
+\item{context.id}{string with the name of the column containing the labels identifying the contexts. This variable should have been specified when the estimation was conducted using the function \code{\link{hdpGLM}}.}
 
-\item{data}{the data.frame used to estimate the model. It must contain the column with the context labels. Only used if \code{context.labels} is also provided}
+\item{ylab}{string, the label of the y-axis}
+
+\item{xlab}{string, the label of the x-axis}
 
 \item{...}{Additional arguments accepted are:
 

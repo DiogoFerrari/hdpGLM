@@ -97,6 +97,13 @@ arma::mat hdpGLM_update_theta_gaussian(arma::colvec y,arma::mat X, arma::mat W, 
   arma::uvec idx_col_betas = arma::linspace<arma::uvec>(1, d+1, d+1);
   arma::uvec idx_col_sigma = arma::linspace<arma::uvec>(d+1 +1, d+1 +1, 1);
 
+  
+    // Rcpp::Rcout << "ok" << std::endl;
+    // Rcpp::Rcout << "tau rows:\n" << tau.n_rows << std::endl;
+    // Rcpp::Rcout << "tau cols:\n" << tau.n_cols << std::endl;
+    // Rcpp::Rcout << "Z size\n" << Z.n_rows << std::endl;
+    // Rcpp::Rcout << "C size\n" << C.n_rows << std::endl;
+
   // update beta for Zjstar
   // ----------------------
   for(int j = 1; j <= J; j++){

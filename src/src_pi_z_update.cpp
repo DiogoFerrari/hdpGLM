@@ -158,6 +158,7 @@ arma::colvec hdpGLM_update_Z(arma::colvec y, arma::mat X, arma::mat W, arma::col
     // -----------
     arma::vec pik = phii/sum(phii);
     Z(i) = as<double>(sample(oneToK, 1, false, wrap(pik)));
+
   }
   return(Z);
 }
