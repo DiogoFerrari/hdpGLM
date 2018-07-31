@@ -529,10 +529,14 @@ plot.hdpGLM <- function(x, terms=NULL, j.label=NULL, j.idx=NULL, title=NULL, sub
         }        
         g = tab2 %>%
             dplyr::filter(j %in% !!j)  %>% 
+            dplyr::mutate_if(is.factor, as.character) %>% 
             ggplot2::ggplot(.) +
             ## ggjoy::geom_joy(ggplot2::aes(x=values, y=j, group=j), fill="#00000044") +
             ggridges::geom_density_ridges(ggplot2::aes(x=values, y=j, group=j), fill="#00000044", colour='white', rel_min_height = 0.05) +
-            ggplot2::geom_segment(data=tab  %>% dplyr::filter(j %in% !!j), ggplot2::aes(x=True, xend=True, y=j, yend=jnext, col='red')) +
+            ggplot2::geom_segment(data=tab  %>%
+                                      dplyr::filter(j %in% !!j) %>%
+                                      dplyr::mutate_if(is.factor, as.character),
+                                  ggplot2::aes(x=True, xend=True, y=j, yend=jnext, col='red')) +
             ## ggplot2::geom_segment(data=tab , ggplot2::aes(x=Mean, xend=Mean, y=j, yend=jnext, col='black')) +
             ggplot2::facet_wrap( ~ Parameter, ncol = ncol, scales='free', labeller=ggplot2::label_parsed) +
             ggplot2::ylab('Context Index') +
@@ -564,6 +568,7 @@ plot.hdpGLM <- function(x, terms=NULL, j.label=NULL, j.idx=NULL, title=NULL, sub
                 tidyr::unite(., Parameter, Parameter, term, sep='~')
         g = tab %>%
             dplyr::filter(j %in% !!j)  %>% 
+            dplyr::mutate_if(is.factor, as.character) %>% 
             ggplot2::ggplot(.) +
             ## ggjoy::geom_joy(ggplot2::aes(x=values, y=j, group=j), fill="#00000044") +
             ggridges::geom_density_ridges(ggplot2::aes(x=values, y=j, group=j), fill="#00000044", colour='white', rel_min_height = 0.05) +
@@ -585,7 +590,8 @@ plot.hdpGLM <- function(x, terms=NULL, j.label=NULL, j.idx=NULL, title=NULL, sub
         }
     }
     if (!is.null(context.id)) {
-        contexts = x$context.cov %>% dplyr::filter(C %in% !!j) 
+        contexts = x$context.cov %>% dplyr::filter(C %in% !!j)  %>%
+            dplyr::mutate_if(is.factor, as.character)
         g = g +
             ggplot2::scale_y_discrete(breaks = contexts$C, labels = contexts[,context.id] %>% dplyr::pull(.) %>% as.character, limits=contexts$C) +
             ggplot2::ylab(context.id) 
@@ -813,9 +819,10 @@ plot_beta_sim <- function(data, w.idx, ncol=NULL)
         dplyr::mutate(W0=1, j=1:nrow(.))
     taus = summary(data)$tau %>%
                        tibble::as_data_frame(.)  %>%
-                       dplyr::mutate(beta = paste0('beta', beta, sep=''),
+                       dplyr::mutate(beta = paste0('beta[', beta,"]", sep=''),
                                      w = paste0('W', w, sep=''),
-                                     tau.label = paste0(stringr::str_extract(Parameter, 'tau') , '[', stringr::str_extract(Parameter, '[0-9]+') ,']'),
+                                     ## tau.label = paste0(stringr::str_extract(Parameter, 'tau') , '[', stringr::str_extract(Parameter, '[0-9]+') ,']'),
+                                     tau.label = Parameter,
                                      w.label   = paste0(stringr::str_extract(w, 'W') , '[', stringr::str_extract(w, '[0-9]+') ,']'))  %>%
                        dplyr::group_by(beta) %>%
                        dplyr::mutate(beta.exp        = paste0(paste0(tau.label, w.label), collapse="~+~"),
@@ -833,9 +840,11 @@ plot_beta_sim <- function(data, w.idx, ncol=NULL)
         dplyr::full_join(., taus , by=c("w", "Parameter"="beta"), suffix=c(".beta", ".tau")) 
     parameters = parameters %>%
         dplyr::mutate(
-                   Parameter = paste0("E(", stringr::str_extract(Parameter, 'beta') , '[', stringr::str_extract(Parameter, '[0-9]+') ,'])'),
-                   Parameter.tau = paste0(stringr::str_extract(Parameter.tau,'tau'),'[',
-                                          stringr::str_extract(Parameter.tau,'[0-9]+') ,']'),
+                   ## Parameter = paste0("E(", stringr::str_extract(Parameter, 'beta') , '[', stringr::str_extract(Parameter, '[0-9]+') ,'])'),
+                   ## Parameter.tau = paste0(stringr::str_extract(Parameter.tau,'tau'),'[',
+                   ##                        stringr::str_extract(Parameter.tau,'[0-9]+') ,']'),
+                   Parameter = paste0("E(", Parameter, ')'),
+                   Parameter.tau = Parameter.tau,
                    order = paste0(stringr::str_extract(w, '[0-9]+'),  sep=''),
                    facet = paste0(Parameter, "==", beta.exp.values.tau)) 
     ## plot
@@ -1090,6 +1099,7 @@ plot_tau <- function(samples, X=NULL, W=NULL, title=NULL, true.tau=NULL, show.al
 
 }
 ## {{{ docs }}}
+
 #' Plot posterior expectation of beta in each context
 #'
 #' This function plots the posterior expectation of beta, the linear effect of the individual level covariates, as function of the context-level covariates
@@ -1137,6 +1147,7 @@ plot_tau <- function(samples, X=NULL, W=NULL, title=NULL, true.tau=NULL, show.al
 #'
 #' 
 #' @export
+
 ## }}}
 plot_pexp_beta <- function(samples, X=NULL, W=NULL, pred.pexp.beta=FALSE, ncol.beta=NULL, ylab=NULL, nrow.w=NULL, ncol.w=NULL, smooth.line=FALSE, title=NULL)
 {
@@ -1153,8 +1164,8 @@ plot_pexp_beta <- function(samples, X=NULL, W=NULL, pred.pexp.beta=FALSE, ncol.b
     options(warn=-1)
     on.exit(options(warn=0))
 
+    ## samples
     samples = hdpGLM_get_occupied_clusters(samples)
-    ## get context-level covariates to plot
     Ws = samples$context.cov  %>% dplyr::select(-C) %>% names
     if (is.null(W)) {
         W = Ws
@@ -1201,14 +1212,17 @@ plot_pexp_beta <- function(samples, X=NULL, W=NULL, pred.pexp.beta=FALSE, ncol.b
             dplyr::select(k, Parameter.facet, Mean, w) %>%
             ## tidyr::gather(key = W, value=value, -Parameter.facet, -Mean, -k)  %>%
             ggplot2::ggplot(.) +
-            ggplot2::geom_point(ggplot2::aes_string(x=w, y="Mean", colour="k"), size=2) +
+            ## ggplot2::geom_point(ggplot2::aes_string(x=w, y="Mean", colour="k"), size=2) +
+            ggplot2::geom_point(ggplot2::aes_string(x=w, y="Mean"), size=2) +
             ## facet_grid( W ~ Parameter.facet ,  scales='free_x',labeller=label_parsed ) +
             ggplot2::facet_wrap( ~  Parameter.facet , ncol=ncol.beta, scales='free',labeller=ggplot2::label_parsed ) +
             ggplot2::scale_colour_brewer(palette='BrBG', name="Cluster") +
             ggplot2::theme_bw()+
             ggplot2::theme(strip.background = ggplot2::element_rect(colour="white", fill="white"),
                            strip.text.x = ggplot2::element_text(size=12, face='bold', hjust=0),
-                           strip.text.y = ggplot2::element_text(size=12, face="bold", vjust=0)) 
+                           strip.text.y = ggplot2::element_text(size=12, face="bold", vjust=0)) +
+         ggplot2::guides(colour=FALSE)
+
         if (is.null(ylab)) {
             plots[[i]] = plots[[i]] +
                 ## ggplot2::ylab(bquote(E(beta~"|"~ .)~"(Posterior expectation of "~beta~")")) 
@@ -1234,7 +1248,7 @@ plot_pexp_beta <- function(samples, X=NULL, W=NULL, pred.pexp.beta=FALSE, ncol.b
     }else{
         g = ggpubr::ggarrange(plotlist=plots, nrow=nrow.w, ncol=ncol.w, common.legend=T)
     }
-    
+    ## omit color lefend
     return(g)
 }
 fit_pexp_beta <- function(samples, W=NULL)
