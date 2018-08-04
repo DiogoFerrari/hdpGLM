@@ -183,6 +183,9 @@ summary.hdpGLM <- function(object, ...)
     only.occupied.clusters.in.contexts=TRUE
     ## summarise beta
     ## --------------
+    ## Debug/Monitoring message --------------------------
+    msg <- paste0('\n','Generating summary for beta...',  '\n'); cat(msg)
+    ## ---------------------------------------------------
     if(only.occupied.clusters.in.contexts)   x = hdpGLM_get_occupied_clusters(x)
     if(!is.null(true.beta)){
         ## first we need to match the index of the contexts provided by the user and the one used by the algorithm (see details in the function help)
@@ -196,6 +199,7 @@ summary.hdpGLM <- function(object, ...)
             tibble::as_data_frame(.)  %>% 
             tidyr::gather(key=Parameter, value=sample, -k, -j) %>% 
             dplyr::group_by(k,j, Parameter) %>%
+            dplyr::filter(dplyr::n()>1) %>%  # discard cases with a single draw
             dplyr::summarize_all(.funs=list(Mean="mean", Median="median", SD="sd", "HPD.lower", "HPD.upper")) %>%
             dplyr::ungroup(.)
     }
@@ -215,6 +219,9 @@ summary.hdpGLM <- function(object, ...)
 
     ## summarise tau
     ## -------------
+    ## Debug/Monitoring message --------------------------
+    msg <- paste0('\n','Generating summary for tau...',  '\n'); cat(msg)
+    ## ---------------------------------------------------
     tau.summ = x$tau %>% summary(.)
     tau.summ[[1]] = tau.summ[[1]] %>% base::data.frame(Parameter=rownames(.), ., row.names=1:nrow(.)) %>% tibble::as_data_frame()
     ## using interval from summary
@@ -247,7 +254,8 @@ summary.hdpGLM <- function(object, ...)
             dplyr::select(w, beta, Parameter, Description, dplyr::everything())  %>%
             dplyr::arrange(w, beta) 
     }
-    
+    if ('tau.idx' %in% names(taus)) taus = taus %>% dplyr::select(-tau.idx) 
+        
     return(list(beta=betas, tau=taus))
 }
 ## =====================================================
@@ -287,6 +295,7 @@ summary.hdpGLM <- function(object, ...)
 #' plot(samples, true.beta=summary(dt)$beta)
 #' 
 #' @export
+
 ## }}}
 plot.dpGLM    <- function(x, terms=NULL, separate=FALSE, hpd=TRUE, true.beta=NULL, title=NULL, subtitle=NULL, adjust=1, ncols=NULL, only.occupied.clusters=TRUE, focus.hpd=FALSE, legend.position="top", colour='grey', alpha=.4, display.terms=TRUE, plot.mean=TRUE, ...)
 {
@@ -486,6 +495,7 @@ plot.hdpGLM <- function(x, terms=NULL, j.label=NULL, j.idx=NULL, title=NULL, sub
         }
     }
     x = hdpGLM_get_occupied_clusters(x)
+    summ = summary(x)
     if (!is.null(true.beta)) {
         ## first we need to match the index of the contexts provided by the user and the one used by the algorithm (see details in the function help)
         true.beta      = true.beta  %>% dplyr::full_join(.,  x$context.cov, by=c("j"="C"))
@@ -502,7 +512,7 @@ plot.hdpGLM <- function(x, terms=NULL, j.label=NULL, j.idx=NULL, title=NULL, sub
             tibble::as_data_frame(.)  %>%
             dplyr::select(-sigma)  %>% 
             tidyr::gather(key = Parameter, value=values, -j, -k) %>%
-            dplyr::full_join(., summary(x)$beta %>% dplyr::select(term, Parameter) %>% dplyr::filter(Parameter!='sigma')   , by=c('Parameter'))  %>% 
+            dplyr::full_join(., summ$beta %>% dplyr::select(term, Parameter) %>% dplyr::filter(Parameter!='sigma')   , by=c('Parameter'))  %>% 
             dplyr::mutate(Parameter = paste0(stringr::str_extract(Parameter, 'beta') , '[', stringr::str_extract(Parameter, '[0-9]+') ,']'))
         if (!is.null(terms)) {
             tab2 = tab2 %>%
@@ -548,12 +558,12 @@ plot.hdpGLM <- function(x, terms=NULL, j.label=NULL, j.idx=NULL, title=NULL, sub
             ggplot2::theme(legend.position = legend.position) +
             ggplot2::xlim(xlim)
     }else{
-        xlim = summary(x)$beta %>% dplyr::summarize(lower=min(HPD.lower), upper=max(HPD.upper)) %>% c %>% unlist
+        xlim = summ$beta %>% dplyr::summarize(lower=min(HPD.lower), upper=max(HPD.upper)) %>% c %>% unlist
         tab = x$samples %>%
             tibble::as_data_frame(.)  %>%
             dplyr::select(-sigma)  %>% 
             tidyr::gather(key = Parameter, value=values, -j, -k) %>%
-            dplyr::full_join(., summary(x)$beta %>% dplyr::select(term, Parameter) %>% dplyr::filter(Parameter!='sigma')   , by=c('Parameter'))  %>% 
+            dplyr::full_join(., summ$beta %>% dplyr::select(term, Parameter) %>% dplyr::filter(Parameter!='sigma')   , by=c('Parameter'))  %>% 
             dplyr::mutate(Parameter = paste0(stringr::str_extract(Parameter, 'beta') , '[', stringr::str_extract(Parameter, '[0-9]+') ,']')) 
         if (!is.null(terms)) 
             tab = tab %>%
@@ -605,6 +615,7 @@ plot.hdpGLM <- function(x, terms=NULL, j.label=NULL, j.idx=NULL, title=NULL, sub
     
     return(g)
 }
+
 ## =====================================================
 ## predicted values
 ## =====================================================
@@ -967,11 +978,12 @@ dpGLM_select_non_zero <- function(x, select_perc_time_active=60)
 #' @param X a string vector with the name of the first-level covariates whose associated tau should be displayed
 #' @param W a string vector with the name of a context-level covariate(s) whose linear effect will be displayed. If \code{NULL}, the linear effect tau of all context-level covariates are displayed. Note: the context-level covariate must have been included in the estimation of the model.
 #' @param true.tau a \code{data.frame} with four columns. The first must be named \code{w} and it indicates the index of each context-level covariate, starting with 0 for the intercept term. The second column named \code{beta} must contain the indexes of the betas of individual-level covariates, starting with 0 for the intercept term. The third column named \code{Parameter} must be named \code{tau<w><beta>}, where \code{w} and \code{beta} must be the actual values displayed in the columns \code{w} and \code{beta}. Finally, it must have a column named \code{True} with the true value of the parameter.
-#' @inheritParams summary.hdpglm
+#' @inheritParams summary.hdpGLM
 #' @param show.all.taus  boolean, if \code{FALSE} (default) the posterior distribution of taus representing the intercept of the expectation of beta are omitted
 #' @param show.all.betas boolean, if \code{FALSE} (default) the taus affecting only the intercept terms of the outcome variable are omitted
 #' @param ncol number of columns of the grid. If \code{NULL}, one column is used
 #' @param title string, title of the plot
+#' @inheritParams plot.hdpGLM 
 #'
 #' @examples
 #' set.seed(66)
@@ -1004,7 +1016,7 @@ dpGLM_select_non_zero <- function(x, select_perc_time_active=60)
 #' 
 #' @export
 ## }}}
-plot_tau <- function(samples, X=NULL, W=NULL, title=NULL, true.tau=NULL, show.all.taus=FALSE, show.all.betas=FALSE, ncol=NULL)
+plot_tau <- function(samples, X=NULL, W=NULL, title=NULL, true.tau=NULL, show.all.taus=FALSE, show.all.betas=FALSE, ncol=NULL, legend.position='top')
 {
     ## keep all default options
     op.default <- options()
@@ -1071,7 +1083,7 @@ plot_tau <- function(samples, X=NULL, W=NULL, title=NULL, true.tau=NULL, show.al
         ggplot2::theme(strip.background = ggplot2::element_rect(colour="white", fill="white"),
                        strip.text.x = ggplot2::element_text(size=12, face='bold', hjust=0),
                        strip.text.y = ggplot2::element_text(size=12, face="bold", vjust=0))  +
-        ggplot2::theme(legend.position = "top") +
+        ggplot2::theme(legend.position = legend.position) +
         ggplot2::scale_x_continuous(expand = c(0.0001, 0.0001)) +
         ggplot2::scale_y_continuous(expand = c(0, 0)) +
         ggplot2::facet_wrap( ~ facet , ncol=ncol, scales='free',labeller = ggplot2::label_parsed)  
@@ -1099,6 +1111,142 @@ plot_tau <- function(samples, X=NULL, W=NULL, title=NULL, true.tau=NULL, show.al
 
 }
 ## {{{ docs }}}
+#' Plot posterior distribution of beta for each context
+#'
+#' Plot the posterior distribution of the linear parameters beta for each context
+#'
+#'
+#' @inheritParams plot_tau
+#' @inheritParams plot.hdpGLM
+#' @inheritParams plot.dpGLM
+#' @param plot.grid boolean, if \code{TRUE} a grid is displayed in the background
+#' @param showKhat boolean, if \code{TRUE} a message with the number of estimated clusters by context is displayed
+#' @param col.border string, color of the border of the densities
+#' @param col string, color of the densities
+#' @param xlab.size numeric, size of the breaks in the x-axis 
+#' @param ylab.size numeric, size of the breaks in the y-axis
+#' @param title.size numeric, size of the title
+#' @param legend.size numeric, size of the legend
+#' @param xtick.distance numeric, distance between x-axis marks and bottom of the figure
+#' @param ytick.distance numeric, distance between y-axis marks and bottom of the figure
+#' @param left.margin numeric, distance between left margin and left side of the figure
+#'
+#' @export
+## }}}
+plot_beta <- function(samples, X=NULL, context.id=NULL, true.beta=NULL, title=NULL, subtitle=NULL, plot.mean=FALSE, plot.grid=FALSE, showKhat=FALSE, col=NULL, xlab.size=NULL, ylab.size=NULL, title.size=NULL, legend.size=NULL, xtick.distance=NULL, left.margin=0, ytick.distance=NULL, col.border='white')
+{
+    ## other options
+    par.default <- graphics::par(no.readonly = TRUE)
+    on.exit(graphics::par(par.default), add=TRUE)
+    ## keep all default options
+    op.default <- options()
+    on.exit(options(op.default), add=TRUE)
+    ## keep current working folder on exit
+    dir.default <- getwd()
+    on.exit(setwd(dir.default), add=TRUE)
+    ## no warning messages
+    options(warn=-1)
+    on.exit(options(warn=0))
+    ## get context indexes and context labels to plot
+    ## ----------------------------------------------
+    C = samples$context.cov$C %>% unique %>% sort
+    if (!is.null(context.id)) {
+        j.label = samples$context.cov[,context.id] %>% dplyr::pull(.) %>% as.character
+        
+    }else{
+        j.label = paste0(" ", C) 
+    }
+    ## get summary of the estimation
+    ## -----------------------------
+    if (!is.null(true.beta)) {
+        summ   = summary(samples, true.beta=true.beta)
+    }else{
+        summ   = summary(samples)
+    }
+    beta   = summ$beta %>% dplyr::filter(term == !!X) %>% dplyr::select(Parameter)  %>% unique %>% dplyr::pull(.)
+    xlim   = summ$beta %>% dplyr::summarise(lower = min(HPD.lower), upper=max(HPD.upper)) 
+    xlim   = c(xlim$lower, xlim$upper)
+    title  = paste0(beta,'(',X,')')
+    ## plot layout
+    ## -----------
+    lspace = max(max(nchar(j.label)) -.4*max(nchar(j.label)), 2) + left.margin
+    graphics::par(las=2,cex.axis=1.2, bty='n', pch=20, cex.main=.9, mar=c(0,lspace,0,0), mgp = c(2,.6,0))
+    mat = matrix(c(C,length(C)+1:2), byrow=T, nrow=length(C)+2)
+    graphics::layout(mat, heights=c(2,rep(1, nrow(mat)-2), 2))
+    ## Plot aesthetics
+    ## ---------------
+    if(is.null(col)) col="grey"
+    if((is.null(xlab.size))) xlab.size=.8
+    if((is.null(ylab.size))) ylab.size=.8
+    if(is.null(title.size)) title.size=1
+    if (is.null(legend.size)) legend.size=1
+    if(is.null(xtick.distance)) xtick.distance=0
+    if (is.null(ytick.distance)) ytick.distance=0
+    ## plot title and legend
+    ## ---------------------
+    graphics::plot(xlim[1], xlim[2], xlim=xlim, bty='n', xaxt='n', yaxt='n',  axes=FALSE, type="n",   ylab="", xlab="")
+    ## ;
+    ## title(parse(text=title),   outer = F, cex.main=title.size, size=3, adj=0)
+    ## ;
+    graphics::legend("topleft", legend=parse(text=title), cex=title.size, bty='n', adj=.5)
+    ## ;
+    ## ;
+    if (plot.mean & !is.null(true.beta))
+        graphics::legend("center", legend=c("Clusters Posterior Mean", "True"), lwd=c(1,1), col=c("black", "red"), bty="n", horiz=T)
+    if (plot.mean & is.null(true.beta))
+        graphics::legend("center", legend=c("Clusters Posterior Mean"), lwd=c(1), col=c("black"), bty="n", horiz=T)
+    if (!plot.mean & !is.null(true.beta))
+        graphics::legend("center", legend=c("True"), lwd=c(1), col=c("red"), bty="n", horiz=T, cex=legend.size)
+    ## plot densities
+    ## --------------
+    for (j in C)
+    {
+        ## Debug/Monitoring message --------------------------
+        msg <- paste0('\n','Generating plot with posterior density for context ', j,  '...'); cat(msg)
+        ## ---------------------------------------------------
+        if (!is.null(true.beta)) {
+            True = summ$beta %>%
+                dplyr::filter(j==!!j) %>%
+                dplyr::filter(Parameter == !!beta)  %>%
+                dplyr::select(True) %>%
+                dplyr::pull(.)
+        }
+        if (plot.mean | showKhat) {
+            Mean = summ$beta %>%
+                dplyr::filter(j==!!j) %>%
+                dplyr::filter(Parameter == !!beta)  %>%
+                dplyr::select(Mean) %>%
+                dplyr::pull(.)
+            K_estimated = length(Mean)
+        }
+        g = samples$samples %>%
+            tibble::as_data_frame()  %>%
+            dplyr::filter(j == !!j)  %>%
+            dplyr::select(beta)  %>%
+            dplyr::pull(.) %>% 
+            stats::density(.)
+        graphics::plot(g,  col=col,
+             xlim=xlim,
+             main='',
+             xaxt='n',
+             yaxt='n',
+             ylab='')
+        if (plot.grid) {graphics::grid()}
+        graphics::mtext(j.label[j], side=2, line=1, cex=ylab.size, adj=ytick.distance) # plot ylabs
+        graphics::polygon(g,col=col, border=col.border, lty=.5)
+        graphics::axis(side =2, labels = F,   lwd=0.01, lwd.ticks=0, las=1, col='grey') ## vertical ine to mark y-axis
+        ## graphics::axis(side =1, labels = F,   lwd=0.01, lwd.ticks=0, las=1, col='grey') ## vertical ine to mark x-axis
+        ## graphics::axis(side =3, labels = F,   lwd=0.01, lwd.ticks=0, las=1, col='grey') ## vertical ine to mark x-axis
+        if (!is.null(true.beta)) graphics::abline(v=True, col='red', lwd=.8)
+        if (plot.mean)           graphics::abline(v=Mean, col='black', lwd=2)
+        if (showKhat) graphics::legend('topleft', legend=paste0("Estimated Clusters: ", K_estimated) , bty='n')
+    }
+    graphics::plot(xlim[1], 0, xlim=xlim, bty='n', xaxt='n', yaxt='n',  axes=FALSE, type="n", ylab="", xlab="")
+    graphics::axis(1, las=0, pos=1, outer=T, lwd=.01, cex.axis=xlab.size, padj=xtick.distance, tck=-.1, col='grey')
+    cat('\n')
+    invisible()
+}
+## {{{ docs }}}
 
 #' Plot posterior expectation of beta in each context
 #'
@@ -1106,13 +1254,15 @@ plot_tau <- function(samples, X=NULL, W=NULL, title=NULL, true.tau=NULL, show.al
 #'
 #'
 #' @inheritParams plot_tau
+#' @inheritParams plot.hdpGLM
 #' @param smooth.line boolean, if \code{TRUE} the plot will display a regression line representing the regression of the posterior expectation of the linear coefficients betas on the context-level covariates. Default \code{FALSE}
 #' @param pred.pexp.beta boolean, if \code{TRUE} the plots will display a line with the predicted posterior expectation of betas obtained using the posterior expectation of taus, the linear coefficients of the expectation of beta
 #' @param ncol.beta integer with number of rows of the grid used for each group of context-level covariates
 #' @param nrow.w integer with the number of rows of the grid
 #' @param ncol.w integer with the number of columns of the grid
 #' @param ylab string, the label of the y-axis
-#' @param title string, title of the plot 
+#' @param title string, title of the plot
+#' @param col.pred.line string with color of fitted line. Only works if \code{pred.pexp.beta=TRUE}
 #'
 #' @examples
 #' set.seed(66)
@@ -1149,7 +1299,7 @@ plot_tau <- function(samples, X=NULL, W=NULL, title=NULL, true.tau=NULL, show.al
 #' @export
 
 ## }}}
-plot_pexp_beta <- function(samples, X=NULL, W=NULL, pred.pexp.beta=FALSE, ncol.beta=NULL, ylab=NULL, nrow.w=NULL, ncol.w=NULL, smooth.line=FALSE, title=NULL)
+plot_pexp_beta <- function(samples, X=NULL, W=NULL, pred.pexp.beta=FALSE, ncol.beta=NULL, ylab=NULL, nrow.w=NULL, ncol.w=NULL, smooth.line=FALSE, title=NULL, legend.position='top', col.pred.line='red')
 {
     ## Debug/Monitoring message --------------------------
     msg <- paste0('\n','\nGeneting plots ...\n',  '\n'); cat(msg)
@@ -1178,14 +1328,15 @@ plot_pexp_beta <- function(samples, X=NULL, W=NULL, pred.pexp.beta=FALSE, ncol.b
     ##     dplyr::select(W)  %>%
     ##     dplyr::filter(!duplicated(.)) %>%
     ##     dplyr::left_join(., samples$context.cov) 
-    taus  = summary(samples)$tau
-    betas = summary(samples)$beta %>%
-                           dplyr::filter(Parameter != 'sigma')  %>%
-                           dplyr::mutate(Parameter.label = paste0(stringr::str_extract(Parameter, 'beta') , '[', stringr::str_extract(Parameter, '[0-9]+') ,']'),
-                                         term.label = stringr::str_replace_all(string=term, pattern="\\)|\\(", replacement=""),
-                                         term.label = paste0("(", stringr::str_replace_all(string=term.label, pattern=" ", replacement="~") , ")") )  %>%
-                           tidyr::unite(Parameter.facet, Parameter.label, term.label, sep="~", remove=FALSE) %>%
-                           dplyr::left_join(., samples$context.cov, by=c('j' = 'C')) 
+    summ = summary(samples)
+    taus  = summ$tau
+    betas = summ$beta %>%
+        dplyr::filter(Parameter != 'sigma')  %>%
+        dplyr::mutate(Parameter.label = paste0(stringr::str_extract(Parameter, 'beta') , '[', stringr::str_extract(Parameter, '[0-9]+') ,']'),
+                      term.label = stringr::str_replace_all(string=term, pattern="\\)|\\(", replacement=""),
+                      term.label = paste0("(", stringr::str_replace_all(string=term.label, pattern=" ", replacement="~") , ")") )  %>%
+        tidyr::unite(Parameter.facet, Parameter.label, term.label, sep="~", remove=FALSE) %>%
+        dplyr::left_join(., samples$context.cov, by=c('j' = 'C')) 
                            
     
     if (!is.null(X)) {
@@ -1213,7 +1364,7 @@ plot_pexp_beta <- function(samples, X=NULL, W=NULL, pred.pexp.beta=FALSE, ncol.b
             ## tidyr::gather(key = W, value=value, -Parameter.facet, -Mean, -k)  %>%
             ggplot2::ggplot(.) +
             ## ggplot2::geom_point(ggplot2::aes_string(x=w, y="Mean", colour="k"), size=2) +
-            ggplot2::geom_point(ggplot2::aes_string(x=w, y="Mean"), size=2) +
+            ggplot2::geom_point(ggplot2::aes_string(x=w, y="Mean"), colour="#00000044", size=2) +
             ## facet_grid( W ~ Parameter.facet ,  scales='free_x',labeller=label_parsed ) +
             ggplot2::facet_wrap( ~  Parameter.facet , ncol=ncol.beta, scales='free',labeller=ggplot2::label_parsed ) +
             ggplot2::scale_colour_brewer(palette='BrBG', name="Cluster") +
@@ -1238,7 +1389,7 @@ plot_pexp_beta <- function(samples, X=NULL, W=NULL, pred.pexp.beta=FALSE, ncol.b
                 dplyr::filter(term %in% X) 
             plots[[i]] = plots[[i]] +
                 ggplot2::geom_line(data= pred %>% dplyr::mutate(linetype="Fitted line using posterior \nexpectation of context effect") ,
-                                   ggplot2::aes_string(x=w, y="E.beta.pred", group="beta", colour=NULL, linetype="linetype")) +
+                                   ggplot2::aes_string(x=w, y="E.beta.pred", group="beta",  linetype="linetype"), colour=col.pred.line) +
                 ggplot2::scale_linetype_manual(values = "solid", name="") 
         }
     }
@@ -1246,7 +1397,7 @@ plot_pexp_beta <- function(samples, X=NULL, W=NULL, pred.pexp.beta=FALSE, ncol.b
         g = ggpubr::ggarrange(plotlist=plots, nrow=nrow.w, ncol=ncol.w, common.legend=T) %>%
             ggpubr::annotate_figure(., top = ggpubr::text_grob(title, color = "black", size = 14))
     }else{
-        g = ggpubr::ggarrange(plotlist=plots, nrow=nrow.w, ncol=ncol.w, common.legend=T)
+        g = ggpubr::ggarrange(plotlist=plots, nrow=nrow.w, ncol=ncol.w, common.legend=T, legend=legend.position)
     }
     ## omit color lefend
     return(g)

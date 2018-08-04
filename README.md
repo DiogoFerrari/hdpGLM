@@ -21,6 +21,8 @@ Instalation
 
 ``` {.r .rundoc-block rundoc-language="R" rundoc-exports="code"}
 devtools::install_github("DiogoFerrari/hdpGLM")
+# If you don't want to update the dependencies, use: (you may need to install some dependencies manually)
+devtools::install_github("DiogoFerrari/hdpGLM", dependencies=F)
 ```
 
 Usage

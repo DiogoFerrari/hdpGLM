@@ -132,7 +132,7 @@ getUniqueW <- function(W, C)
         as.matrix
     )
 }
-hdpglm_exclude_nas <- function(data, formula1, formula2)
+hdpglm_exclude_nas <- function(data, formula1, formula2, context.id)
 {
     ## vars = c(all.vars(formula1), all.vars(formula2))
     if (is.null(formula2)) {
@@ -140,6 +140,7 @@ hdpglm_exclude_nas <- function(data, formula1, formula2)
     }else{
         vars = c(formula.tools::get.vars(formula1, data=data), formula.tools::get.vars(formula2, data=data))
     }
+    if (!is.null(context.id)) vars = c(vars, context.id)
     return(data %>% dplyr::select(vars)  %>% dplyr::filter(stats::complete.cases(.)))
 }
 
@@ -261,7 +262,7 @@ hdpGLM <- function(formula1, formula2=NULL, data, context.id=NULL, weights=NULL,
     ## Exclude NA values
     ## -----------------
     if (na.action == 'exclude') {
-        data    = hdpglm_exclude_nas(data, formula1, formula2)
+        data    = hdpglm_exclude_nas(data, formula1, formula2, context.id)
     }else{
         ## Debug/Monitoring message --------------------------
         msg <- paste0('\n','Note: only action currently available to deal with NA\'s is \'exclude\'',  '\n'); cat(msg)

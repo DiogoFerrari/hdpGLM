@@ -5,7 +5,8 @@
 \title{Plot tau}
 \usage{
 plot_tau(samples, X = NULL, W = NULL, title = NULL, true.tau = NULL,
-  show.all.taus = FALSE, show.all.betas = FALSE, ncol = NULL)
+  show.all.taus = FALSE, show.all.betas = FALSE, ncol = NULL,
+  legend.position = "top")
 }
 \arguments{
 \item{samples}{an output of the function \code{\link{hdpGLM}}}
@@ -23,6 +24,8 @@ plot_tau(samples, X = NULL, W = NULL, title = NULL, true.tau = NULL,
 \item{show.all.betas}{boolean, if \code{FALSE} (default) the taus affecting only the intercept terms of the outcome variable are omitted}
 
 \item{ncol}{number of columns of the grid. If \code{NULL}, one column is used}
+
+\item{legend.position}{one of four options: "bottom" (default), "top", "left", or "right". It indicates the position of the legend}
 }
 \description{
 Function to plot posterior distribution of tau

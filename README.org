@@ -9,6 +9,8 @@ Hierarchical Dirichlet Process Generalized Linear models *hdpGLM* is a package t
 
 #+BEGIN_SRC R :exports code
 devtools::install_github("DiogoFerrari/hdpGLM")
+# If you don't want to update the dependencies, use: (you may need to install some dependencies manually)
+devtools::install_github("DiogoFerrari/hdpGLM", dependencies=F)
 #+END_SRC
 
 * Usage
