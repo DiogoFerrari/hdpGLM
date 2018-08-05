@@ -1302,7 +1302,7 @@ plot_beta <- function(samples, X=NULL, context.id=NULL, true.beta=NULL, title=NU
 plot_pexp_beta <- function(samples, X=NULL, W=NULL, pred.pexp.beta=FALSE, ncol.beta=NULL, ylab=NULL, nrow.w=NULL, ncol.w=NULL, smooth.line=FALSE, title=NULL, legend.position='top', col.pred.line='red')
 {
     ## Debug/Monitoring message --------------------------
-    msg <- paste0('\n','\nGeneting plots ...\n',  '\n'); cat(msg)
+    msg <- paste0('\n','\nGenerating plots ...\n',  '\n'); cat(msg)
     ## ---------------------------------------------------
     ## keep all default options
     op.default <- options()
