@@ -6,7 +6,9 @@
 \usage{
 plot_tau(samples, X = NULL, W = NULL, title = NULL, true.tau = NULL,
   show.all.taus = FALSE, show.all.betas = FALSE, ncol = NULL,
-  legend.position = "top")
+  legend.position = "top", x.axis.size = 1.1, y.axis.size = 1.1,
+  title.size = 1.2, panel.title.size = 1.4, legend.size = 1,
+  xlab = NULL)
 }
 \arguments{
 \item{samples}{an output of the function \code{\link{hdpGLM}}}
@@ -26,6 +28,18 @@ plot_tau(samples, X = NULL, W = NULL, title = NULL, true.tau = NULL,
 \item{ncol}{number of columns of the grid. If \code{NULL}, one column is used}
 
 \item{legend.position}{one of four options: "bottom" (default), "top", "left", or "right". It indicates the position of the legend}
+
+\item{x.axis.size}{numeric, the relative size of the label in the x-axis}
+
+\item{y.axis.size}{numeric, the relative size of the label in the y-axis}
+
+\item{title.size}{numeric, the relative size of the title of the plot}
+
+\item{panel.title.size}{numeric, the relative size of the titles in the panel of the plot}
+
+\item{legend.size}{numeric, the relative size of the legend}
+
+\item{xlab}{string, the label of the x-axis}
 }
 \description{
 Function to plot posterior distribution of tau

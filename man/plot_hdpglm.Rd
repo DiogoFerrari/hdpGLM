@@ -7,7 +7,10 @@
 plot_hdpglm(samples, X = NULL, W = NULL, ncol.taus = 1,
   ncol.betas = NULL, ncol.w = NULL, nrow.w = NULL, smooth.line = FALSE,
   pred.pexp.beta = FALSE, title.tau = NULL, true.tau = NULL,
-  title.beta = NULL)
+  title.beta = NULL, tau.x.axis.size = 1.1, tau.y.axis.size = 1.1,
+  tau.title.size = 1.2, tau.panel.title.size = 1.4, tau.legend.size = 1,
+  beta.x.axis.size = 1.1, beta.y.axis.size = 1.1, beta.title.size = 1.2,
+  beta.panel.title.size = 1.4, beta.legend.size = 1, tau.xlab = NULL)
 }
 \arguments{
 \item{samples}{an output of the function \code{\link{hdpGLM}}}
@@ -32,7 +35,27 @@ plot_hdpglm(samples, X = NULL, W = NULL, ncol.taus = 1,
 
 \item{true.tau}{a \code{data.frame} with four columns. The first must be named \code{w} and it indicates the index of each context-level covariate, starting with 0 for the intercept term. The second column named \code{beta} must contain the indexes of the betas of individual-level covariates, starting with 0 for the intercept term. The third column named \code{Parameter} must be named \code{tau<w><beta>}, where \code{w} and \code{beta} must be the actual values displayed in the columns \code{w} and \code{beta}. Finally, it must have a column named \code{True} with the true value of the parameter.}
 
-\item{title.beta}{string, the title for the posterior expectation of beta as function of context-level covariate
+\item{title.beta}{string, the title for the posterior expectation of beta as function of context-level covariate}
+
+\item{tau.x.axis.size}{numeric, relative size of the x-axis of the plot with tau}
+
+\item{tau.y.axis.size}{numeric, relative size of the y-axis of the plot with tau}
+
+\item{tau.title.size}{numeric, relative size of the title of the plot with tau}
+
+\item{tau.panel.title.size}{numeric, relative size of the title of the panels of the plot with tau}
+
+\item{tau.legend.size}{numeric, relative size of the legend of the plot with tau}
+
+\item{beta.x.axis.size}{numeric, relative size of the x-axis of the plot with beta}
+
+\item{beta.y.axis.size}{numeric, relative size of the y-axis of the plot with beta}
+
+\item{beta.title.size}{numeric, relative size of the title of the plot with beta}
+
+\item{beta.panel.title.size}{numeric, relative size of the title of the panels of the plot with beta}
+
+\item{beta.legend.size}{numeric, relative size of the legend of the plot with beta
 
 set.seed(66)
 n = 20    # sample size
@@ -54,6 +77,8 @@ plot_hdpglm(samples, ncol.taus=2, ncol.betas=2, X='X1')
 plot_hdpglm(samples, ncol.taus=2, ncol.betas=2, X='X1', ncol.w=2, nrow.w=1)
 plot_hdpglm(samples, ncol.taus=2, ncol.betas=2, X='X1', ncol.w=2, nrow.w=1,
             pred.pexp.beta=TRUE,smooth.line=TRUE, )}
+
+\item{tau.xlab}{string, the label of the x-axis for the plot with tau}
 }
 \description{
 this function creates a plot with two grids. One is the grid with posterior expectation of betas as function of context-level covariates. The other is the posterior distribution of tau

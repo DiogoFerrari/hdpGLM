@@ -474,11 +474,17 @@ plot.dpGLM    <- function(x, terms=NULL, separate=FALSE, hpd=TRUE, true.beta=NUL
 #' @param context.id string with the name of the column containing the labels identifying the contexts. This variable should have been specified when the estimation was conducted using the function \code{\link{hdpGLM}}.
 #' @param ylab string, the label of the y-axis
 #' @param xlab string, the label of the x-axis
+#' @param rel.height see ggridges::geom_density_ridges
+#' @param x.axis.size numeric, the relative size of the label in the x-axis 
+#' @param y.axis.size numeric, the relative size of the label in the y-axis 
+#' @param title.size numeric, the relative size of the title of the plot
+#' @param panel.title.size numeric, the relative size of the titles in the panel of the plot
+#' @param legend.size numeric, the relative size of the legend
 #' @inheritParams summary.hdpGLM
 #' 
 #' @export
 ## }}}
-plot.hdpGLM <- function(x, terms=NULL, j.label=NULL, j.idx=NULL, title=NULL, subtitle=NULL, true.beta=NULL, ncol=NULL,  legend.position="bottom", display.terms=TRUE, context.id=NULL, ylab=NULL, xlab=NULL, ...)
+plot.hdpGLM <- function(x, terms=NULL, j.label=NULL, j.idx=NULL, title=NULL, subtitle=NULL, true.beta=NULL, ncol=NULL,  legend.position="bottom", display.terms=TRUE, context.id=NULL, ylab=NULL, xlab=NULL, x.axis.size=1.1, y.axis.size=1.1, title.size=1.2, panel.title.size=1.5, legend.size=1.1, rel.height=0.01, ...)
 {
     if (is.null(j.idx) & is.null(j.label)) {
         j = x$context.cov$C 
@@ -542,7 +548,7 @@ plot.hdpGLM <- function(x, terms=NULL, j.label=NULL, j.idx=NULL, title=NULL, sub
             dplyr::mutate_if(is.factor, as.character) %>% 
             ggplot2::ggplot(.) +
             ## ggjoy::geom_joy(ggplot2::aes(x=values, y=j, group=j), fill="#00000044") +
-            ggridges::geom_density_ridges(ggplot2::aes(x=values, y=j, group=j), fill="#00000044", colour='white', rel_min_height = 0.05) +
+            ggridges::geom_density_ridges(ggplot2::aes(x=values, y=j, group=j), fill="#00000044", colour='white', rel_min_height = rel.height) +
             ggplot2::geom_segment(data=tab  %>%
                                       dplyr::filter(j %in% !!j) %>%
                                       dplyr::mutate_if(is.factor, as.character),
@@ -552,10 +558,11 @@ plot.hdpGLM <- function(x, terms=NULL, j.label=NULL, j.idx=NULL, title=NULL, sub
             ggplot2::ylab('Context Index') +
             ggplot2::theme_bw()+
             ggplot2::theme(strip.background = ggplot2::element_rect(colour="white", fill="white"),
-                           strip.text.x = ggplot2::element_text(size=12, face='bold', hjust=0),
-                           strip.text.y = ggplot2::element_text(size=12, face="bold", vjust=0)) +
+                           strip.text.x = ggplot2::element_text(size=ggplot2::rel(panel.title.size), face='bold', hjust=0),
+                           strip.text.y = ggplot2::element_text(size=ggplot2::rel(panel.title.size), face="bold", vjust=0)) +
             ggplot2::scale_colour_manual(values = c("red", "black"), name="", labels=c('True', "MCMC Cluster Mean")) +
-            ggplot2::theme(legend.position = legend.position) +
+            ggplot2::theme(legend.position = legend.position,
+                           legend.text     = ggplot2::element_text(size=ggplot2::rel(legend.size))) +
             ggplot2::xlim(xlim)
     }else{
         xlim = summ$beta %>% dplyr::summarize(lower=min(HPD.lower), upper=max(HPD.upper)) %>% c %>% unlist
@@ -581,13 +588,13 @@ plot.hdpGLM <- function(x, terms=NULL, j.label=NULL, j.idx=NULL, title=NULL, sub
             dplyr::mutate_if(is.factor, as.character) %>% 
             ggplot2::ggplot(.) +
             ## ggjoy::geom_joy(ggplot2::aes(x=values, y=j, group=j), fill="#00000044") +
-            ggridges::geom_density_ridges(ggplot2::aes(x=values, y=j, group=j), fill="#00000044", colour='white', rel_min_height = 0.05) +
+            ggridges::geom_density_ridges(ggplot2::aes(x=values, y=j, group=j), fill="#00000044", colour='white', rel_min_height = rel.height) +
             ggplot2::ylab('Context Index') +
             ggplot2::facet_wrap( ~ Parameter, ncol = ncol, scales='free', labeller=ggplot2::label_parsed) +
             ggplot2::theme_bw()+
             ggplot2::theme(strip.background = ggplot2::element_rect(colour="white", fill="white"),
-                           strip.text.x = ggplot2::element_text(size=12, face='bold', hjust=0),
-                           strip.text.y = ggplot2::element_text(size=12, face="bold", vjust=0)) +
+                           strip.text.x = ggplot2::element_text(size=ggplot2::rel(panel.title.size), face='bold', hjust=0),
+                           strip.text.y = ggplot2::element_text(size=ggplot2::rel(panel.title.size), face="bold", vjust=0)) +
             ggplot2::xlim(xlim)
 
     }
@@ -610,8 +617,11 @@ plot.hdpGLM <- function(x, terms=NULL, j.label=NULL, j.idx=NULL, title=NULL, sub
         g = g + ggplot2::ylab(ylab) 
     }
     if (!is.null(xlab )) {
-        g = g + ggplot2::xlab(xlab) 
+        g = g + ggplot2::xlab(xlab)
     }
+    g = g + ggplot2::theme(axis.title.x = ggplot2::element_text(size=ggplot2::rel(x.axis.size), angle=0, ),
+                           axis.title.y = ggplot2::element_text(size=ggplot2::rel(y.axis.size)),
+                           plot.title   = ggplot2::element_text(size=ggplot2::rel(title.size)))
     
     return(g)
 }
@@ -1016,7 +1026,7 @@ dpGLM_select_non_zero <- function(x, select_perc_time_active=60)
 #' 
 #' @export
 ## }}}
-plot_tau <- function(samples, X=NULL, W=NULL, title=NULL, true.tau=NULL, show.all.taus=FALSE, show.all.betas=FALSE, ncol=NULL, legend.position='top')
+plot_tau <- function(samples, X=NULL, W=NULL, title=NULL, true.tau=NULL, show.all.taus=FALSE, show.all.betas=FALSE, ncol=NULL, legend.position='top', x.axis.size=1.1, y.axis.size=1.1, title.size=1.2, panel.title.size=1.4, legend.size=1, xlab=NULL)
 {
     ## keep all default options
     op.default <- options()
@@ -1081,8 +1091,8 @@ plot_tau <- function(samples, X=NULL, W=NULL, title=NULL, true.tau=NULL, show.al
         ggplot2::geom_vline(ggplot2::aes(xintercept=HPD.upper,  linetype="95% HPD", col='95% HPD'))+
         ggplot2::theme_bw() +
         ggplot2::theme(strip.background = ggplot2::element_rect(colour="white", fill="white"),
-                       strip.text.x = ggplot2::element_text(size=12, face='bold', hjust=0),
-                       strip.text.y = ggplot2::element_text(size=12, face="bold", vjust=0))  +
+                       strip.text.x = ggplot2::element_text(size=ggplot2::rel(panel.title.size), face='bold', hjust=0),
+                       strip.text.y = ggplot2::element_text(size=ggplot2::rel(panel.title.size), face="bold", vjust=0))  +
         ggplot2::theme(legend.position = legend.position) +
         ggplot2::scale_x_continuous(expand = c(0.0001, 0.0001)) +
         ggplot2::scale_y_continuous(expand = c(0, 0)) +
@@ -1106,7 +1116,20 @@ plot_tau <- function(samples, X=NULL, W=NULL, title=NULL, true.tau=NULL, show.al
     if (is.null(title)) {
         g = g +
             ggplot2::ggtitle(label="Posterior distribution of context effect", subtitle="")
+    }else{
+        g = g +
+            ggplot2::ggtitle(label=title, subtitle="")
     }
+    if (!is.null(xlab)) {
+        g = g +
+            ggplot2::xlab(xlab) 
+    }
+    g = g +
+        ggplot2::theme(axis.title.x = ggplot2::element_text(size=ggplot2::rel(x.axis.size), angle=0, ),
+                       axis.title.y = ggplot2::element_text(size=ggplot2::rel(y.axis.size)),
+                       plot.title   = ggplot2::element_text(size=ggplot2::rel(title.size)),
+                       legend.text  = ggplot2::element_text(size=ggplot2::rel(legend.size))
+                       )
     return(g)
 
 }
@@ -1263,6 +1286,7 @@ plot_beta <- function(samples, X=NULL, context.id=NULL, true.beta=NULL, title=NU
 #' @param ylab string, the label of the y-axis
 #' @param title string, title of the plot
 #' @param col.pred.line string with color of fitted line. Only works if \code{pred.pexp.beta=TRUE}
+#' @param title.size numeric, absolute size of the title 
 #'
 #' @examples
 #' set.seed(66)
@@ -1299,7 +1323,7 @@ plot_beta <- function(samples, X=NULL, context.id=NULL, true.beta=NULL, title=NU
 #' @export
 
 ## }}}
-plot_pexp_beta <- function(samples, X=NULL, W=NULL, pred.pexp.beta=FALSE, ncol.beta=NULL, ylab=NULL, nrow.w=NULL, ncol.w=NULL, smooth.line=FALSE, title=NULL, legend.position='top', col.pred.line='red')
+plot_pexp_beta <- function(samples, X=NULL, W=NULL, pred.pexp.beta=FALSE, ncol.beta=NULL, ylab=NULL, nrow.w=NULL, ncol.w=NULL, smooth.line=FALSE, title=NULL, legend.position='top', col.pred.line='red', x.axis.size=1.1, y.axis.size=1.1, title.size=12, panel.title.size=1.4, legend.size=1)
 {
     ## Debug/Monitoring message --------------------------
     msg <- paste0('\n','\nGenerating plots ...\n',  '\n'); cat(msg)
@@ -1370,14 +1394,14 @@ plot_pexp_beta <- function(samples, X=NULL, W=NULL, pred.pexp.beta=FALSE, ncol.b
             ggplot2::scale_colour_brewer(palette='BrBG', name="Cluster") +
             ggplot2::theme_bw()+
             ggplot2::theme(strip.background = ggplot2::element_rect(colour="white", fill="white"),
-                           strip.text.x = ggplot2::element_text(size=12, face='bold', hjust=0),
-                           strip.text.y = ggplot2::element_text(size=12, face="bold", vjust=0)) +
+                           strip.text.x = ggplot2::element_text(size=ggplot2::rel(panel.title.size), face='bold', hjust=0),
+                           strip.text.y = ggplot2::element_text(size=ggplot2::rel(panel.title.size), face="bold", vjust=0)) +
          ggplot2::guides(colour=FALSE)
 
         if (is.null(ylab)) {
             plots[[i]] = plots[[i]] +
                 ## ggplot2::ylab(bquote(E(beta~"|"~ .)~"(Posterior expectation of "~beta~")")) 
-                ggplot2::ylab("Posterior expectation") 
+                ggplot2::ylab("Clusters Posterior Average") 
         }
         if (smooth.line) {
             plots[[i]] = plots[[i]] + ggplot2::geom_smooth(ggplot2::aes_string(x=w, y="Mean"), colour='grey40', size=.5, fill='grey80', method="lm") 
@@ -1390,16 +1414,22 @@ plot_pexp_beta <- function(samples, X=NULL, W=NULL, pred.pexp.beta=FALSE, ncol.b
             plots[[i]] = plots[[i]] +
                 ggplot2::geom_line(data= pred %>% dplyr::mutate(linetype="Fitted line using posterior \nexpectation of context effect") ,
                                    ggplot2::aes_string(x=w, y="E.beta.pred", group="beta",  linetype="linetype"), colour=col.pred.line) +
-                ggplot2::scale_linetype_manual(values = "solid", name="") 
+                ggplot2::scale_linetype_manual(values = "solid", name="")             
         }
+        plots[[i]] = plots[[i]] +
+            ggplot2::theme(axis.title.x = ggplot2::element_text(size=ggplot2::rel(x.axis.size), angle=0, ),
+                           axis.title.y = ggplot2::element_text(size=ggplot2::rel(y.axis.size)),
+                           plot.title   = ggplot2::element_text(size=ggplot2::rel(title.size)),
+                           legend.text  = ggplot2::element_text(size=ggplot2::rel(legend.size))
+                           )
+        
     }
     if (!is.null(title)) {
         g = ggpubr::ggarrange(plotlist=plots, nrow=nrow.w, ncol=ncol.w, common.legend=T) %>%
-            ggpubr::annotate_figure(., top = ggpubr::text_grob(title, color = "black", size = 14))
+            ggpubr::annotate_figure(., top = ggpubr::text_grob(title, color = "black", size =title.size))
     }else{
         g = ggpubr::ggarrange(plotlist=plots, nrow=nrow.w, ncol=ncol.w, common.legend=T, legend=legend.position)
     }
-    ## omit color lefend
     return(g)
 }
 fit_pexp_beta <- function(samples, W=NULL)
@@ -1514,6 +1544,17 @@ hdpglm_get_new_data          <- function(data, n, x, cat.values=NULL)
 #' @param nrow.w integer with the number of rows to use to diaplay the different context-level covariates
 #' @param title.tau string, the title for the posterior distribution of the context effects
 #' @param title.beta string, the title for the posterior expectation of beta as function of context-level covariate
+#' @param tau.x.axis.size numeric, relative size of the x-axis of the plot with tau
+#' @param tau.xlab string, the label of the x-axis for the plot with tau 
+#' @param tau.y.axis.size numeric, relative size of the y-axis of the plot with tau
+#' @param tau.title.size numeric, relative size of the title of the plot with tau
+#' @param tau.panel.title.size numeric, relative size of the title of the panels of the plot with tau
+#' @param tau.legend.size numeric, relative size of the legend of the plot with tau
+#' @param beta.x.axis.size numeric, relative size of the x-axis of the plot with beta
+#' @param beta.y.axis.size numeric, relative size of the y-axis of the plot with beta
+#' @param beta.title.size numeric, relative size of the title of the plot with beta
+#' @param beta.panel.title.size numeric, relative size of the title of the panels of the plot with beta
+#' @param beta.legend.size numeric, relative size of the legend of the plot with beta
 #'
 #' set.seed(66)
 #' n = 20    # sample size
@@ -1539,14 +1580,14 @@ hdpglm_get_new_data          <- function(data, n, x, cat.values=NULL)
 #'
 #' @export
 ## }}}
-plot_hdpglm <- function(samples, X=NULL, W=NULL, ncol.taus=1, ncol.betas=NULL, ncol.w=NULL, nrow.w=NULL, smooth.line=FALSE, pred.pexp.beta=FALSE, title.tau=NULL, true.tau=NULL, title.beta=NULL)
+plot_hdpglm <- function(samples, X=NULL, W=NULL, ncol.taus=1, ncol.betas=NULL, ncol.w=NULL, nrow.w=NULL, smooth.line=FALSE, pred.pexp.beta=FALSE, title.tau=NULL, true.tau=NULL, title.beta=NULL, tau.x.axis.size=1.1, tau.y.axis.size=1.1, tau.title.size=1.2, tau.panel.title.size=1.4, tau.legend.size=1, beta.x.axis.size=1.1, beta.y.axis.size=1.1, beta.title.size=1.2, beta.panel.title.size=1.4, beta.legend.size=1, tau.xlab=NULL)
 {
     
     ## Debug/Monitoring message --------------------------
     msg <- paste0('\n','\nPlot being generated ...\n',  '\n'); cat(msg)
     ## ---------------------------------------------------
-    g1 = plot_tau(samples, X=X, W=W, ncol=ncol.taus, title=title.tau, true.tau=true.tau)
-    g2 = plot_pexp_beta(samples, X=X, W=W, ncol.beta=ncol.betas, ncol.w=ncol.w, nrow.w=nrow.w, smooth.line=smooth.line, pred.pexp.beta= pred.pexp.beta, title=title.beta) 
+    g1 = plot_tau(samples, X=X, W=W, ncol=ncol.taus, title=title.tau, true.tau=true.tau, x.axis.size = tau.x.axis.size, y.axis.size = tau.y.axis.size, title.size  = tau.title.size, panel.title.size = tau.panel.title.size, legend.size  = tau.legend.size, xlab=tau.xlab)
+    g2 = plot_pexp_beta(samples, X=X, W=W, ncol.beta=ncol.betas, ncol.w=ncol.w, nrow.w=nrow.w, smooth.line=smooth.line, pred.pexp.beta= pred.pexp.beta, title=title.beta, x.axis.size = beta.x.axis.size, y.axis.size = beta.y.axis.size, title.size  = beta.title.size, panel.title.size = beta.panel.title.size, legend.size  = beta.legend.size) 
     
     g = ggpubr::ggarrange(plotlist=list(g2,g1), nrow=2)
     return(g)

@@ -7,7 +7,8 @@
 plot_pexp_beta(samples, X = NULL, W = NULL, pred.pexp.beta = FALSE,
   ncol.beta = NULL, ylab = NULL, nrow.w = NULL, ncol.w = NULL,
   smooth.line = FALSE, title = NULL, legend.position = "top",
-  col.pred.line = "red")
+  col.pred.line = "red", x.axis.size = 1.1, y.axis.size = 1.1,
+  title.size = 12, panel.title.size = 1.4, legend.size = 1)
 }
 \arguments{
 \item{samples}{an output of the function \code{\link{hdpGLM}}}
@@ -33,6 +34,16 @@ plot_pexp_beta(samples, X = NULL, W = NULL, pred.pexp.beta = FALSE,
 \item{legend.position}{one of four options: "bottom" (default), "top", "left", or "right". It indicates the position of the legend}
 
 \item{col.pred.line}{string with color of fitted line. Only works if \code{pred.pexp.beta=TRUE}}
+
+\item{x.axis.size}{numeric, the relative size of the label in the x-axis}
+
+\item{y.axis.size}{numeric, the relative size of the label in the y-axis}
+
+\item{title.size}{numeric, absolute size of the title}
+
+\item{panel.title.size}{numeric, the relative size of the titles in the panel of the plot}
+
+\item{legend.size}{numeric, the relative size of the legend}
 }
 \description{
 This function plots the posterior expectation of beta, the linear effect of the individual level covariates, as function of the context-level covariates

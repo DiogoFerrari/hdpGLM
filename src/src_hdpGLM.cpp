@@ -31,7 +31,7 @@ void hdpGLM_display_message(String family, int burn_in, int n_iter, int iter, in
   Rcpp::Rcout << "Family of the distribution of the outcome variable of the mixture components: " << family.get_cstring() << std::endl;
   Rcpp::Rcout << std::endl;
   Rcpp::Rcout << "Burn-in: " << burn_in << std::endl;
-  Rcpp::Rcout << "Number of MCMC samples: " << n_iter << std::endl;
+  Rcpp::Rcout << "Number of MCMC iterations : " << n_iter << std::endl;
   Rcpp::Rcout << std::endl;
   Rcpp::Rcout << "Iteration: " << iter+1 << std::endl;
   Rcpp::Rcout << std::endl;
@@ -86,7 +86,7 @@ arma::mat hdpGLM_get_theta_active(arma::mat theta, arma::colvec Z, arma::colvec 
   // theta.col(1) is the context of the betas
   // we only save the betas in active clusters
   int J = max(theta.col(1));			// number of contexts
-  int n_active=0;				// to count the total number of active clusters across contexts
+  int n_active = 0;				// to count the total number of active clusters across contexts
   for(int j = 1; j <= J; j++){	// I count n_active b/c it is faster that resizing the matrix theta_new below
     arma::uvec            idx_j = find(C == j);   
     arma::colvec  k_active_in_j = unique(Z(idx_j));
@@ -343,26 +343,26 @@ List hdpGLM_mcmc(arma::colvec y, arma::mat X, arma::mat W, arma::colvec C, arma:
     countZik = hdpGLM_update_countZik(countZik, Z);
     pik	     = hdpGLM_get_pik(countZik);
 
-    // meta
-    // ----
-    active_clusters_at_iter = 1;
-    for(int j = 0; j < J; j++){
-      arma::uvec    idx_j = find(C == j); 
-      arma::colvec Zjstar = unique(Z(idx_j));
-      int active_clusters_j_at_iter =  Zjstar.size();
-      if(active_clusters_j_at_iter > active_clusters_at_iter){active_clusters_at_iter = active_clusters_j_at_iter;};
-    }
-    if (active_clusters_at_iter > max_active_cluster_at_a_iter){max_active_cluster_at_a_iter = active_clusters_at_iter;};
     
     // display information
     // -------------------
     n_display_count+=1;
     if(n_display_count == n_display){
+      active_clusters_at_iter = 1;
+      for(int j = 0; j < J; j++){
+	arma::uvec    idx_j = find(C == j); 
+	arma::colvec Zjstar = unique(Z(idx_j));
+	int active_clusters_j_at_iter =  Zjstar.size();
+	if(active_clusters_j_at_iter > active_clusters_at_iter){active_clusters_at_iter = active_clusters_j_at_iter;};
+      }
+      if (active_clusters_at_iter > max_active_cluster_at_a_iter){max_active_cluster_at_a_iter = active_clusters_at_iter;};
+      
       hdpGLM_display_message(family, burn_in, n_iter, iter, K, J, max_active_cluster_at_a_iter, active_clusters_at_iter, Z, C);
       n_display_count=0;
     }
-
     progress_bar(iter,N);
+
+
   } // end of MCMC iterations
 
   Rcpp::List results = Rcpp::List::create(Rcpp::Named("samples")    = samples,

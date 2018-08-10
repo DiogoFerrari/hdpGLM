@@ -5,7 +5,7 @@
     Dw = ifelse(is.null(Dw), 0, Dw)
     if(family=='gaussian') {        
         sigma_beta = 10
-        sigma_tau  = 10
+        sigma_tau  = 5
         fix = list(alpha      = 1,
                    mu_beta    = rep(0, d+1),
                    Sigma_beta = sigma_beta * diag(d+1),

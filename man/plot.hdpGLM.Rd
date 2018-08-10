@@ -7,7 +7,9 @@
 \method{plot}{hdpGLM}(x, terms = NULL, j.label = NULL, j.idx = NULL,
   title = NULL, subtitle = NULL, true.beta = NULL, ncol = NULL,
   legend.position = "bottom", display.terms = TRUE, context.id = NULL,
-  ylab = NULL, xlab = NULL, ...)
+  ylab = NULL, xlab = NULL, x.axis.size = 1.1, y.axis.size = 1.1,
+  title.size = 1.2, panel.title.size = 1.5, legend.size = 1.1,
+  rel.height = 0.01, ...)
 }
 \arguments{
 \item{x}{an object of the class \code{hdpGLM} generted by the function \link{hdpGLM}}
@@ -35,6 +37,18 @@
 \item{ylab}{string, the label of the y-axis}
 
 \item{xlab}{string, the label of the x-axis}
+
+\item{x.axis.size}{numeric, the relative size of the label in the x-axis}
+
+\item{y.axis.size}{numeric, the relative size of the label in the y-axis}
+
+\item{title.size}{numeric, the relative size of the title of the plot}
+
+\item{panel.title.size}{numeric, the relative size of the titles in the panel of the plot}
+
+\item{legend.size}{numeric, the relative size of the legend}
+
+\item{rel.height}{see ggridges::geom_density_ridges}
 
 \item{...}{Additional arguments accepted are:
 

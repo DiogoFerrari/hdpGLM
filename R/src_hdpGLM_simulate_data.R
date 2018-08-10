@@ -49,6 +49,7 @@
 hdpGLM_simulateData <- function(n, K, nCov, nCovj=0, J=1, parameters=NULL, pi=NULL, family, same.K=FALSE, seed=sample(1:777,1), 
                                 context.effect=NULL, same.clusters.across.contexts=NULL, context.dependent.cluster=0)
 {
+
     if(nCovj==0 | J < 2) 
         dat = dpGLM_simulateData_main(n, K, nCov, nCovj=NULL, parameters=parameters, pi=pi, family=family, seed=seed) 
     if(nCovj> 0){ 
@@ -314,11 +315,11 @@ hdpGLM_simulateParameters <- function(nCov, K=NULL, nCovj=NULL, J=NULL, pi=NULL,
     ## tau
     ## ---
     if(Dw ==0) {
-        parameters$tau = as.matrix(1)  
+        parameters$tau = as.matrix(0)  
         W              = as.matrix(1)  
     }
     if(Dw  >0) {
-        ## user can specify specific betas to be affected by some specific context-level covars only, as well as with context level covar will affect that beta (instead of all context-level covars)
+        ## user can specify specific betas to be affected by some specific context-level covars only, as well as which context level covar will affect that beta (instead of all context-level covars)
         if(!is.null(context.effect)){
             n.of.non.zero.taus = length(context.effect$on.betas) + length(context.effect$by.Ws)
             ## all taus are zero...
