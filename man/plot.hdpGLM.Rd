@@ -9,7 +9,7 @@
   legend.position = "bottom", display.terms = TRUE, context.id = NULL,
   ylab = NULL, xlab = NULL, x.axis.size = 1.1, y.axis.size = 1.1,
   title.size = 1.2, panel.title.size = 1.5, legend.size = 1.1,
-  rel.height = 0.01, ...)
+  rel.height = 0.01, fill.col = "#00000044", border.col = "white", ...)
 }
 \arguments{
 \item{x}{an object of the class \code{hdpGLM} generted by the function \link{hdpGLM}}
@@ -49,6 +49,10 @@
 \item{legend.size}{numeric, the relative size of the legend}
 
 \item{rel.height}{see ggridges::geom_density_ridges}
+
+\item{fill.col}{string with the color of the densities}
+
+\item{border.col}{string with the color of the border of the densities}
 
 \item{...}{Additional arguments accepted are:
 

@@ -480,11 +480,13 @@ plot.dpGLM    <- function(x, terms=NULL, separate=FALSE, hpd=TRUE, true.beta=NUL
 #' @param title.size numeric, the relative size of the title of the plot
 #' @param panel.title.size numeric, the relative size of the titles in the panel of the plot
 #' @param legend.size numeric, the relative size of the legend
+#' @param fill.col string with the color of the densities
+#' @param border.col string with the color of the border of the densities
 #' @inheritParams summary.hdpGLM
 #' 
 #' @export
 ## }}}
-plot.hdpGLM <- function(x, terms=NULL, j.label=NULL, j.idx=NULL, title=NULL, subtitle=NULL, true.beta=NULL, ncol=NULL,  legend.position="bottom", display.terms=TRUE, context.id=NULL, ylab=NULL, xlab=NULL, x.axis.size=1.1, y.axis.size=1.1, title.size=1.2, panel.title.size=1.5, legend.size=1.1, rel.height=0.01, ...)
+plot.hdpGLM <- function(x, terms=NULL, j.label=NULL, j.idx=NULL, title=NULL, subtitle=NULL, true.beta=NULL, ncol=NULL,  legend.position="bottom", display.terms=TRUE, context.id=NULL, ylab=NULL, xlab=NULL, x.axis.size=1.1, y.axis.size=1.1, title.size=1.2, panel.title.size=1.5, legend.size=1.1, rel.height=0.01, fill.col="#00000044", border.col='white', ...)
 {
     if (is.null(j.idx) & is.null(j.label)) {
         j = x$context.cov$C 
@@ -548,7 +550,7 @@ plot.hdpGLM <- function(x, terms=NULL, j.label=NULL, j.idx=NULL, title=NULL, sub
             dplyr::mutate_if(is.factor, as.character) %>% 
             ggplot2::ggplot(.) +
             ## ggjoy::geom_joy(ggplot2::aes(x=values, y=j, group=j), fill="#00000044") +
-            ggridges::geom_density_ridges(ggplot2::aes(x=values, y=j, group=j), fill="#00000044", colour='white', rel_min_height = rel.height) +
+            ggridges::geom_density_ridges(ggplot2::aes(x=values, y=j, group=j), fill=fill.col, colour=border.col, rel_min_height = rel.height) +
             ggplot2::geom_segment(data=tab  %>%
                                       dplyr::filter(j %in% !!j) %>%
                                       dplyr::mutate_if(is.factor, as.character),
@@ -588,7 +590,7 @@ plot.hdpGLM <- function(x, terms=NULL, j.label=NULL, j.idx=NULL, title=NULL, sub
             dplyr::mutate_if(is.factor, as.character) %>% 
             ggplot2::ggplot(.) +
             ## ggjoy::geom_joy(ggplot2::aes(x=values, y=j, group=j), fill="#00000044") +
-            ggridges::geom_density_ridges(ggplot2::aes(x=values, y=j, group=j), fill="#00000044", colour='white', rel_min_height = rel.height) +
+            ggridges::geom_density_ridges(ggplot2::aes(x=values, y=j, group=j), fill=fill.col, colour=border.col, rel_min_height = rel.height) +
             ggplot2::ylab('Context Index') +
             ggplot2::facet_wrap( ~ Parameter, ncol = ncol, scales='free', labeller=ggplot2::label_parsed) +
             ggplot2::theme_bw()+
@@ -606,17 +608,23 @@ plot.hdpGLM <- function(x, terms=NULL, j.label=NULL, j.idx=NULL, title=NULL, sub
             g = g + ggplot2::ggtitle(title)
         }
     }
+    ## y-axis
+    ## ------
+    contexts = x$context.cov %>% dplyr::filter(C %in% !!j)  %>% dplyr::mutate_if(is.factor, as.character)
     if (!is.null(context.id)) {
         contexts = x$context.cov %>% dplyr::filter(C %in% !!j)  %>%
             dplyr::mutate_if(is.factor, as.character)
         g = g +
             ggplot2::scale_y_discrete(breaks = contexts$C, labels = contexts[,context.id] %>% dplyr::pull(.) %>% as.character, limits=contexts$C) +
             ggplot2::ylab(context.id) 
+    }else{
+        g = g +
+            ggplot2::scale_y_discrete(breaks = contexts$C, labels = contexts$C %>% as.character, limits=contexts$C)
     }
-    if (!is.null(ylab )) {
+    if (!is.null(ylab)) {
         g = g + ggplot2::ylab(ylab) 
     }
-    if (!is.null(xlab )) {
+    if (!is.null(xlab)) {
         g = g + ggplot2::xlab(xlab)
     }
     g = g + ggplot2::theme(axis.title.x = ggplot2::element_text(size=ggplot2::rel(x.axis.size), angle=0, ),
