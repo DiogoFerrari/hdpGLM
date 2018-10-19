@@ -14,7 +14,7 @@ features.
 For details of the model and the MCMC algorithm, see my paper [Modeling
 Context-Dependent Latent Effect
 Heterogeneity](https://dioferrari.files.wordpress.com/2018/09/hdpglm_v31.pdf),
-current R&& at [Political
+current R&R at [Political
 Analysis](https://www.cambridge.org/core/journals/political-analysis).
 
 Instalation
