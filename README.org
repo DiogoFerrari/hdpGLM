@@ -20,7 +20,7 @@ NOTE: it may be necessary to create a token to install the package from the git 
 
 * Usage
 
-Here is a simple example (for more information, see =help(hdpGLM)=)
+Here is a simple example (for more information, see =help(hdpGLM)=).
 
 #+NAME: 
 #+BEGIN_SRC R :exports code
