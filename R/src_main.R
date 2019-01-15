@@ -259,6 +259,10 @@ hdpGLM <- function(formula1, formula2=NULL, data, context.id=NULL, weights=NULL,
     msg <- paste0('\n\n','Preparing for estimation ...',  '\n\n'); cat(msg)
     ## ---------------------------------------------------
 
+    ## make sure the data is not grouped
+    ## ---------------------------------
+    data = data %>% dplyr::ungroup(.) 
+
     ## Exclude NA values
     ## -----------------
     if (na.action == 'exclude') {
