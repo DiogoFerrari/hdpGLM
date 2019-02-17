@@ -283,7 +283,8 @@ summary.hdpGLM <- function(object, ...)
 #' @param colour = string with color to fill the density plot
 #' @param alpha number between 0 and 1 indicating the degree of transparency of the density 
 #' @param display.terms boolean, if \code{TRUE} (default), the covariate name is displayed in the plot
-#' @param plot.mean boolean, if \code{TRUE} the posterior mean of every cluster is displayed 
+#' @param plot.mean boolean, if \code{TRUE} the posterior mean of every cluster is displayed
+#' @param legend.label.true.value a string with the value to display in the legend when the \code{true.beta} is used 
 #' @param ... ignored 
 #'
 #'
@@ -297,7 +298,7 @@ summary.hdpGLM <- function(object, ...)
 #' @export
 
 ## }}}
-plot.dpGLM    <- function(x, terms=NULL, separate=FALSE, hpd=TRUE, true.beta=NULL, title=NULL, subtitle=NULL, adjust=1, ncols=NULL, only.occupied.clusters=TRUE, focus.hpd=FALSE, legend.position="top", colour='grey', alpha=.4, display.terms=TRUE, plot.mean=TRUE, ...)
+plot.dpGLM    <- function(x, terms=NULL, separate=FALSE, hpd=TRUE, true.beta=NULL, title=NULL, subtitle=NULL, adjust=1, ncols=NULL, only.occupied.clusters=TRUE, focus.hpd=FALSE, legend.position="top", colour='grey', alpha=.4, display.terms=TRUE, plot.mean=TRUE, legend.label.true.value="True", ...)
 {
     ## keep all default options
     op.default <- options()
@@ -391,8 +392,8 @@ plot.dpGLM    <- function(x, terms=NULL, separate=FALSE, hpd=TRUE, true.beta=NUL
                 ggplot2::geom_vline(data=tab, ggplot2::aes(xintercept=Mean,  linetype='Mean', col="Mean")) +
                 ## ggplot2::geom_vline(data=tab, ggplot2::aes(xintercept=HPD.lower,  linetype='95% HPD', col="95% HPD")) +
                 ## ggplot2::geom_vline(data=tab, ggplot2::aes(xintercept=HPD.upper,  linetype='95% HPD', col="95% HPD"))  +
-                ggplot2::scale_linetype_manual(values=c('solid',  "solid"), name='', labels=c( "Cluster Mean",  "True"))+
-                ggplot2::scale_color_manual   (values=c('black',  "red"), name='', labels=c( "Cluster Mean", "True")) +
+                ggplot2::scale_linetype_manual(values=c('solid',  "solid"), name='', labels=c( "Cluster Mean",  legend.label.true.value))+
+                ggplot2::scale_color_manual   (values=c('black',  "red"), name='', labels=c( "Cluster Mean", legend.label.true.value)) +
                 ggplot2::facet_wrap( ~ Parameter, ncol = ncols, scales='free', labeller=ggplot2::label_parsed)
         } 
         if( !plot.mean & !separate){
@@ -401,8 +402,8 @@ plot.dpGLM    <- function(x, terms=NULL, separate=FALSE, hpd=TRUE, true.beta=NUL
                 ## ggplot2::geom_vline(data=tab, ggplot2::aes(xintercept=Mean,  linetype='Mean', col="Mean")) +
                 ## ggplot2::geom_vline(data=tab, ggplot2::aes(xintercept=HPD.lower,  linetype='95% HPD', col="95% HPD")) +
                 ## ggplot2::geom_vline(data=tab, ggplot2::aes(xintercept=HPD.upper,  linetype='95% HPD', col="95% HPD"))  +
-                ggplot2::scale_linetype_manual(values=c(  "solid"), name='', labels=c(   "True"))+
-                ggplot2::scale_color_manual   (values=c(  "red"), name='', labels=c(  "True")) +
+                ggplot2::scale_linetype_manual(values=c(  "solid"), name='', labels=c(legend.label.true.value))+
+                ggplot2::scale_color_manual   (values=c(  "red"), name='', labels=c(  legend.label.true.value)) +
                 ggplot2::facet_wrap( ~ Parameter, ncol = ncols, scales='free', labeller=ggplot2::label_parsed)
         } 
     }else{## no true.beta
@@ -1600,3 +1601,8 @@ plot_hdpglm <- function(samples, X=NULL, W=NULL, ncol.taus=1, ncol.betas=NULL, n
     g = ggpubr::ggarrange(plotlist=list(g2,g1), nrow=2)
     return(g)
 }
+
+
+
+
+
