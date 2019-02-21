@@ -9,7 +9,7 @@ hdpGLM_match_clusters(samples, true)
 \arguments{
 \item{samples}{a \code{\link{hdpGLM}} or a \code{dpGLM} object, output of the function \code{\link{hdpGLM}}.}
 
-\item{true}{a list with the true values of the parameters that generate the data (See \code{\link{hdpGLM_simulateParameters}})}
+\item{true}{a list with the true values of the parameters that generate the data (See \code{hdpGLM_simulateParameters})}
 }
 \value{
 The function returns a table with the labels of the clusters from the MCMC estimation provided by the function \code{\link{hdpGLM}} and the labels used to generate the data, which is in the column \code{True.Cluster.match} of the output. The output table also contains the true value of the linear coefficients that were used to generate the data.

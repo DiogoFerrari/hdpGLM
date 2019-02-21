@@ -41,10 +41,7 @@
 #'
 #' @examples
 #' data = hdpGLM_simulateData(n=2000, K=2, nCov=0, family='gaussian')
-#' \dontrun{
-#' }
 #' @export
-
 ## }}}
 hdpGLM_simulateData <- function(n, K, nCov, nCovj=0, J=1, parameters=NULL, pi=NULL, family, same.K=FALSE, seed=sample(1:777,1), 
                                 context.effect=NULL, same.clusters.across.contexts=NULL, context.dependent.cluster=0)
@@ -86,7 +83,6 @@ dpGLM_simulateData_main <- function(n, K, nCov, nCovj=NULL, parameters=NULL, pi=
     return(sim_data)
 }
 ## {{{ docs }}}
-
 #' Simulated a Parameters used to create Data Sets from dpGLM model
 #'
 #' This function generates parameters that can be used to
@@ -98,6 +94,7 @@ dpGLM_simulateData_main <- function(n, K, nCov, nCovj=NULL, parameters=NULL, pi=
 #' @return The function returns a list with the parameters
 #'         used to generate data sets from the dpGLM model.
 #'         This list can be used in the function \code{\link{hdpGLM_simulateData}}
+#' 
 #' @examples
 #' parameters = dpGLM_simulateParameters(nCov=2, K=2) 
 #'
@@ -278,13 +275,13 @@ hdpGLM_simulateData_main <- function(n, K, nCov, nCovj=NULL, J, parameters=NULL,
 #'
 #' @return The function returns a list with the parameters
 #'         used to generate data sets from the hdpGLM model.
-#'         This list can be used in the function \code{\link{hdpGLM_simulateData}}
+#'         This list can be used in the function \code{hdpGLM_simulateData}
+#' 
 #' @examples
 #' parameters = hdpGLM_simulateParameters(nCov=2, K=2, nCovj=3, J=20,
 #'                 same.clusters.across.contexts=FALSE, context.dependent.cluster=0) 
 #'
 #' @export
-
 ## }}}
 hdpGLM_simulateParameters <- function(nCov, K=NULL, nCovj=NULL, J=NULL, pi=NULL, same.K, seed=NULL, context.effect=NULL, same.clusters.across.contexts, context.dependent.cluster)
 {

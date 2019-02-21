@@ -26,7 +26,7 @@ hdpGLM_classify <- function(data, samples)
 #' This function matches the estimated clusters and the true values of the linear coefficients of the clusters.
 #'
 #' @param samples a \code{\link{hdpGLM}} or a \code{dpGLM} object, output of the function \code{\link{hdpGLM}}. 
-#' @param true a list with the true values of the parameters that generate the data (See \code{\link{hdpGLM_simulateParameters}})
+#' @param true a list with the true values of the parameters that generate the data (See \code{hdpGLM_simulateParameters})
 #'
 #' @return The function returns a table with the labels of the clusters from the MCMC estimation provided by the function \code{\link{hdpGLM}} and the labels used to generate the data, which is in the column \code{True.Cluster.match} of the output. The output table also contains the true value of the linear coefficients that were used to generate the data.
 #'
@@ -289,14 +289,25 @@ summary.hdpGLM <- function(object, ...)
 #'
 #'
 #' @examples
-#' dt      = hdpGLM_simulateData(n=5000,nCov=4, K=5, family='gaussian')
-#' mcmc    = list(burn.in = 0,  n.iter = 2000)
-#' samples = hdpGLM(y~., data=dt$data, mcmc=mcmc, family='gaussian', n.display=1000, K=100)
-#'
-#' plot(samples, true.beta=summary(dt)$beta)
+#' # Note: this example is just for illustration. MCMC iterations are very reduced
+#' set.seed(10)
+#' n = 20
+#' data = tibble::data_frame(x1 = rnorm(n, -3),
+#'                                    x2 = rnorm(n,  3),
+#'                                    z  = sample(1:3, n, replace=TRUE),
+#'                                    y  =I(z==1) * (3 + 4*x1 - x2 + rnorm(n)) +
+#'                                        I(z==2) * (3 + 2*x1 + x2 + rnorm(n)) +
+#'                                        I(z==3) * (3 - 4*x1 - x2 + rnorm(n)) ,
+#'                                    ) 
+#' 
+#' ## estimation
+#' mcmc    = list(burn.in=1, n.iter=50)
+#' samples = hdpGLM(y ~ x1 + x2,  data=data, mcmc=mcmc, n.display=1)
+#' 
+#' plot(samples)
+#' 
 #' 
 #' @export
-
 ## }}}
 plot.dpGLM    <- function(x, terms=NULL, separate=FALSE, hpd=TRUE, true.beta=NULL, title=NULL, subtitle=NULL, adjust=1, ncols=NULL, only.occupied.clusters=TRUE, focus.hpd=FALSE, legend.position="top", colour='grey', alpha=.4, display.terms=TRUE, plot.mean=TRUE, legend.label.true.value="True", ...)
 {
@@ -639,6 +650,7 @@ plot.hdpGLM <- function(x, terms=NULL, j.label=NULL, j.idx=NULL, title=NULL, sub
 ## predicted values
 ## =====================================================
 ## {{{ docs }}}
+
 #' dpGLM Predicted values
 #'
 #' Function returns the predicted (fitted) values of the outcome variable using the estimated posterior expectation of the linear covariate betas produced by the \code{hdpGLM} function
@@ -655,6 +667,7 @@ plot.hdpGLM <- function(x, terms=NULL, j.label=NULL, j.idx=NULL, title=NULL, sub
 #' @return It returns a data.frame with the fitted values for the outcome variable, which are produced using the estimated posterior expectation of the linear coefficients \code{beta}.
 #'
 #' @export
+
 ## }}}
 predict.dpGLM <- function(object, ...)
 {
@@ -831,16 +844,18 @@ summary.hdpGLM_data <- function(object, ...)
     return(list(data = summary(x$data),beta=betas, tau=taus))
 }
 ## {{{ docs }}}
+
 #' Plot simulated data
 #'
 #' Create a plot with the beta sampled from its distribution, as a function of context-level feature $W$
 #'
 #'
-#' @param data the output of the function \code{\link{hdpGLM_simulateData}} 
+#' @param data the output of the function \code{hdpGLM_simulateData} 
 #' @param w.idx integer, the index of the context level covariate the plot
 #' @param ncol integer, the number of columns in the grid of the plot
 #'
 #' @export
+
 ## }}}
 plot_beta_sim <- function(data, w.idx, ncol=NULL)
 {
@@ -988,6 +1003,7 @@ dpGLM_select_non_zero <- function(x, select_perc_time_active=60)
 ## Plot tau and posterior expectaiton of beta
 ## =====================================================
 ## {{{ docs }}}
+
 #' Plot tau
 #'
 #' Function to plot posterior distribution of tau
@@ -1005,35 +1021,48 @@ dpGLM_select_non_zero <- function(x, select_perc_time_active=60)
 #' @inheritParams plot.hdpGLM 
 #'
 #' @examples
+#'
+#' library(magrittr)
 #' set.seed(66)
 #' 
-#' n = 20    # sample size
-#' K = 2     # number of clusters
-#' nCov = 3  # Dx, number of ind-level covars
-#' nCovj = 2 # Dw, number of context-level covars 
-#' J = 15    # number of contexts
-#' 
-#' ## simulating some data
-#' sim_data = hdpGLM_simulateData(n=n, K=K, nCov=nCov, nCovj=nCovj, J=J, family='gaussian')
+#' # Note: this example is just for illustration. MCMC iterations are very reduced
+#' set.seed(10)
+#' n = 20
+#' data.context1 = tibble::data_frame(x1 = rnorm(n, -3),
+#'                                    x2 = rnorm(n,  3),
+#'                                    z  = sample(1:3, n, replace=TRUE),
+#'                                    y  =I(z==1) * (3 + 4*x1 - x2 + rnorm(n)) +
+#'                                        I(z==2) * (3 + 2*x1 + x2 + rnorm(n)) +
+#'                                        I(z==3) * (3 - 4*x1 - x2 + rnorm(n)) ,
+#'                                    w = 20
+#'                                    ) 
+#' data.context2 = tibble::data_frame(x1 = rnorm(n, -3),
+#'                                    x2 = rnorm(n,  3),
+#'                                    z  = sample(1:2, n, replace=TRUE),
+#'                                    y  =I(z==1) * (1 + 3*x1 - 2*x2 + rnorm(n)) +
+#'                                        I(z==2) * (1 - 2*x1 +   x2 + rnorm(n)),
+#'                                    w = 10
+#'                                    ) 
+#' data = data.context1 %>%
+#'     dplyr::bind_rows(data.context2)
 #' 
 #' ## estimation
 #' mcmc    = list(burn.in=1, n.iter=50)
-#' samples = hdpGLM(y ~ X1 + X2 + X3, y ~ W1 + W2, data=sim_data$data, mcmc=mcmc, n.display=1)
+#' samples = hdpGLM(y ~ x1 + x2, y ~ w, data=data, mcmc=mcmc, n.display=1)
 #' 
 #' 
 #' plot_tau(samples)
 #' plot_tau(samples, ncol=2)
-#' plot_tau(samples, X='X1')
-#' plot_tau(samples, X='X2')
-#' plot_tau(samples, W='W1')
-#' plot_tau(samples, X='X1', W='W2')
+#' plot_tau(samples, X='x1')
+#' plot_tau(samples, X='x2')
+#' plot_tau(samples, W='w')
+#' plot_tau(samples, X='x1', W='w')
 #' plot_tau(samples, show.all.taus=TRUE)
 #' plot_tau(samples, show.all.taus=TRUE, show.all.betas=TRUE)
 #' plot_tau(samples, show.all.taus=TRUE, show.all.betas=TRUE, ncol=2)
-#' plot_tau(samples, true.tau=summary(sim_data)$tau,
-#'          show.all.taus=TRUE, show.all.betas=TRUE, ncol=2)
 #' 
 #' @export
+
 ## }}}
 plot_tau <- function(samples, X=NULL, W=NULL, title=NULL, true.tau=NULL, show.all.taus=FALSE, show.all.betas=FALSE, ncol=NULL, legend.position='top', x.axis.size=1.1, y.axis.size=1.1, title.size=1.2, panel.title.size=1.4, legend.size=1, xlab=NULL)
 {
@@ -1298,39 +1327,51 @@ plot_beta <- function(samples, X=NULL, context.id=NULL, true.beta=NULL, title=NU
 #' @param title.size numeric, absolute size of the title 
 #'
 #' @examples
+#' 
+#' library(magrittr)
 #' set.seed(66)
 #' 
-#' n = 20    # sample size
-#' K = 2     # number of clusters
-#' nCov = 3  # Dx, number of ind-level covars
-#' nCovj = 2 # Dw, number of context-level covars 
-#' J = 15    # number of contexts
-#' 
-#' ## simulating some data
-#' sim_data = hdpGLM_simulateData(n=n, K=K, nCov=nCov, nCovj=nCovj, J=J, family='gaussian')
+#' # Note: this example is just for illustration. MCMC iterations are very reduced
+#' set.seed(10)
+#' n = 20
+#' data.context1 = tibble::data_frame(x1 = rnorm(n, -3),
+#'                                    x2 = rnorm(n,  3),
+#'                                    z  = sample(1:3, n, replace=TRUE),
+#'                                    y  =I(z==1) * (3 + 4*x1 - x2 + rnorm(n)) +
+#'                                        I(z==2) * (3 + 2*x1 + x2 + rnorm(n)) +
+#'                                        I(z==3) * (3 - 4*x1 - x2 + rnorm(n)) ,
+#'                                    w = 20
+#'                                    ) 
+#' data.context2 = tibble::data_frame(x1 = rnorm(n, -3),
+#'                                    x2 = rnorm(n,  3),
+#'                                    z  = sample(1:2, n, replace=TRUE),
+#'                                    y  =I(z==1) * (1 + 3*x1 - 2*x2 + rnorm(n)) +
+#'                                        I(z==2) * (1 - 2*x1 +   x2 + rnorm(n)),
+#'                                    w = 10
+#'                                    ) 
+#' data = data.context1 %>%
+#'     dplyr::bind_rows(data.context2)
 #' 
 #' ## estimation
 #' mcmc    = list(burn.in=1, n.iter=50)
-#' samples = hdpGLM(y ~ X1 + X2 + X3, y ~ W1 + W2, data=sim_data$data, mcmc=mcmc, n.display=1)
+#' samples = hdpGLM(y ~ x1 + x2, y ~ w, data=data, mcmc=mcmc, n.display=1)
 #' 
 #' plot_pexp_beta(samples)
-#' plot_pexp_beta(samples, X='X1', nrow.w=2)
-#' plot_pexp_beta(samples, X='X1', ncol.w=2)
-#' plot_pexp_beta(samples, X='X1', ncol.w=2, nrow.w=1)
-#' plot_pexp_beta(samples, X='X1', ncol.beta=2)
+#' plot_pexp_beta(samples, X='x1', nrow.w=2)
+#' plot_pexp_beta(samples, X='x1', ncol.w=2)
+#' plot_pexp_beta(samples, X='x1', ncol.w=2, nrow.w=1)
+#' plot_pexp_beta(samples, X='x1', ncol.beta=2)
 #' plot_pexp_beta(samples, ncol.beta=2)
 #' plot_pexp_beta(samples,  pred.pexp.beta=TRUE)
-#' plot_pexp_beta(samples,  pred.pexp.beta=TRUE, W="W1")
-#' plot_pexp_beta(samples,  pred.pexp.beta=TRUE, X="X1")
-#' plot_pexp_beta(samples,  pred.pexp.beta=TRUE, W="W1", X=c("X1", "X2"))
-#' plot_pexp_beta(samples, W='W1')
-#' plot_pexp_beta(samples, W='W1', smooth.line=TRUE)
-#' plot_pexp_beta(samples, W='W1', smooth.line=TRUE, pred.pexp.beta=TRUE)
-#' plot_pexp_beta(samples, W='W1', smooth.line=TRUE, pred.pexp.beta=TRUE, ncol.beta=2)
-#'
+#' plot_pexp_beta(samples,  pred.pexp.beta=TRUE, W="w")
+#' plot_pexp_beta(samples,  pred.pexp.beta=TRUE, X="x1")
+#' plot_pexp_beta(samples,  pred.pexp.beta=TRUE, W="w", X=c("x1", "x2"))
+#' plot_pexp_beta(samples, W='w')
+#' plot_pexp_beta(samples, W='w', smooth.line=TRUE)
+#' plot_pexp_beta(samples, W='w', smooth.line=TRUE, pred.pexp.beta=TRUE)
+#' plot_pexp_beta(samples, W='w', smooth.line=TRUE, pred.pexp.beta=TRUE, ncol.beta=2)
 #' 
 #' @export
-
 ## }}}
 plot_pexp_beta <- function(samples, X=NULL, W=NULL, pred.pexp.beta=FALSE, ncol.beta=NULL, ylab=NULL, nrow.w=NULL, ncol.w=NULL, smooth.line=FALSE, title=NULL, legend.position='top', col.pred.line='red', x.axis.size=1.1, y.axis.size=1.1, title.size=12, panel.title.size=1.4, legend.size=1)
 {
@@ -1565,26 +1606,40 @@ hdpglm_get_new_data          <- function(data, n, x, cat.values=NULL)
 #' @param beta.panel.title.size numeric, relative size of the title of the panels of the plot with beta
 #' @param beta.legend.size numeric, relative size of the legend of the plot with beta
 #'
-#' set.seed(66)
-#' n = 20    # sample size
-#' K = 2     # number of clusters
-#' nCov = 3  # Dx, number of ind-level covars
-#' nCovj = 2 # Dw, number of context-level covars 
-#' J = 15    # number of contexts
+#' @examples
 #' 
-#' ## simulating some data
-#' sim_data = hdpGLM_simulateData(n=n, K=K, nCov=nCov, nCovj=nCovj, J=J, family='gaussian')
+#' library(magrittr)
+#' # Note: this example is just for illustration. MCMC iterations are very reduced
+#' set.seed(10)
+#' n = 20
+#' data.context1 = tibble::data_frame(x1 = rnorm(n, -3),
+#'                                    x2 = rnorm(n,  3),
+#'                                    z  = sample(1:3, n, replace=TRUE),
+#'                                    y  =I(z==1) * (3 + 4*x1 - x2 + rnorm(n)) +
+#'                                        I(z==2) * (3 + 2*x1 + x2 + rnorm(n)) +
+#'                                        I(z==3) * (3 - 4*x1 - x2 + rnorm(n)) ,
+#'                                    w = 20
+#'                                    ) 
+#' data.context2 = tibble::data_frame(x1 = rnorm(n, -3),
+#'                                    x2 = rnorm(n,  3),
+#'                                    z  = sample(1:2, n, replace=TRUE),
+#'                                    y  =I(z==1) * (1 + 3*x1 - 2*x2 + rnorm(n)) +
+#'                                        I(z==2) * (1 - 2*x1 +   x2 + rnorm(n)),
+#'                                    w = 10
+#'                                    ) 
+#' data = data.context1 %>%
+#'     dplyr::bind_rows(data.context2)
 #' 
 #' ## estimation
 #' mcmc    = list(burn.in=1, n.iter=50)
-#' samples = hdpGLM(y ~ X1 + X2 + X3, y ~ W1 + W2, data=sim_data$data, mcmc=mcmc, n.display=1)
+#' samples = hdpGLM(y ~ x1 + x2, y ~ w, data=data, mcmc=mcmc, n.display=1)
 #' 
 #' plot_hdpglm(samples)
 #' plot_hdpglm(samples, ncol.taus=2)
-#' plot_hdpglm(samples, ncol.taus=2, ncol.betas=2, X='X1')
-#' plot_hdpglm(samples, ncol.taus=2, ncol.betas=2, X='X1', ncol.w=2, nrow.w=1)
-#' plot_hdpglm(samples, ncol.taus=2, ncol.betas=2, X='X1', ncol.w=2, nrow.w=1,
-#'             pred.pexp.beta=TRUE,smooth.line=TRUE, )
+#' plot_hdpglm(samples, ncol.taus=2, ncol.betas=2, X='x1')
+#' plot_hdpglm(samples, ncol.taus=2, ncol.betas=2, X='x1', ncol.w=2, nrow.w=1)
+#' plot_hdpglm(samples, ncol.taus=2, ncol.betas=2, X='x1', ncol.w=2, nrow.w=1,
+#'             pred.pexp.beta=TRUE,smooth.line=TRUE )
 #' 
 #'
 #' @export

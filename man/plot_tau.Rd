@@ -45,32 +45,44 @@ plot_tau(samples, X = NULL, W = NULL, title = NULL, true.tau = NULL,
 Function to plot posterior distribution of tau
 }
 \examples{
+
+library(magrittr)
 set.seed(66)
 
-n = 20    # sample size
-K = 2     # number of clusters
-nCov = 3  # Dx, number of ind-level covars
-nCovj = 2 # Dw, number of context-level covars 
-J = 15    # number of contexts
-
-## simulating some data
-sim_data = hdpGLM_simulateData(n=n, K=K, nCov=nCov, nCovj=nCovj, J=J, family='gaussian')
+# Note: this example is just for illustration. MCMC iterations are very reduced
+set.seed(10)
+n = 20
+data.context1 = tibble::data_frame(x1 = rnorm(n, -3),
+                                   x2 = rnorm(n,  3),
+                                   z  = sample(1:3, n, replace=TRUE),
+                                   y  =I(z==1) * (3 + 4*x1 - x2 + rnorm(n)) +
+                                       I(z==2) * (3 + 2*x1 + x2 + rnorm(n)) +
+                                       I(z==3) * (3 - 4*x1 - x2 + rnorm(n)) ,
+                                   w = 20
+                                   ) 
+data.context2 = tibble::data_frame(x1 = rnorm(n, -3),
+                                   x2 = rnorm(n,  3),
+                                   z  = sample(1:2, n, replace=TRUE),
+                                   y  =I(z==1) * (1 + 3*x1 - 2*x2 + rnorm(n)) +
+                                       I(z==2) * (1 - 2*x1 +   x2 + rnorm(n)),
+                                   w = 10
+                                   ) 
+data = data.context1 \%>\%
+    dplyr::bind_rows(data.context2)
 
 ## estimation
 mcmc    = list(burn.in=1, n.iter=50)
-samples = hdpGLM(y ~ X1 + X2 + X3, y ~ W1 + W2, data=sim_data$data, mcmc=mcmc, n.display=1)
+samples = hdpGLM(y ~ x1 + x2, y ~ w, data=data, mcmc=mcmc, n.display=1)
 
 
 plot_tau(samples)
 plot_tau(samples, ncol=2)
-plot_tau(samples, X='X1')
-plot_tau(samples, X='X2')
-plot_tau(samples, W='W1')
-plot_tau(samples, X='X1', W='W2')
+plot_tau(samples, X='x1')
+plot_tau(samples, X='x2')
+plot_tau(samples, W='w')
+plot_tau(samples, X='x1', W='w')
 plot_tau(samples, show.all.taus=TRUE)
 plot_tau(samples, show.all.taus=TRUE, show.all.betas=TRUE)
 plot_tau(samples, show.all.taus=TRUE, show.all.betas=TRUE, ncol=2)
-plot_tau(samples, true.tau=summary(sim_data)$tau,
-         show.all.taus=TRUE, show.all.betas=TRUE, ncol=2)
 
 }

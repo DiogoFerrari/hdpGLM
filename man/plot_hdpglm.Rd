@@ -55,31 +55,47 @@ plot_hdpglm(samples, X = NULL, W = NULL, ncol.taus = 1,
 
 \item{beta.panel.title.size}{numeric, relative size of the title of the panels of the plot with beta}
 
-\item{beta.legend.size}{numeric, relative size of the legend of the plot with beta
-
-set.seed(66)
-n = 20    # sample size
-K = 2     # number of clusters
-nCov = 3  # Dx, number of ind-level covars
-nCovj = 2 # Dw, number of context-level covars 
-J = 15    # number of contexts
-
-## simulating some data
-sim_data = hdpGLM_simulateData(n=n, K=K, nCov=nCov, nCovj=nCovj, J=J, family='gaussian')
-
-## estimation
-mcmc    = list(burn.in=1, n.iter=50)
-samples = hdpGLM(y ~ X1 + X2 + X3, y ~ W1 + W2, data=sim_data$data, mcmc=mcmc, n.display=1)
-
-plot_hdpglm(samples)
-plot_hdpglm(samples, ncol.taus=2)
-plot_hdpglm(samples, ncol.taus=2, ncol.betas=2, X='X1')
-plot_hdpglm(samples, ncol.taus=2, ncol.betas=2, X='X1', ncol.w=2, nrow.w=1)
-plot_hdpglm(samples, ncol.taus=2, ncol.betas=2, X='X1', ncol.w=2, nrow.w=1,
-            pred.pexp.beta=TRUE,smooth.line=TRUE, )}
+\item{beta.legend.size}{numeric, relative size of the legend of the plot with beta}
 
 \item{tau.xlab}{string, the label of the x-axis for the plot with tau}
 }
 \description{
 this function creates a plot with two grids. One is the grid with posterior expectation of betas as function of context-level covariates. The other is the posterior distribution of tau
+}
+\examples{
+
+library(magrittr)
+# Note: this example is just for illustration. MCMC iterations are very reduced
+set.seed(10)
+n = 20
+data.context1 = tibble::data_frame(x1 = rnorm(n, -3),
+                                   x2 = rnorm(n,  3),
+                                   z  = sample(1:3, n, replace=TRUE),
+                                   y  =I(z==1) * (3 + 4*x1 - x2 + rnorm(n)) +
+                                       I(z==2) * (3 + 2*x1 + x2 + rnorm(n)) +
+                                       I(z==3) * (3 - 4*x1 - x2 + rnorm(n)) ,
+                                   w = 20
+                                   ) 
+data.context2 = tibble::data_frame(x1 = rnorm(n, -3),
+                                   x2 = rnorm(n,  3),
+                                   z  = sample(1:2, n, replace=TRUE),
+                                   y  =I(z==1) * (1 + 3*x1 - 2*x2 + rnorm(n)) +
+                                       I(z==2) * (1 - 2*x1 +   x2 + rnorm(n)),
+                                   w = 10
+                                   ) 
+data = data.context1 \%>\%
+    dplyr::bind_rows(data.context2)
+
+## estimation
+mcmc    = list(burn.in=1, n.iter=50)
+samples = hdpGLM(y ~ x1 + x2, y ~ w, data=data, mcmc=mcmc, n.display=1)
+
+plot_hdpglm(samples)
+plot_hdpglm(samples, ncol.taus=2)
+plot_hdpglm(samples, ncol.taus=2, ncol.betas=2, X='x1')
+plot_hdpglm(samples, ncol.taus=2, ncol.betas=2, X='x1', ncol.w=2, nrow.w=1)
+plot_hdpglm(samples, ncol.taus=2, ncol.betas=2, X='x1', ncol.w=2, nrow.w=1,
+            pred.pexp.beta=TRUE,smooth.line=TRUE )
+
+
 }

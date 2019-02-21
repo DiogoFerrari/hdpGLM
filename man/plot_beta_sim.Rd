@@ -7,7 +7,7 @@
 plot_beta_sim(data, w.idx, ncol = NULL)
 }
 \arguments{
-\item{data}{the output of the function \code{\link{hdpGLM_simulateData}}}
+\item{data}{the output of the function \code{hdpGLM_simulateData}}
 
 \item{w.idx}{integer, the index of the context level covariate the plot}
 

@@ -220,19 +220,29 @@ hdpglm_exclude_nas <- function(data, formula1, formula2, context.id)
 #' Journal of computational and graphical statistics, 9(2), 249–265 (2000).
 #'
 #' @examples
-#' data    = hdpGLM_simulateData(n=5000,nCov=4, K=5, family='gaussian')
-#' mcmc    = list(burn.in = 0,  n.iter = 1000)
-#' samples = hdpGLM(y~., data=data$data, mcmc=mcmc, family='gaussian', n.display=30, K=50)
-#'
+#' set.seed(10)
+#' n = 1000
+#' data = tibble::data_frame(x1 = rnorm(n, -3),
+#'                           x2 = rnorm(n,  3),
+#'                           z  = sample(1:3, n, replace=TRUE),
+#'                           y  =I(z==1) * (3 + 4*x1 - x2 + rnorm(n)) +
+#'                               I(z==2) * (3 + 2*x1 + x2 + rnorm(n)) +
+#'                               I(z==3) * (3 - 4*x1 - x2 + rnorm(n)) 
+#'                           ) 
+#' 
+#' 
+#' mcmc    = list(burn.in = 0,  n.iter = 2000)
+#' samples = hdpGLM(y~ x1 + x2, data=data, mcmc=mcmc, family='gaussian', n.display=30, K=50)
+#' 
 #' summary(samples)
-#' summary(samples, true.beta=summary(data)$beta)
-#' 
 #' plot(samples)
-#' 
 #' plot(samples, separate=TRUE)
+#' 
+#' ## compare with GLM
+#' lm(y~ x1 + x2, data=data,  family='gaussian')
+#' 
 #'  
 #' @export
-
 ## }}}
 hdpGLM <- function(formula1, formula2=NULL, data, context.id=NULL, weights=NULL, mcmc, K=100, fix=NULL, family='gaussian', epsilon=0.01, leapFrog=40, n.display=1000, hmc_iter=1, imp.bin="R", na.action = "exclude")
 {

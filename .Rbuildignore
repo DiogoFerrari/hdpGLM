@@ -3,3 +3,7 @@
 dev.R.R/.data/
 TAGS
 README.org
+cran-comments.md
+.gitignore
+.data
+.git
