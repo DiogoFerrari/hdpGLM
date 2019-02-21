@@ -8,23 +8,20 @@ dpGLM_simulateParameters(nCov, nCovj = NULL, K = NULL, pi = NULL,
   seed = NULL)
 }
 \arguments{
-\item{nCov}{integer, the number of covariates of the
-GLM components}
+\item{nCov}{integer, the number of covariates of the GLM components}
 
-\item{nCovj}{an integer indicating the number of
-covariates determining the average parameter of the
-base measure of the Dirichlet process prior}
+\item{nCovj}{an integer indicating the number of covariates determining the average parameter of the base measure of the Dirichlet process prior}
 
 \item{K}{integer, the number of clusters. If there are multiple contexts, K is the average number of clusters across contexts, and each context gets a number of clusters sampled from a Poisson distribution, except if \code{same.K} is \code{TRUE}.}
 
 \item{pi}{either NULL or a vector with length K that add up to 1. If not NULL, it determines the mixture probabilities}
 
-\item{seed}{a seed for \code{\link{set.seed}}}
+\item{seed}{a seed for \code{set.seed}}
 }
 \value{
 The function returns a list with the parameters
         used to generate data sets from the dpGLM model.
-        This list can be used in the function \code{\link{hdpGLM_simulateData}}
+        This list can be used in the function \code{hdpGLM_simulateData}
 }
 \description{
 This function generates parameters that can be used to

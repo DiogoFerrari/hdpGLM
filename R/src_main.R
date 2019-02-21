@@ -224,10 +224,10 @@ hdpglm_exclude_nas <- function(data, formula1, formula2, context.id)
 #' 
 #' ## Note: this example is for illustration. You can run the example
 #' ## manually with increased number of iterations to see the actual
-#' ## results
+#' ## results, as well as the data size (n)
 #' 
 #' set.seed(10)
-#' n = 500
+#' n = 300
 #' data = tibble::data_frame(x1 = rnorm(n, -3),
 #'                           x2 = rnorm(n,  3),
 #'                           z  = sample(1:3, n, replace=TRUE),

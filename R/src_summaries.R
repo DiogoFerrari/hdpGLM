@@ -806,16 +806,18 @@ summary.dpGLM_data <- function(object, ...)
     return(list(data = summary(x$data),beta=betas))
 }
 ## {{{ docs }}}
+
 #' Summary
 #'
-#' This functions summarizes the data simulated by the function \code{hdpGLM_simulate_data} 
+#' This functions summarizes the data simulated by the function \code{hdpGLM_simulateData} 
 #'
-#' @param object an object of the class \code{hdpGLM_data}, which is produced by the function \code{hdpGLM_simulate_data} 
+#' @param object an object of the class \code{hdpGLM_data}, which is produced by the function \code{hdpGLM_simulateData} 
 #' @param ... ignored 
 #'
 #' @return It returns a list with three elements. The first is a summary of the data, the second a data_frame with the linear coefficients \code{beta} and their values used to generate the data, and the third element is also a data_frame with the true values of \code{tau} used to generate the \code{betas}.
 #'
 #' @export
+
 ## }}}
 summary.hdpGLM_data <- function(object, ...)
 {

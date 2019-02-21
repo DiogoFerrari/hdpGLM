@@ -27,23 +27,30 @@ dpGLM_simulateData_main <- function(n, K, nCov, nCovj=NULL, parameters=NULL, pi=
     class(sim_data) = "dpGLM_data"
     return(sim_data)
 }
+
 ## {{{ docs }}}
+
 #' Simulated a Parameters used to create Data Sets from dpGLM model
 #'
 #' This function generates parameters that can be used to
 #' simulated data sets from the Hierarchical
 #' Dirichlet Process of Generalized Linear Model (dpGLM)
 #'
-#' @inheritParams hdpGLM_simulateData
+#' @param nCov integer, the number of covariates of the GLM components
+#' @param nCovj an integer indicating the number of covariates determining the average parameter of the base measure of the Dirichlet process prior
+#' @param K integer, the number of clusters. If there are multiple contexts, K is the average number of clusters across contexts, and each context gets a number of clusters sampled from a Poisson distribution, except if \code{same.K} is \code{TRUE}.
+#' @param pi either NULL or a vector with length K that add up to 1. If not NULL, it determines the mixture probabilities
+#' @param seed a seed for \code{set.seed}
 #'
 #' @return The function returns a list with the parameters
 #'         used to generate data sets from the dpGLM model.
-#'         This list can be used in the function \code{\link{hdpGLM_simulateData}}
+#'         This list can be used in the function \code{hdpGLM_simulateData}
 #' 
 #' @examples
 #' parameters = dpGLM_simulateParameters(nCov=2, K=2) 
 #'
 #' @export
+
 ## }}}
 dpGLM_simulateParameters <- function(nCov, nCovj=NULL, K=NULL, pi=NULL, seed=NULL)
 {
@@ -212,21 +219,28 @@ hdpGLM_simulateData_main <- function(n, K, nCov, nCovj=NULL, J, parameters=NULL,
 
 #' Simulated a Parameters used to create Data Sets from hdpGLM model
 #'
-#' This function generates parameters that can be used to
-#' simulated data sets from the Hierarchical
-#' Dirichlet Process of Generalized Linear Model (hdpGLM)
+#' This function generates parameters that can be used to simulated data sets from the Hierarchical Dirichlet Process of Generalized Linear Model (hdpGLM)
 #'
-#' @inheritParams hdpGLM_simulateData
+#' @param K integer, the number of clusters. If there are multiple contexts, K is the average number of clusters across contexts, and each context gets a number of clusters sampled from a Poisson distribution, except if \code{same.K} is \code{TRUE}.
+#' @param nCov integer, the number of covariates of the
+#'             GLM components
+#' @param nCovj an integer indicating the number of covariates determining the average parameter of the base measure of the Dirichlet process prior
+#' @param J an integer representing the number of contexts  @param parameters either NULL or a list with the parameters  to generate the model. If not NULL, it must  contain a sublist name beta, a vector named tau,  and a vector named pi. The sublist beta must be  a list of vectors, each one with size nCov+1  to be the coefficients of the GLM mixtures  components that will generate the data.  For the vector tau, if nCovj=0 (single-context case)  then it must be a 1x1 matrix containing 1.  If ncovj>0, it must be a (nCov+1)x(nCovj+1) matrix.  The vector pi must add up to 1 and have length K.
+#' @param pi either NULL or a vector with length K that add up to 1. If not NULL, it determines the mixture probabilities
+#' @param same.K boolean, used when data is sampled from more than one context. If \code{TRUE} all contexts get the same number of clusters. If \code{FALSE}, each context gets a number of clusters sampled from a Poisson distribution with expectation equals to \code{K} (current not implemented)
+#' @param seed a seed for \code{set.seed}
+#' @param context.effect either \code{NULL} or a two dimensional integer vector. If it is \code{NULL}, all the coefficients (\code{beta}) of the individual level covariates are functions of context-level features (\code{tau}). If it is not \code{NULL}, the first component of the vector indicates the index of the lower level covariate (\code{X}) whose linear effect \code{beta} depends on context (\code{tau}) (0 is the intercept). The second component indicates the index context-level covariate (\code{W}) whose linear coefficient (\code{tau}) is non-zero.
+#' @param same.clusters.across.contexts boolean, if \code{TRUE} all the contexts will have the same number of clusters AND each cluster will have the same coefficient \code{beta}.
+#' @param context.dependent.cluster integer, indicates which cluster will be context-dependent. If \code{zero}, all clusters will be context-dependent 
 #'
-#' @return The function returns a list with the parameters
-#'         used to generate data sets from the hdpGLM model.
-#'         This list can be used in the function \code{hdpGLM_simulateData}
+#' @return The function returns a list with the parameters used to generate data sets from the hdpGLM model. This list can be used in the function \code{hdpGLM_simulateData}
 #' 
 #' @examples
-#' parameters = hdpGLM_simulateParameters(nCov=2, K=2, nCovj=3, J=20,
-#'                 same.clusters.across.contexts=FALSE, context.dependent.cluster=0) 
+#' pars = hdpGLM_simulateParameters(nCov=2, K=2, nCovj=3, J=20,
+#'           same.clusters.across.contexts=FALSE, context.dependent.cluster=0) 
 #'
 #' @export
+
 ## }}}
 hdpGLM_simulateParameters <- function(nCov, K=NULL, nCovj=NULL, J=NULL, pi=NULL, same.K, seed=NULL, context.effect=NULL, same.clusters.across.contexts, context.dependent.cluster)
 {
@@ -396,6 +410,7 @@ hdpGLM_simulateParameters <- function(nCov, K=NULL, nCovj=NULL, J=NULL, pi=NULL,
     }
     return ( list(data=data, Z = Z, parameters=parameters) )
 }
+
 ## to be completed
 .hdpGLM_simulateData_multinomial <- function(n, K=2, nCov=0, nCat, pi=pi,  family, seed)
 {
@@ -454,32 +469,31 @@ hdpGLM_simulateParameters <- function(nCov, K=NULL, nCovj=NULL, J=NULL, pi=NULL,
 
 
 ## {{{ docs }}}
+#'
 #' Simulated a Data Set from hdpGLM model
 #'
 #' This function generates a data set from the Hierarchical Dirichlet Process of Generalized Linear Model (hdpGLM)
 #'
-#'
 #' @param n integer, the sample size of the data. If there are multiple contexts, each context will have n cases
 #' @param K integer, the number of clusters. If there are multiple contexts, K is the average number of clusters across contexts, and each context gets a number of clusters sampled from a Poisson distribution, except if \code{same.K} is \code{TRUE}.
-#' @param nCov integer, the number of covariates of the
-#'             GLM components
-#' @param nCovj an integer indicating the number of
-#'              covariates determining the average parameter of the
-#'              base measure of the Dirichlet process prior
+#' @param nCov integer, the number of covariates of the GLM components
+#' @param nCovj an integer indicating the number of covariates determining the average parameter of the base measure of the Dirichlet process prior
 #' @param J an integer representing the number of contexts  @param parameters either NULL or a list with the parameters  to generate the model. If not NULL, it must  contain a sublist name beta, a vector named tau,  and a vector named pi. The sublist beta must be  a list of vectors, each one with size nCov+1  to be the coefficients of the GLM mixtures  components that will generate the data.  For the vector tau, if nCovj=0 (single-context case)  then it must be a 1x1 matrix containing 1.  If ncovj>0, it must be a (nCov+1)x(nCovj+1) matrix.  The vector pi must add up to 1 and have length K.
+#' @param parameters a list with the parameter values of the model. Format should be the same of the output of the function hdpGLM_simulateParameters()
 #' @param pi either NULL or a vector with length K that add up to 1. If not NULL, it determines the mixture probabilities
 #' @param same.K boolean, used when data is sampled from more than one context. If \code{TRUE} all contexts get the same number of clusters. If \code{FALSE}, each context gets a number of clusters sampled from a Poisson distribution with expectation equals to \code{K} (current not implemented)
+#' @param seed a seed for \code{set.seed}
 #' @param context.effect either \code{NULL} or a two dimensional integer vector. If it is \code{NULL}, all the coefficients (\code{beta}) of the individual level covariates are functions of context-level features (\code{tau}). If it is not \code{NULL}, the first component of the vector indicates the index of the lower level covariate (\code{X}) whose linear effect \code{beta} depends on context (\code{tau}) (0 is the intercept). The second component indicates the index context-level covariate (\code{W}) whose linear coefficient (\code{tau}) is non-zero.
 #' @param same.clusters.across.contexts boolean, if \code{TRUE} all the contexts will have the same number of clusters AND each cluster will have the same coefficient \code{beta}.
 #' @param context.dependent.cluster integer, indicates which cluster will be context-dependent. If \code{zero}, all clusters will be context-dependent 
-#' @param seed a seed for \code{\link{set.seed}}
-#' @inheritParams hdpGLM 
+#' @param family a character with either 'gaussian', 'binomial', or 'multinomial'. It indicates the family of the GLM components of the mixture model.
 #'
 #' @return The function returns a list with the data set, the parameters,  the vector Z indicating the cluster of each observation, and the number of clusters.
 #'
 #' @export
+
 ## }}}
-hdpGLM_simulateData <- function(n, K, nCov, nCovj=0, J=1, parameters=NULL, pi=NULL, family, same.K=FALSE, seed=sample(1:777,1), context.effect=NULL, same.clusters.across.contexts=NULL, context.dependent.cluster=0)
+hdpGLM_simulateData <- function(n, K, nCov, nCovj=0, J=1, parameters=NULL, pi=NULL, same.K=FALSE, seed=sample(1:777,1), context.effect=NULL, same.clusters.across.contexts=NULL, context.dependent.cluster=0, family)
 {
     if(nCovj==0 | J < 2) 
         dat = dpGLM_simulateData_main(n, K, nCov, nCovj=NULL, parameters=parameters, pi=pi, family=family, seed=seed) 
