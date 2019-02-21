@@ -308,6 +308,7 @@ summary.hdpGLM <- function(object, ...)
 #' 
 #' 
 #' @export
+
 ## }}}
 plot.dpGLM    <- function(x, terms=NULL, separate=FALSE, hpd=TRUE, true.beta=NULL, title=NULL, subtitle=NULL, adjust=1, ncols=NULL, only.occupied.clusters=TRUE, focus.hpd=FALSE, legend.position="top", colour='grey', alpha=.4, display.terms=TRUE, plot.mean=TRUE, legend.label.true.value="True", ...)
 {
@@ -469,6 +470,7 @@ plot.dpGLM    <- function(x, terms=NULL, separate=FALSE, hpd=TRUE, true.beta=NUL
     return(g)
 }
 ## {{{ docs }}}
+
 #' Plot
 #'
 #' Generic function to plot the posterior density estimation produced by the function \code{hdpGLM}
@@ -497,6 +499,7 @@ plot.dpGLM    <- function(x, terms=NULL, separate=FALSE, hpd=TRUE, true.beta=NUL
 #' @inheritParams summary.hdpGLM
 #' 
 #' @export
+
 ## }}}
 plot.hdpGLM <- function(x, terms=NULL, j.label=NULL, j.idx=NULL, title=NULL, subtitle=NULL, true.beta=NULL, ncol=NULL,  legend.position="bottom", display.terms=TRUE, context.id=NULL, ylab=NULL, xlab=NULL, x.axis.size=1.1, y.axis.size=1.1, title.size=1.2, panel.title.size=1.5, legend.size=1.1, rel.height=0.01, fill.col="#00000044", border.col='white', ...)
 {
@@ -1358,6 +1361,7 @@ plot_beta <- function(samples, X=NULL, context.id=NULL, true.beta=NULL, title=NU
 #' plot_pexp_beta(samples, W='w', smooth.line=TRUE, pred.pexp.beta=TRUE, ncol.beta=2)
 #' 
 #' @export
+
 ## }}}
 plot_pexp_beta <- function(samples, X=NULL, W=NULL, pred.pexp.beta=FALSE, ncol.beta=NULL, ylab=NULL, nrow.w=NULL, ncol.w=NULL, smooth.line=FALSE, title=NULL, legend.position='top', col.pred.line='red', x.axis.size=1.1, y.axis.size=1.1, title.size=12, panel.title.size=1.4, legend.size=1)
 {
@@ -1567,6 +1571,7 @@ hdpglm_get_new_data          <- function(data, n, x, cat.values=NULL)
     return(newdata)
 }
 ## {{{ docs }}}
+
 #' Plot posterior distribution of tau and posterior expectation of beta
 #'
 #' this function creates a plot with two grids. One is the grid with posterior expectation of betas as function of context-level covariates. The other is the posterior distribution of tau
@@ -1627,6 +1632,7 @@ hdpglm_get_new_data          <- function(data, n, x, cat.values=NULL)
 #' 
 #'
 #' @export
+
 ## }}}
 plot_hdpglm <- function(samples, X=NULL, W=NULL, ncol.taus=1, ncol.betas=NULL, ncol.w=NULL, nrow.w=NULL, smooth.line=FALSE, pred.pexp.beta=FALSE, title.tau=NULL, true.tau=NULL, title.beta=NULL, tau.x.axis.size=1.1, tau.y.axis.size=1.1, tau.title.size=1.2, tau.panel.title.size=1.4, tau.legend.size=1, beta.x.axis.size=1.1, beta.y.axis.size=1.1, beta.title.size=1.2, beta.panel.title.size=1.4, beta.legend.size=1, tau.xlab=NULL)
 {

@@ -100,10 +100,12 @@ Journal of computational and graphical statistics, 9(2), 249–265 (2000).
 \examples{
 
 
-Note: this example is for illustration. You can run the example manually with increased number of iterations to see the actual results
+## Note: this example is for illustration. You can run the example
+## manually with increased number of iterations to see the actual
+## results
 
 set.seed(10)
-n = 1000
+n = 500
 data = tibble::data_frame(x1 = rnorm(n, -3),
                           x2 = rnorm(n,  3),
                           z  = sample(1:3, n, replace=TRUE),
@@ -114,7 +116,8 @@ data = tibble::data_frame(x1 = rnorm(n, -3),
 
 
 mcmc    = list(burn.in = 0,  n.iter = 20)
-samples = hdpGLM(y~ x1 + x2, data=data, mcmc=mcmc, family='gaussian', n.display=30, K=50)
+samples = hdpGLM(y~ x1 + x2, data=data, mcmc=mcmc, family='gaussian',
+                 n.display=30, K=50)
 
 summary(samples)
 plot(samples)
