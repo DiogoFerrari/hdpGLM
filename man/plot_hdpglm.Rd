@@ -5,12 +5,14 @@
 \title{Plot posterior distribution of tau and posterior expectation of beta}
 \usage{
 plot_hdpglm(samples, X = NULL, W = NULL, ncol.taus = 1,
-  ncol.betas = NULL, ncol.w = NULL, nrow.w = NULL, smooth.line = FALSE,
-  pred.pexp.beta = FALSE, title.tau = NULL, true.tau = NULL,
-  title.beta = NULL, tau.x.axis.size = 1.1, tau.y.axis.size = 1.1,
-  tau.title.size = 1.2, tau.panel.title.size = 1.4, tau.legend.size = 1,
-  beta.x.axis.size = 1.1, beta.y.axis.size = 1.1, beta.title.size = 1.2,
-  beta.panel.title.size = 1.4, beta.legend.size = 1, tau.xlab = NULL)
+  ncol.betas = NULL, ncol.w = NULL, nrow.w = NULL,
+  smooth.line = FALSE, pred.pexp.beta = FALSE, title.tau = NULL,
+  true.tau = NULL, title.beta = NULL, tau.x.axis.size = 1.1,
+  tau.y.axis.size = 1.1, tau.title.size = 1.2,
+  tau.panel.title.size = 1.4, tau.legend.size = 1,
+  beta.x.axis.size = 1.1, beta.y.axis.size = 1.1,
+  beta.title.size = 1.2, beta.panel.title.size = 1.4,
+  beta.legend.size = 1, tau.xlab = NULL)
 }
 \arguments{
 \item{samples}{an output of the function \code{\link{hdpGLM}}}
@@ -91,9 +93,7 @@ mcmc    = list(burn.in=1, n.iter=50)
 samples = hdpGLM(y ~ x1 + x2, y ~ w, data=data, mcmc=mcmc, n.display=1)
 
 plot_hdpglm(samples)
-plot_hdpglm(samples, ncol.taus=2)
 plot_hdpglm(samples, ncol.taus=2, ncol.betas=2, X='x1')
-plot_hdpglm(samples, ncol.taus=2, ncol.betas=2, X='x1', ncol.w=2, nrow.w=1)
 plot_hdpglm(samples, ncol.taus=2, ncol.betas=2, X='x1', ncol.w=2, nrow.w=1,
             pred.pexp.beta=TRUE,smooth.line=TRUE )
 

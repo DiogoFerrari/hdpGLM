@@ -13,47 +13,58 @@ using namespace arma;
 double U(colvec theta, List fix)
 {
   String family = fix["family"];
+  double u_value = 0.0;
   
   if (family == "binomial"){
-    return ( U_bin(theta, fix) );
+    u_value = U_bin(theta, fix) ;
   }
   if (family == "multinomial"){
-    return ( U_multi(theta, fix) );
+    u_value = U_multi(theta, fix) ;
   }
+  return(u_value);
 } 
 colvec grad_U(colvec theta, List fix)
 {
   String family = fix["family"];
+  int D = theta.n_rows;
+  arma::colvec grad = arma::zeros(D);
   
   if (family == "binomial"){
-    return ( grad_U_bin(theta, fix) );
+    grad = grad_U_bin(theta, fix) ;
   }
   if (family == "multinomial"){
-    return ( grad_U_multi(theta, fix) );
+    grad = grad_U_multi(theta, fix) ;
   }
+  return(grad);
 }
 colvec q(colvec theta_t, List fix)
 {
   String family = fix["family"];
+  int D = theta_t.n_rows;
+  arma::colvec q_values = arma::zeros(D);
   
   if (family == "binomial"){
-    return ( q_bin(theta_t, fix) );
+    q_values = q_bin(theta_t, fix) ;
   }
   if (family == "multinomial"){
-    return ( q_multi(theta_t, fix) );
+    q_values = q_multi(theta_t, fix) ;
   }
+  return(q_values);
 
 }
 mat G(colvec theta)
 {
   String family = "binomial"; // they are all te same
+  int D = theta.n_rows;
+  arma::mat g_values = arma::zeros(D, D);
   
   if (family == "binomial"){
-    return ( G_bin(theta) );
+    g_values = G_bin(theta) ;
   }
   if (family == "multinomial"){
-    return ( G_multi(theta) );
+    g_values = G_multi(theta) ;
   }
+  return(g_values);
 }
 
 // these does not depend on family
@@ -74,7 +85,7 @@ colvec hmc_update(colvec theta_t, double epsilon, int L, List fix)
   double u;
   double alpha;
   int D = theta_t.n_rows;
-  colvec v_current(D), theta(D), v(D);
+  colvec v_current(D), theta(D), v(D), theta_return(D);
 
   // Algorithm
   // ---------
@@ -110,10 +121,11 @@ colvec hmc_update(colvec theta_t, double epsilon, int L, List fix)
   // std::cout << "alpha       = " << alpha << "\n";
 
   if (u <=  alpha) {
-    return (theta);
+    theta_return = theta;
   }else{
-    return (theta_t);
+    theta_return = theta_t;
   }
+  return(theta_return);
 }
 
 

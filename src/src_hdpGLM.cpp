@@ -64,7 +64,7 @@ void hdpGLM_display_message(String family, int burn_in, int n_iter, int iter, in
 }
 arma::mat hdpGLM_update_countZik(arma::mat countZik, arma::mat Z)
 {
-  for(int i = 0; i < Z.n_rows; i++){
+  for(int i = 0; i < int(Z.n_rows); i++){
     countZik(i, Z(i,0)-1) += 1;
   }
   return(countZik);
@@ -72,7 +72,7 @@ arma::mat hdpGLM_update_countZik(arma::mat countZik, arma::mat Z)
 arma::mat hdpGLM_get_pik(arma::mat countZik)
 {
   arma::mat pik = arma::zeros(countZik.n_rows, countZik.n_cols);
-  for(int i = 0; i < countZik.n_rows; i++){
+  for(int i = 0; i < int(countZik.n_rows); i++){
     pik.row(i) = countZik.row(i)/sum(countZik.row(i));
   }
   return(pik);
@@ -98,7 +98,7 @@ arma::mat hdpGLM_get_theta_active(arma::mat theta, arma::colvec Z, arma::colvec 
   for(int j = 1; j <= J; j++){
     arma::uvec     idx_j = find(C == j);   
     arma::colvec  Zjstar = unique(Z(idx_j));
-    for(int i = 0; i < Zjstar.n_rows; i++){
+    for(int i = 0; i < int(Zjstar.n_rows); i++){
       int idx_k_active_in_j = conv_to<int>::from( find(theta.col(0) == Zjstar(i) && theta.col(1) == j) ); 
       theta_new.row(count) = theta.row(idx_k_active_in_j);
       count+=1;
@@ -129,7 +129,7 @@ arma::mat hdpGLM_get_inits_theta(int J, int K,int d, String family, List fix)
   // initializing beta
   arma::mat beta = rmvnormArma(K*J, fix["mu_beta"], fix["Sigma_beta"]);
   theta.resize(theta.n_rows, theta.n_cols + beta.n_cols);
-  for(int d = 0; d < beta.n_cols; d++){
+  for(int d = 0; d < int(beta.n_cols); d++){
     theta.col(d+2) = beta.col(d);
   }
 
@@ -236,7 +236,7 @@ arma::mat hdpGLM_update_tau(arma::mat W, arma::colvec C, arma::colvec Z, int K, 
     J_star.resize(J_star.n_rows + Zjstar.n_rows, J_star.n_cols);
     beta_star.resize(beta_star.n_rows + Zjstar.n_rows, beta_star.n_cols);
     W_star.resize(W_star.n_rows + Zjstar.n_rows, W_star.n_cols);
-    for(int Z_idx = 0; Z_idx < Zjstar.n_rows; Z_idx++){
+    for(int Z_idx = 0; Z_idx < int(Zjstar.n_rows); Z_idx++){
       int k_star = Zjstar(Z_idx);
       // J_star
       J_star(m-1, 0) = k_star;
@@ -272,7 +272,6 @@ arma::mat hdpGLM_update_tau(arma::mat W, arma::colvec C, arma::colvec Z, int K, 
   }
   return(tau);
 }
-
 
 // }}}
 
@@ -326,13 +325,12 @@ List hdpGLM_mcmc(arma::colvec y, arma::mat X, arma::mat W, arma::colvec C, arma:
     theta    = hdpGLM_update_theta(y, X, W, C, Z, K, tau, theta,  fix, family, epsilon, leapFrog, hmc_iter);
     tau      = hdpGLM_update_tau(W, C, Z, K, d, theta, fix);
 
-
     // saving samples
     // --------------
     if(iter+1 > burn_in){
       arma::mat theta_new = hdpGLM_get_theta_active(theta, Z, C);
       samples.resize(samples.n_rows + theta_new.n_rows, samples.n_cols);
-      for(int i = 0; i < theta_new.n_rows; i++){
+      for(int i = 0; i < int(theta_new.n_rows); i++){
 	samples.row(samples.n_rows - theta_new.n_rows +i) = theta_new.row(i);
       }
       samples_tau.row(iter - burn_in)= vectorise(tau).t();

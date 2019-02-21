@@ -220,6 +220,10 @@ hdpglm_exclude_nas <- function(data, formula1, formula2, context.id)
 #' Journal of computational and graphical statistics, 9(2), 249–265 (2000).
 #'
 #' @examples
+#'
+#' 
+#' Note: this example is for illustration. You can run the example manually with increased number of iterations to see the actual results
+#' 
 #' set.seed(10)
 #' n = 1000
 #' data = tibble::data_frame(x1 = rnorm(n, -3),
@@ -231,7 +235,7 @@ hdpglm_exclude_nas <- function(data, formula1, formula2, context.id)
 #'                           ) 
 #' 
 #' 
-#' mcmc    = list(burn.in = 0,  n.iter = 2000)
+#' mcmc    = list(burn.in = 0,  n.iter = 20)
 #' samples = hdpGLM(y~ x1 + x2, data=data, mcmc=mcmc, family='gaussian', n.display=30, K=50)
 #' 
 #' summary(samples)
@@ -328,7 +332,11 @@ hdpGLM <- function(formula1, formula2=NULL, data, context.id=NULL, weights=NULL,
         }
     }else
     {
-        samples            =  hdpGLM_mcmc(y, X, W, C, weights, K, fix, family, mcmc, epsilon, leapFrog, n.display, hmc_iter)
+        if (family=='binomial') {
+            stop("\n\nHierarchical version of hdpGLM is not implemented for binomial family yet. \n\nIn the current implementation, you can use the binomial family to estimate hdpGLM in a single context only. \n\n")
+        }else{
+            samples            =  hdpGLM_mcmc(y, X, W, C, weights, K, fix, family, mcmc, epsilon, leapFrog, n.display, hmc_iter)
+        }
     }
     T.mcmc  = Sys.time() - T.mcmc
 

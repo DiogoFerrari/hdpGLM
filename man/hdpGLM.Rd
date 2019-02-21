@@ -4,10 +4,10 @@
 \alias{hdpGLM}
 \title{Hierarchical Dirichlet Process GLM}
 \usage{
-hdpGLM(formula1, formula2 = NULL, data, context.id = NULL, weights = NULL,
-  mcmc, K = 100, fix = NULL, family = "gaussian", epsilon = 0.01,
-  leapFrog = 40, n.display = 1000, hmc_iter = 1, imp.bin = "R",
-  na.action = "exclude")
+hdpGLM(formula1, formula2 = NULL, data, context.id = NULL,
+  weights = NULL, mcmc, K = 100, fix = NULL, family = "gaussian",
+  epsilon = 0.01, leapFrog = 40, n.display = 1000, hmc_iter = 1,
+  imp.bin = "R", na.action = "exclude")
 }
 \arguments{
 \item{formula1}{a single symbolic description of the linear model of the
@@ -98,6 +98,10 @@ Neal, R. M., Markov chain sampling methods for dirichlet process mixture models,
 Journal of computational and graphical statistics, 9(2), 249–265 (2000).
 }
 \examples{
+
+
+Note: this example is for illustration. You can run the example manually with increased number of iterations to see the actual results
+
 set.seed(10)
 n = 1000
 data = tibble::data_frame(x1 = rnorm(n, -3),
@@ -109,7 +113,7 @@ data = tibble::data_frame(x1 = rnorm(n, -3),
                           ) 
 
 
-mcmc    = list(burn.in = 0,  n.iter = 2000)
+mcmc    = list(burn.in = 0,  n.iter = 20)
 samples = hdpGLM(y~ x1 + x2, data=data, mcmc=mcmc, family='gaussian', n.display=30, K=50)
 
 summary(samples)

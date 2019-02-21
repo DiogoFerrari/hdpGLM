@@ -34,4 +34,4 @@ Imports: coda,
     ggridges,
     ggpubr,
     formula.tools
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1

@@ -1053,12 +1053,7 @@ dpGLM_select_non_zero <- function(x, select_perc_time_active=60)
 #' 
 #' plot_tau(samples)
 #' plot_tau(samples, ncol=2)
-#' plot_tau(samples, X='x1')
-#' plot_tau(samples, X='x2')
-#' plot_tau(samples, W='w')
 #' plot_tau(samples, X='x1', W='w')
-#' plot_tau(samples, show.all.taus=TRUE)
-#' plot_tau(samples, show.all.taus=TRUE, show.all.betas=TRUE)
 #' plot_tau(samples, show.all.taus=TRUE, show.all.betas=TRUE, ncol=2)
 #' 
 #' @export
@@ -1357,18 +1352,9 @@ plot_beta <- function(samples, X=NULL, context.id=NULL, true.beta=NULL, title=NU
 #' samples = hdpGLM(y ~ x1 + x2, y ~ w, data=data, mcmc=mcmc, n.display=1)
 #' 
 #' plot_pexp_beta(samples)
-#' plot_pexp_beta(samples, X='x1', nrow.w=2)
-#' plot_pexp_beta(samples, X='x1', ncol.w=2)
 #' plot_pexp_beta(samples, X='x1', ncol.w=2, nrow.w=1)
 #' plot_pexp_beta(samples, X='x1', ncol.beta=2)
-#' plot_pexp_beta(samples, ncol.beta=2)
-#' plot_pexp_beta(samples,  pred.pexp.beta=TRUE)
-#' plot_pexp_beta(samples,  pred.pexp.beta=TRUE, W="w")
-#' plot_pexp_beta(samples,  pred.pexp.beta=TRUE, X="x1")
-#' plot_pexp_beta(samples,  pred.pexp.beta=TRUE, W="w", X=c("x1", "x2"))
-#' plot_pexp_beta(samples, W='w')
-#' plot_pexp_beta(samples, W='w', smooth.line=TRUE)
-#' plot_pexp_beta(samples, W='w', smooth.line=TRUE, pred.pexp.beta=TRUE)
+#' plot_pexp_beta(samples, pred.pexp.beta=TRUE, W="w", X=c("x1", "x2"))
 #' plot_pexp_beta(samples, W='w', smooth.line=TRUE, pred.pexp.beta=TRUE, ncol.beta=2)
 #' 
 #' @export
@@ -1635,9 +1621,7 @@ hdpglm_get_new_data          <- function(data, n, x, cat.values=NULL)
 #' samples = hdpGLM(y ~ x1 + x2, y ~ w, data=data, mcmc=mcmc, n.display=1)
 #' 
 #' plot_hdpglm(samples)
-#' plot_hdpglm(samples, ncol.taus=2)
 #' plot_hdpglm(samples, ncol.taus=2, ncol.betas=2, X='x1')
-#' plot_hdpglm(samples, ncol.taus=2, ncol.betas=2, X='x1', ncol.w=2, nrow.w=1)
 #' plot_hdpglm(samples, ncol.taus=2, ncol.betas=2, X='x1', ncol.w=2, nrow.w=1,
 #'             pred.pexp.beta=TRUE,smooth.line=TRUE )
 #' 

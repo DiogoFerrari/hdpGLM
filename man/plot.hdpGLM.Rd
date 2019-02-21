@@ -6,10 +6,11 @@
 \usage{
 \method{plot}{hdpGLM}(x, terms = NULL, j.label = NULL, j.idx = NULL,
   title = NULL, subtitle = NULL, true.beta = NULL, ncol = NULL,
-  legend.position = "bottom", display.terms = TRUE, context.id = NULL,
-  ylab = NULL, xlab = NULL, x.axis.size = 1.1, y.axis.size = 1.1,
-  title.size = 1.2, panel.title.size = 1.5, legend.size = 1.1,
-  rel.height = 0.01, fill.col = "#00000044", border.col = "white", ...)
+  legend.position = "bottom", display.terms = TRUE,
+  context.id = NULL, ylab = NULL, xlab = NULL, x.axis.size = 1.1,
+  y.axis.size = 1.1, title.size = 1.2, panel.title.size = 1.5,
+  legend.size = 1.1, rel.height = 0.01, fill.col = "#00000044",
+  border.col = "white", ...)
 }
 \arguments{
 \item{x}{an object of the class \code{hdpGLM} generted by the function \link{hdpGLM}}
