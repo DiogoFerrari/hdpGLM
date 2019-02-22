@@ -4,13 +4,13 @@ citEntry(entry = "Article",
          title = "Hierarchial Dirichlet Process Generalized Linear Mixed Model (hdpGLM)",
          author = personList(as.person("Diogo Ferrari")),
          journal = "...",
-         year = "2018",
+         year = "2019",
          volume = "",
          number = "",
          pages = "",
          url = "",
-         textVersion = paste("Ferrari, Diogo (2018).", 
-                             "Hierarchial Dirichlet Process Generalized Linear Mixed Model (hdpGLM)",
-                             "Journal...",
-                             "URL ...")
+         textVersion = paste("Ferrari, Diogo (2019).", 
+                             "Modeling Context-Dependent Latent Heterogeneity",
+                             "Political Analysis",
+                             "")
          )
