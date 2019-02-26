@@ -1,7 +1,7 @@
 hdpGLM
 ======
 
-[<https://travis-ci.org/DiogoFerrari/hdpGLM.svg?branch=master>](https://travis-ci.org/DiogoFerrari/hdpGLM)
+[![](https://travis-ci.org/DiogoFerrari/hdpGLM.svg)](https://travis-ci.org/DiogoFerrari/hdpGLM)
 
 Overview
 ========

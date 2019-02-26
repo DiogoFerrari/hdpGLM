@@ -2,7 +2,8 @@
 * hdpGLM
 
 #+ATTR_HTML: title="Join the chat at https://gitter.im/jceb/vim-orgmode"
-  [[https://travis-ci.org/DiogoFerrari/hdpGLM][https://travis-ci.org/DiogoFerrari/hdpGLM.svg?branch=master]]
+  [[https://travis-ci.org/DiogoFerrari/hdpGLM][file:https://travis-ci.org/DiogoFerrari/hdpGLM.svg]]
+
 
 * Overview
 
