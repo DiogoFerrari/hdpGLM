@@ -1,16 +1,15 @@
 
 * hdpGLM
 
-
-[![Travis build status](https://travis-ci.org/DiogoFerrari/hdpGLM.svg?branch=master)](https://travis-ci.org/DiogoFerrari/hdpGLM)
-
+#+ATTR_HTML: title="Join the chat at https://gitter.im/jceb/vim-orgmode"
+  [[https://travis-ci.org/DiogoFerrari/hdpGLM][https://travis-ci.org/DiogoFerrari/hdpGLM.svg?branch=master]]
 
 * Overview
 
 
 The package implements the hierarchical Dirichlet process Generalized Linear Models proposed in the paper Modeling Context-Dependent Latent Effect Heterogeneity. The model can be used to estimate latent heterogeneity in the marginal effect of GLM linear coefficients, cluster data points based on that latent heterogeneity, and investigate if Simpson’s Paradox occurs due to latent or omitted features. It also can be used with hierarchical data to estimate the effect of upper-level covariates on the latent heterogeneity in the effect of lower-level features.
 
-For details of the model and the MCMC algorithm, see my paper [[https://dioferrari.files.wordpress.com/2018/09/hdpglm_v31.pdf][Modeling Context-Dependent Latent Effect Heterogeneity]], current R&R at [[https://www.cambridge.org/core/journals/political-analysis][Political Analysis]].
+For details of the model and the MCMC algorithm, see my paper [[https://dioferrari.files.wordpress.com/2018/09/hdpglm_v31.pdf][Modeling Context-Dependent Latent Effect Heterogeneity]], forthcoming at [[https://www.cambridge.org/core/journals/political-analysis][Political Analysis]].
 
 * Instalation
 
