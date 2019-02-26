@@ -1,3 +1,10 @@
+hdpGLM
+======
+
+------------------------------------------------------------------------
+
+<https://travis-ci.org/DiogoFerrari/hdpGLM.svg?branch=master>
+
 Overview
 ========
 
@@ -33,7 +40,7 @@ page in R by running `help(install_github)`).
 Usage
 =====
 
-Here is a simple example (for more information, see `help(hdpGLM)`)
+Here is a simple example (for more information, see `help(hdpGLM)`).
 
 ``` {.r .rundoc-block rundoc-language="R" rundoc-exports="code"}
 

@@ -1,4 +1,10 @@
 
+* hdpGLM
+
+--------------
+
+[[https://travis-ci.org/DiogoFerrari/hdpGLM.svg?branch=master]]
+
 * Overview
 
 
