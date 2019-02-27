@@ -5,6 +5,11 @@
   [[https://travis-ci.org/DiogoFerrari/hdpGLM][file:https://travis-ci.org/DiogoFerrari/hdpGLM.svg]]
 
 
+
+#+ATTR_HTML: :alt hdpGLM :title hdpGLM :width 250 :align right
+[[./man/figures/hdpGLM-logo.png]]
+
+
 * Overview
 
 
