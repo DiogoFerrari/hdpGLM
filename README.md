@@ -3,7 +3,7 @@ hdpGLM
 
 [![](https://travis-ci.org/DiogoFerrari/hdpGLM.svg)](https://travis-ci.org/DiogoFerrari/hdpGLM)
 
-![](./man/figures/hdpGLM-logo.png){alt="hdpGLM" title="hdpGLM" width="250" align="right"}
+![](./man/figures/hdpGLM-logo.png){width="139" align="right"}
 
 Overview
 ========
