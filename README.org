@@ -1,11 +1,8 @@
 
 * hdpGLM @@html:<img src='man/figures/hdpGLM_logo.png' align="right" height="139" />@@
 
-
-#+ATTR_HTML: title="Join the chat at https://gitter.im/jceb/vim-orgmode"
+#+ATTR_HTML: title="Travis hdpGLM"
   [[https://travis-ci.org/DiogoFerrari/hdpGLM][file:https://travis-ci.org/DiogoFerrari/hdpGLM.svg]]
-
-
 
 * Overview
 

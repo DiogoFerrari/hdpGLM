@@ -162,7 +162,7 @@ hdpglm_exclude_nas <- function(data, formula1, formula2, context.id)
 #'                 of group level covariates. If \code{NULL}, it will use
 #'                 a single base measure to the DPP mixture model.
 #' @param data a data.frame with all the variables specified in \code{formula1} and \code{formula2}. Note: it is advisable to scale the variables before the estimation
-#' @param context.id string with the name of the column in the data that identify uniquely the contexts. If \code{NULL} (default) contexts will be identified by numerical indexes and unique context-level variables. 
+#' @param context.id string with the name of the column in the data that identify uniquely the contexts. If \code{NULL} (default) contexts will be identified by numerical indexes and unique context-level variables. The user is advised to pre-process the data to provide meaninful labels for the contexts to facilitate later visualization and analyses of the results.
 #' @param weights numeric vector with the same size as the number of rows of the data. It must contains the weights of the observations in the data set. NOTE: FEATURE NOT IMPLEMENTED YET
 #' @param mcmc a list containing elements named \code{burn.in} (required, an
 #'             integer greater or equal to 0 indicating the number iterations used in the
