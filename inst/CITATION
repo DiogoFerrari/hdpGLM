@@ -1,14 +1,14 @@
 
 citHeader("To cite hdpGLM in publications use:")
-citEntry(entry = "Article",
+citEntry(entry = "article",
          title = "Hierarchial Dirichlet Process Generalized Linear Mixed Model (hdpGLM)",
          author = personList(as.person("Diogo Ferrari")),
-         journal = "...",
+         journal = "Political Analysis",
          year = "2019",
          volume = "",
          number = "",
          pages = "",
-         url = "",
+         url = "https://doi.org/10.1017/pan.2019.13",
          textVersion = paste("Ferrari, Diogo (2019).", 
                              "Modeling Context-Dependent Latent Heterogeneity",
                              "Political Analysis",
