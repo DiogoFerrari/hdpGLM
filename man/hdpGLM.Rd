@@ -124,7 +124,7 @@ plot(samples)
 plot(samples, separate=TRUE)
 
 ## compare with GLM
-lm(y~ x1 + x2, data=data,  family='gaussian')
+## lm(y~ x1 + x2, data=data,  family='gaussian')
 
  
 }

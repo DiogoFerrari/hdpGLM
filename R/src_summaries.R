@@ -120,7 +120,7 @@ summary.dpGLM <- function(object, ...)
             tibble::as_data_frame(.)  %>% 
             tidyr::gather(key=Parameter, value=sample, -k) %>% 
             dplyr::group_by(k, Parameter) %>%
-            dplyr::summarize_all(.funs=list(Mean="mean", Median="median", SD="sd", "HPD.lower", "HPD.upper")) %>%
+            dplyr::summarize_all(.funs=list(Mean="mean", Median="median", SD="sd", HPD.lower="HPD.lower", HPD.upper="HPD.upper")) %>%
             dplyr::ungroup(.)
     }
     ## include terms column (var names) if not already present
@@ -200,7 +200,7 @@ summary.hdpGLM <- function(object, ...)
             tidyr::gather(key=Parameter, value=sample, -k, -j) %>% 
             dplyr::group_by(k,j, Parameter) %>%
             dplyr::filter(dplyr::n()>1) %>%  # discard cases with a single draw
-            dplyr::summarize_all(.funs=list(Mean="mean", Median="median", SD="sd", "HPD.lower", "HPD.upper")) %>%
+            dplyr::summarize_all(.funs=list(Mean="mean", Median="median", SD="sd", HPD.lower="HPD.lower", HPD.upper="HPD.upper")) %>%
             dplyr::ungroup(.)
     }
     ## include terms column (var names) if not already present
