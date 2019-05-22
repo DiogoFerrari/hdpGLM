@@ -23,7 +23,7 @@ a single base measure to the DPP mixture model.}
 
 \item{data}{a data.frame with all the variables specified in \code{formula1} and \code{formula2}. Note: it is advisable to scale the variables before the estimation}
 
-\item{context.id}{string with the name of the column in the data that identify uniquely the contexts. If \code{NULL} (default) contexts will be identified by numerical indexes and unique context-level variables.}
+\item{context.id}{string with the name of the column in the data that identify uniquely the contexts. If \code{NULL} (default) contexts will be identified by numerical indexes and unique context-level variables. The user is advised to pre-process the data to provide meaninful labels for the contexts to facilitate later visualization and analyses of the results.}
 
 \item{weights}{numeric vector with the same size as the number of rows of the data. It must contains the weights of the observations in the data set. NOTE: FEATURE NOT IMPLEMENTED YET}
 
