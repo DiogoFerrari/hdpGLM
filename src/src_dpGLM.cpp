@@ -171,6 +171,7 @@ List dpGLM_mcmc(arma::colvec y, arma::mat X, arma::colvec weights, int K, List f
   int n_parameters = 1 + d+1;   // 1=Z, d+1="d betas for the covars + intercept" 
   if( family == "gaussian"){n_parameters+=1;} // for sigma
   arma::mat samples(0, n_parameters);
+  arma::mat samples_pi(0, K);
 
   // MCMC iterations
   // ---------------
@@ -187,10 +188,14 @@ List dpGLM_mcmc(arma::colvec y, arma::mat X, arma::colvec weights, int K, List f
     // --------------
     if(iter+1 > burn_in){
       arma::mat theta_new = dpGLM_get_theta_active(theta, Z);
+	  // resize
       samples.resize(samples.n_rows + theta_new.n_rows, samples.n_cols);
+      samples_pi.resize(samples_pi.n_rows + 1, K);
+	  // store samples
       for(int i = 0; i < theta_new.n_rows; i++){
-	samples.row(samples.n_rows - theta_new.n_rows +i) = theta_new.row(i);
+		samples.row(samples.n_rows - theta_new.n_rows +i) = theta_new.row(i);
       }
+	  samples_pi.row(samples_pi.n_rows - 1) = pi.t();
     }
 
     // update countZik and pik
@@ -214,13 +219,14 @@ List dpGLM_mcmc(arma::colvec y, arma::mat X, arma::colvec weights, int K, List f
 
     progress_bar(iter,N);
   } // end of MCMC iterations
-
+  
   Rcpp::List results = Rcpp::List::create(Rcpp::Named("samples") = samples,
-					  Rcpp::Named("pik") = pik,
-					  Rcpp::Named("max_active") = max_active_cluster_at_a_iter,
-					  Rcpp::Named("n.iter") = n_iter,
-					  Rcpp::Named("burn.in") = burn_in);
-
+										  Rcpp::Named("samples_pi") = samples_pi,
+										  Rcpp::Named("pik") = pik,
+										  Rcpp::Named("max_active") = max_active_cluster_at_a_iter,
+										  Rcpp::Named("n.iter") = n_iter,
+										  Rcpp::Named("burn.in") = burn_in);
+  
   dpGLM_ACCEPTANCE_COUNT  = 0;
   dpGLM_ACCEPTANCE_RATE_AVERAGE = 0.0;
   dpGLM_MCMC_TRIAL = 0;
