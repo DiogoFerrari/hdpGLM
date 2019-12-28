@@ -390,6 +390,8 @@ hdpGLM <- function(formula1, formula2=NULL, data, context.id=NULL, weights=NULL,
     }
 
     samples$time_elapsed = T.mcmc
+    attr(samples, 'formula1') = formula1
+    attr(samples, 'formula2') = formula2
     return(samples)
 }
 

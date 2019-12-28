@@ -108,8 +108,8 @@ summary.dpGLM <- function(object, ...)
         true.beta = eval(args$true.beta)
     }
 
-    only.occupied.clusters=TRUE
-    if(only.occupied.clusters) x = dpGLM_get_occupied_clusters(x)
+    only.occupied.clusters = TRUE
+    x = dpGLM_get_occupied_clusters(x)
 
     if(!is.null(true.beta)){
         betas          = hdpGLM_match_clusters(x, true=true.beta)
@@ -672,57 +672,109 @@ plot.hdpGLM <- function(x, terms=NULL, j.label=NULL, j.idx=NULL, title=NULL, sub
 #' @export
 
 ## }}}
-predict.dpGLM <- function(object, ...)
+## predict.dpGLM <- function(object, ...)
+## {
+##     samples = object
+##     ## get additional parameters ...
+##     args = as.list(match.call())
+##     if(!'new_data' %in% names(args)) {
+##         stop("\n\nThe argument 'new_data' must be provided\n\n")
+##     }else{
+##         new_data = eval(args$new_data)
+##     }
+##     ## get additional parameters ...
+##     args = as.list(match.call())
+##     if(!'family' %in% names(args)) {
+##         family = 'gaussian'
+##     }else{
+##         family = eval(args$family)
+##     }
+
+##     new_data[,"(Intercept)"] = 1
+##     if(! class(samples)%in% c('dpGLM','hdpGLM')) stop("\n\nParameter samples must be a dpGLM or hdpGLM object ! \n\n")
+##     est = samples %>%
+##         summary(.) %>%
+##         dplyr::filter(Parameter != 'sigma') %>%
+##         dplyr::mutate_if(is.factor, as.character) %>% 
+##         dplyr::rename(covars=term)
+
+##     clusters  = est$k %>% unique
+##     pred = tibble::data_frame()
+##     for (cluster in clusters)
+##     {
+##         est_cl = est %>%
+##             dplyr::filter(k == cluster)
+##         X = new_data %>% dplyr::select(est_cl$covars) %>%
+##             as.matrix
+##         betas = est_cl %>%
+##             dplyr::select(Mean, dplyr::contains("HPD")) %>%
+##             as.matrix
+##         if (family=="gaussian") {
+##             pred.tmp = X %*% betas
+##         }
+##         if (family=="binomial") {
+##             pred.tmp = 1/(1+exp(- X %*% betas))
+##         }
+##         pred.tmp = data.frame(pred.tmp, k=cluster)
+##         pred = pred %>% base::rbind(., pred.tmp)
+##     }
+##     new_data = new_data[rep(1:nrow(new_data), length(clusters)),]
+##     pred = tibble::as_data_frame(pred)  %>%
+##         dplyr::bind_cols(new_data) %>%
+##         dplyr::rename(pred.mean=Mean, pred.l=HPD.lower, pred.u=HPD.upper)
+##     return(pred)
+## }
+predict.dpGLM <- function(object, new_data, ...)
+## predict.dpGLM  <- function(samples, data)
 {
+    options(warn=-1)
+    on.exit(options(warn=0))
+
     samples = object
-    ## get additional parameters ...
-    args = as.list(match.call())
-    if(!'new_data' %in% names(args)) {
-        stop("\n\nThe argument 'new_data' must be provided\n\n")
-    }else{
-        new_data = eval(args$new_data)
-    }
-    ## get additional parameters ...
-    args = as.list(match.call())
-    if(!'family' %in% names(args)) {
-        family = 'gaussian'
-    }else{
-        family = eval(args$family)
-    }
+    data = new_data
+    
+    ## get data design matrix
+    formula = attr(samples, 'formula1')
+    X = getRegMatrix_main(formula, data)$X
 
-    new_data[,"(Intercept)"] = 1
-    if(! class(samples)%in% c('dpGLM','hdpGLM')) stop("\n\nParameter samples must be a dpGLM or hdpGLM object ! \n\n")
-    est = samples %>%
-        summary(.) %>%
-        dplyr::filter(Parameter != 'sigma') %>%
-        dplyr::mutate_if(is.factor, as.character) %>% 
-        dplyr::rename(covars=term)
-
-    clusters  = est$k %>% unique
-    pred = tibble::data_frame()
-    for (cluster in clusters)
+    ## get linear coefficients
+    K = ncol(samples$pik)
+    betas = tibble::tibble(k = 1:K, pk = samples$samples_pi %>% colMeans) %>% 
+        dplyr::full_join(., samples %>% summary(., only.occupied.clusters=TRUE) , by=c("k"))  %>%
+        tidyr::drop_na() 
+    Ks = betas$k %>% unique()
+    yhat = matrix(rep(0, times=nrow(X)), ncol=1)
+    covars = colnames(X)
+    for (k in Ks)
     {
-        est_cl = est %>%
-            dplyr::filter(k == cluster)
-        X = new_data %>% dplyr::select(est_cl$covars) %>%
-            as.matrix
-        betas = est_cl %>%
-            dplyr::select(Mean, dplyr::contains("HPD")) %>%
-            as.matrix
-        if (family=="gaussian") {
-            pred.tmp = X %*% betas
-        }
-        if (family=="binomial") {
-            pred.tmp = 1/(1+exp(- X %*% betas))
-        }
-        pred.tmp = data.frame(pred.tmp, k=cluster)
-        pred = pred %>% base::rbind(., pred.tmp)
+        pi = betas %>% 
+            dplyr::filter(k=={{k}})  %>%
+            dplyr::select(pk)  %>%
+            dplyr::distinct(., .keep_all=TRUE)  %>%
+            dplyr::pull(.)
+        beta = betas %>%
+            dplyr::filter(k=={{k}})  %>%
+            dplyr::select(term, Mean)   %>%
+            tidyr::spread(., key=term, value=Mean) %>%
+            dplyr::select(covars)  %>%
+            as.matrix %>%
+            t
+        yhat = yhat + (pi * (X %*% beta))
     }
-    new_data = new_data[rep(1:nrow(new_data), length(clusters)),]
-    pred = tibble::as_data_frame(pred)  %>%
-        dplyr::bind_cols(new_data) %>%
-        dplyr::rename(pred.mean=Mean, pred.l=HPD.lower, pred.u=HPD.upper)
-    return(pred)
+    return(yhat)
+}
+getRegMatrix_main <- function(formula, data)
+{
+    ## check if output variable (y) is missing
+    cols = names(data)
+    output_var = formula.tools::lhs.vars(formula)
+    if (! output_var %in% names(data)) {
+        data[,output_var] = 1
+    }
+    ## get design matrix
+    func.call <- match.call(expand.dots = FALSE)
+    X = .getRegMatrix(func.call, data, weights=NULL, formula_number='')
+    return(X)
 }
 
 ## =====================================================
