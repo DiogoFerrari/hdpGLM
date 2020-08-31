@@ -1,0 +1,202 @@
+---
+title: "Introduction to hdpGLM"
+author: "Jiewen Luo"
+date: "`r Sys.Date()`"
+header-includes:
+  - \usepackage{amsmath}
+  - \usepackage{amsfonts}
+  - \usepackage{amssymb}
+  
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to hdpGLM}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Summary
+The hdpGLM package implements the hierarchical Dirichlet process Generalized Linear Models proposed by Ferrari(2019). The model can be used to estimate latent heterogeneity in the marginal effect of GLM linear coefficients, cluster data points based on that latent heterogeneity, and investigate if Simpson’s Paradox occurs due to latent or omitted features. It also can be used with hierarchical data to estimate the effect of upper-level covariates on the latent heterogeneity in the effect of lower-level features.
+
+## Technical Details
+Ferrari(2019) proposes a hierarchical Dirichlet process of generalized linear models to estimate heterogeneous marginal effects of GLM linear. To estimate such models, a (blocked) Gibbs sampler was adopted in the case of continuous outcome variables; whereas a Hamiltonian Monte Carlo within Gibbs is applied to handle discrete outcome variables.\
+
+### (I) Modeling
+ For each observation $i$, denote:\
+(i) $y_i$ as the outcome variable; (ii) $X_i$ as the set of observed covariates including a column with
+one for the intercept term; (iii) $K$ as the number of heterogeneous groups for a given population (context); (iv) $Z_i=k$ as the group of each observation for a given population (context), where $k \in \{1, \dots, K\}$; (v) $J$ as the number of different populations (contexts); (vi) $C_i =j$ as the context of observation $i$, where $j \in \{1, \dots, J\}$; and (vii) $W_j$ denotes context-level features of context j including a column with
+one for the intercept term, for $j \in \{1, \dots, J\}$.\
+If p(.) is a distribution in the exponential family, $g$ is a link function, and $\theta=(\beta, \sigma)$, then the group- and context-specific GLM is given by:\
+
+\begin{align}
+&G_j|\alpha_0, G_0, W_j \sim \mathcal{DP}(\alpha_0, G_0(W_j))\\
+&\theta_{ji} | G_j \sim G_j\\
+&y_i|X_i, C_i, \theta_{ji}, \sim p(y_i|X_i, \theta_{ji}), \mathbb{E}[y_i|.]=\mu_{ji}=g^{-1}(X_i^T\mathbb{\beta}_{ji}).
+\end{align}
+
+In this case, we say that each atom $\theta_{ji}$ follows a hierarchical Dirichlet process $G_j$ with scale parameter $\alpha_0$ and context-dependent base measure $G_0(W_j)$. And the conditional distribution of $y$ given data and atom \theta_{ji} follows a GLM. More desirably, one can use the stick-breaking construction to generalized the model as followed:\
+
+\begin{align}
+&V_I|\alpha_0 \sim Beta(1, \alpha_0)\\
+&\pi_k = \left\{
+        \begin{array}{ll}
+            V_1 & k=1 \\
+            V_k\prod_{I=1}^{K-1}(1-V_I) & k > 1
+        \end{array}
+    \right.\\
+    
+&Z_i|\pi \sim Cat(\pi), \pi \in \Delta^\infty \\
+
+&\tau_d \sim p(\tau_d)， d=1, \dots, D_x+1 \\
+
+&\theta_{kj}|Z_{ik}, \tau, C_{ij}, W \sim p(\theta_{jk}|W, \tau), j=1, \dots, J\\
+
+& y_i|Z_{ik},\theta_{kj} X_i, C_{ji} \sim p(y_i|Z_{ik}, C_{ij},X_i, \theta_{kj}) \ni \mathbb{E}[y_i|Z_{ik},\theta_{kj}, X_i, C_{ji}]=\mu_i=g^{-1}(X_i^T\mathbb{\beta}_{kj})\\
+&\text{Further assume that, for} \hspace{1mm}\theta=(\beta, \sigma)\\
+
+\hspace{5mm} &\tau_d | \mu_{\tau}, \Sigma_{\tau} \sim N_{D_w+1}(\mu_{\tau},\Sigma_{\tau}),  \hspace{5mm} d=1, \dots, D_x+1\\
+
+\hspace{5mm} & \beta_{kj}|Z_{ik}, \tau, C_{ij},W \sim N_{D_x+1}([W_j^T\tau]^T, \Sigma_{\beta}), \hspace{5mm} j=1, \dots, J.
+
+\end{align}
+
+### (II) Estimation
+
+#### (A) **Algorithm 1:** Gibbs Sampler for hdpGLM with continuous outcome variable.\
+Set $Z^*$ as the unique values of $Z$, and $Z^{*C}$ as all the complement values of $Z^*$. We denote (i) $Z_j^*$ as the unique values of $Z$ in the context $j$; (ii) $Z_j^{*C}$ as the complement of $Z^*$ in $j$; (iii) $I_k$ as the set of indexes $i$ of the data points assigned to the cluster $k$; (iv) $N_k$ as the total number of data points in $k$ , and (v) $X_{jk}$ (or $y_{jk}$) as the covariates (outcome variable) of the observations $i$ in context $j$ and assigned to the cluster $k$.\
+
+  **Requre:**  $Z^{(t)}=(Z_1^{(t)}, \dots, Z_n^{(t)}, \theta_Z^{(t)}, \tau^{(t)}, \pi^{(t)})$\
+
+1. For $d \in \{1, \dots, D_x+1\}$, sample $\tau_d^{(t+1)}\mid \theta^{(t)}, \mathbf{W}\sim p(\theta_d^{(t)}\mid \mathbf{W},\tau_d^{(t)})p(\tau_d)$
+
+2. For $j=1, \dots, J$:
+   a. For all $k\in Z_j^*$, sample $\theta_{kj}^{(t+1)}\mid Z^{(t)}, \theta^{(t)}, \tau^{(t+1)}, \mathbf{X}, \mathbf{W}, C, y \sim p(\theta_{kj}\mid \tau^{(t+1)}, \mathbf{W})\prod_{i \in I_k} p(y_i \mid Z_{ik}^{(t)}, C_{ij}, X_i, \theta_{kj}^{(t)})$; \
+   b. For all $k\in Z_j^{*C}$, sample $\theta_{kj}^{(t+1)}\mid \tau^{(t+1)}, \mathbf{W} \sim p(\theta_{kj}\mid \tau^{(t+1)}, \mathbf{W})$
+3. For $i=1, \dots, n$, sample $Z_i^{(t+1)}| \theta^{(t+1)}, \pi^{(t)}, X_i, y \sim \sum_{k=1}^K p_{ik}\delta(Z_{ik}) \ni p_{ik} \propto \pi_k^{(t)}p(y_i\mid X_i, Z_{ik}^{(t)}, C_{ij}, \theta_{kj}^{(t+1)})$
+4. For $k=1, \dots, K-1$, sample $v_k^{(t+1)}\overset{iid}{\sim} Beta\Big(1+N_k^{(t+1)}, \alpha_0+\sum_{I=k+1}^KN_I^{(t+1)} \Big) \ni N_k^{(t+1)}=\sum_{i=1}^nI(Z_{ik}^{(t+1)})$\
+Set $v_K^{(t+1)}=1$ and compute $\pi_k^{(t+1)} = \left\{
+        \begin{array}{ll}
+            V_1^{(t+1)} & k=1 \\
+            V_k^{(t+1)}\prod_{I=1}^{K-1}(1-V_I)^{(t+1)} & k =2, \dots, K.
+        \end{array}
+    \right.$\
+    
+#### (B) **Algorithm 2:** Riemman Manifold Hamiltonian Monte Carlo for hdpGLM with discrete outcome variable.
+The random variable of interest is $\beta_{kj} \in \mathbb{R}^{D_x+1}$ and we use $v \in \mathbb{R}^{D_x+1}$ as the ancillary variable (momentum) such that $v \sim N_{D_x+1}(0,G(\beta_{kj}))$. Denote (i) $l \in \{1, \dots, L\}$ as the leapfrog steps with size $\epsilon$; (ii) $H(\beta_{kj}, v)$ as the Hamiltonian; (iii) $U(\beta_{kj})$ as elements of the the Hamiltonian model, which has gradient $\mathbb{\triangledown}_{\beta_{kj}}U(\beta_{kj})$ (For detailed definitions of each terms, please refer to [https://doi.org/10.1017/pan.2019.13]\
+
+**Requre:**  $Z^{(t)}=(Z_1^{(t)}, \dots, Z_n^{(t)}, \beta^{(t)}, \tau^{(t)}, \pi^{(t)})$\
+
+1.  For $j=1, \dots, J$ and $k\in Z_j^*$, **do**
+
+2. $\hspace{2mm}$ sample $v^{current} \sim N_{D_x+1}(0, G(\beta_{kj}))$
+
+3.   $\hspace{2mm}$ Let $v \leftarrow v^{current}$, $\beta_{kj} \leftarrow \beta_{kj}^{(t)}$
+
+4.   $\hspace{2mm}$ Set $v \leftarrow v-\frac{\epsilon}{2}\mathbb{\triangledown}_{\beta_{kj}}U(\beta_{kj})$
+
+5. $\hspace{2mm}$ **for** $l=L-1$ **do**
+
+6. $\hspace{4mm}$ $\beta_{kj} \leftarrow \beta_{kj}+\epsilon(G^{-1}(\beta_{kj})v)$
+
+7.  $\hspace{4mm}$ $v \leftarrow v-\frac{\epsilon}{2}\mathbb{\triangledown}_{\beta_{kj}}U(\beta_{kj})$
+
+8.   $\hspace{2mm}$ **end for**
+
+9.   $\hspace{2mm}$ Set $v \leftarrow v-\frac{\epsilon}{2}\mathbb{\triangledown}_{\beta_{kj}}U(\beta_{kj})$
+
+10.   $\hspace{2mm}$ Set $v=-v$
+
+11.  $\hspace{2mm}$  sample $\mu \sim U(0,1)$
+
+12.    $\hspace{2mm}$ **if** $\mu < min\Big\{1, exp\Big\{-H(\beta_{kj},v)+H(\beta_{kj}^{(t)},v^{current})\Big\}\Big\}$ **then**
+
+13.   $\hspace{4mm}$ $\beta_{kj}^{(t+1)} \leftarrow \beta_{kj}$
+
+14.   $\hspace{2mm}$**else**
+
+15.   $\hspace{4mm}$ $\beta_{kj}^{(t+1)} \leftarrow \beta_{kj}^{(t)}$
+
+16.   $\hspace{2mm}$ **end if**
+
+17. **end for**
+
+
+## Implementation
+The **hdpGLM** package provides a function hdpGLM() that takes GLM parameters (<code>formula1</code>, <code>formula2</code>), data source (<code>data</code>), population indicator (<code>context.id</code>), MCMC sampling parameters (<code>mcmc,K, fix, epsilon,leapFrog, n.display, hmc_iter</code>), the family of the GLM (<code>family</code>), and then returns a list of MCMC outputs. The basic structure of the function is:\
+```
+hdpGLM(formula1, formula2 = NULL, data, context.id = NULL, mcmc, K = 100, fix = NULL, family = "gaussian", epsilon = 0.01, leapFrog = 40, n.display = 1000, hmc_iter = 1)
+```
+
+<code>formula1</code> specifies the linear relationship between the outcome variable and the set of individual-level covariates. <code>formula2</code> specifies the linear function based on group-level covariates. <code>data</code> receives a data.frame which contains all the variables utilized in formula1 and formula2. 
+<code>context.id</code> identifies a vector of unique context each observation belongs to. <code>mcmc</code> takes a list containing the number of burn-in iterations and the number of iterations after burn in period for MCMC sampling.
+<code>K</code> indicates the maximum number of clusters to truncate the Dirichlet
+Process Priors.
+<code>fix</code> stores hyperparamters of the model. It should be either NULL or contain a vector named mu_beta, a squared matrix Sigma_beta, and single number alpha. if family ='gaussian', then it must also contains s2_sigma and df_sigma, both single numbers. If NULL, the defaults are mu_beta=0, Sigma_beta=diag(10), alpha=1, df_sigma=10, d2_sigma=10.
+<code>family</code> can be ’gaussian’, ’binomial’, or ’multinomial'.
+<code>epsilon</code> is a numeric used in the Stormer-Verlet Integrator to solve the Hamiltonian Monte Carlo (HMC) when family='binomial' or family='multinomial'.
+<code>leapFrog</code> indicates the number of steps taken at each iteration HMC for the Stormer-Verlet Integrator, and it is used when family='binomial' or family='multinomial'.
+<code>n.display</code> indicates the iteration to display information about the estimation process.
+<code>hmc_iter</code> indicates
+the number of HMC iterations for each Gibbs iteration and is only used when family='binomial' or family='multinomial'. The applicable default value for each input parameter is as listed.\
+
+For example, if one wants to investigate the effects of income and race on redistributive policies preference for a given country, and the sources of income also plays a role in individuals' attitude toward redistributive policies, one can use:
+
+```
+hdpGLM(preference ~ income + race, preference ~ income.source, data=data, mcmc=list(burn.in = 0, n.iter = 100))
+```
+The output of the function then gives us multiple realizations of the marginal effects of income and race drawn from the distributions that are proportional the true effect distributions.
+
+## Example\
+
+To illustrate how to use the **hdpGLM** package, we first generate an example data set called data. This dataset is derived from two data contexts, each of which contains $20$ observations, $2$ individual-level covariates, and $1$ group-level covariate. While the first data context holds  $3$ heterogeneous groups, the second context holds $2$. The outcome variable y depends on the two individual-level covariates, group categories, data contexts, as well as an unpredictable random shock.
+```{r}
+library(magrittr)
+# Note: this example is just for illustration. MCMC iterations are very reduced
+set.seed(10)
+n = 20
+
+data.context1 = tibble::data_frame(
+x1 = rnorm(n, -3),
+x2 = rnorm(n, 3),
+z = sample(1:3, n, replace=TRUE),
+y =I(z==1) * (3 + 4*x1 - x2 + rnorm(n)) +
+I(z==2) * (3 + 2*x1 + x2 + rnorm(n)) +
+I(z==3) * (3 - 4*x1 - x2 + rnorm(n)) ,
+w = 20
+)
+
+data.context2 = tibble::data_frame(x1 = rnorm(n, -3),
+x2 = rnorm(n, 3),
+z = sample(1:2, n, replace=TRUE),
+y =I(z==1) * (1 + 3*x1 - 2*x2 + rnorm(n)) +
+I(z==2) * (1 - 2*x1 + x2 + rnorm(n)),
+w = 10
+)
+
+data = data.context1 %>%
+dplyr::bind_rows(data.context2)
+
+```
+Let’s specify the number of burn-in iterations to be $1$, and the number of iterations after the burn-in period to be $50$ for MCMC estimation. The outcomes of the sampling can be derived using the hdpGLM() function provided by the **hdpGLM** package.
+```{r}
+## estimation
+library(hdpGLM)
+mcmc = list(burn.in=1, n.iter=50)
+samples = hdpGLM(y ~ x1 + x2, y ~ w, data=data, mcmc=mcmc, n.display=0)
+```
+The package provides a summary function that produces estimated heterogeneous marginal effects and their corresponding inference statistics. It also contains a plot function to help users visualize the effects of interest.
+```{r}
+summary(samples)
+plot_hdpglm(samples, ncol.taus=4, ncol.betas=4, tau.x.axis.size = .7,
+tau.y.axis.size = .7,beta.x.axis.size = .7, beta.y.axis.size = .7, tau.title.size = .9)
+```
+
+## Reference
+
+Ferrari, D. (2020). Modeling Context-Dependent Latent Effect Heterogeneity. *Political Analysis*, 28(1), 20-46.
