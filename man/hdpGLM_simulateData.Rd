@@ -2,7 +2,7 @@
 % Please edit documentation in R/src_hdpGLM_simulate.R
 \name{hdpGLM_simulateData}
 \alias{hdpGLM_simulateData}
-\title{Simulated a Data Set from hdpGLM model}
+\title{Simulate a Data Set from hdpGLM}
 \usage{
 hdpGLM_simulateData(n, K, nCov = 2, nCovj = 0, J = 1,
   family = "gaussian", parameters = NULL, pi = NULL,
@@ -38,5 +38,5 @@ hdpGLM_simulateData(n, K, nCov = 2, nCovj = 0, J = 1,
 \item{context.dependent.cluster}{integer, indicates which cluster will be context-dependent. If \code{zero}, all clusters will be context-dependent}
 }
 \description{
-Simulated a Data Set from hdpGLM model
+Simulate a Data Set from hdpGLM
 }

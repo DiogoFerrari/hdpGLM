@@ -515,81 +515,81 @@ dpGLM_mcmc_xxr  <- function(y, X, weights, K, fix, family, mcmc, epsilon, leapFr
 
 hdpGLM_mcmc_xxr <- function(y, X, Xj, weights, K, fix, family, mcmc, epsilon, leapFrog, n.display, hmc_iter){}
 
-## {{{ doc }}}
-#' Hierarchical Dirichlet Process GLM
-#'
-#' The function estimates a semi-parametric mixture of Generalized
-#' Linear Models. It uses a (hierarchical) Dependent Dirichlet Process
-#' Prior for the mixture probabilities. 
-#'
-#' @param formula1 a single symbolic description of the linear model of the
-#'                 mixture GLM components to be fitted. The sintax is the same
-#'                 as used in the \code{\link{lm}} function.
-#' @param formula2 eihter NULL (default) or a single symbolic description of the
-#'                 linear model of the hierarchical component of the model.
-#'                 It specifies how the average parameter of the base measure
-#'                 of the Dirichlet Process Prior varies linearly as a function
-#'                 of group level covariates. If \code{NULL}, it will use
-#'                 a single base measure to the DPP mixture model.
-#' @param data a data.frame with all the variables specified in \code{formula1}
-#'             and \code{formula2}
-#' @param weights numeric vector with the same size as the number of rows of the data. It must contains the weights of the observations in the data set. NOTE: FEATURE NOT IMPLEMENTED YET
-#' @param mcmc a list containing elements named \code{burn.in} (required, an
-#'             integer greater or equal to 0 indicating the number iterations used in the
-#'             burn-in period of the MCMC) and \code{n.iter} (required, an integer greater or
-#'             equal to 1 indicating the number of iterations to record after the burn-in
-#'             period for the MCMC).
-#' @param K an integer indicating the maximum number of clusters to truncate the
-#'          Dirichlet Process Prior in order to use the blocked Gibbs sampler.
-#' @param fix either NULL or a list with the constants of the model. If not NULL,
-#'            if must contain a vector named \code{mu_beta}, whose size must be
-#'            equal to the number of covariates specified in \code{formula1}
-#'            plus one for the constant term; \code{Sigma_beta}, which must be a squared
-#'            matrix, and each dimension must equal to the size of the vector \code{mu_beta}; 
-#'            and \code{alpha}, which must a single number. If @param family is 'gaussian',
-#'            then it must also contains \code{s2_sigma} and \code{df_sigma}, both
-#'            single numbers. If NULL, the defaults are \code{mu_beta=0},
-#'            \code{Sigma_beta=diag(10)}, \code{alpha=1}, \code{df_sigma=10},
-#'            \code{d2_sigma=10} (all with the dimension automatically set to the
-#'            correct values).
-#' @param family a character with either 'gaussian', 'binomial', or 'multinomial'.
-#'               It indicates the family of the GLM components of the mixture model.
-#' @param epsilon numeric, used when \code{family='binomial'} or \code{family='multinomial'}.
-#'                It is used in the Stormer-Verlet Integrator (a.k.a leapfrog integrator)
-#'                to solve the Hamiltonian Monte Carlo in the estimation of the model.
-#'                Default is 0.01.
-#' @param leapFrog an integer, used when \code{family='binomial'} or \code{family='multinomial'}.
-#'                 It indicates the number of steps taken at each iteration Hamiltonian
-#'                 Monte Carlo for the Stormer-Verlet Integrator. Default is 40.
-#' @param n.display an integer indicating the iteration to display information
-#'                  about the estimation process. If zero, it does not display any information.
-#'                  Note: displaying informaiton at every iteration (n.display=1) may increase
-#'                  the time to estimate the model slightly. 
-#' @param hmc_iter an integer, used when \code{family='binomial'} or \code{family='multinomial'}.
-#'                 It indicates the number of HMC interation for each Gibbs iteration.
-#'                 Default is 1.
-#' @return The function returns a list with elements \code{samples}, \code{pik}, \code{max_active},
-#'         \code{n.iter}, \code{burn.in}, and \code{time.elapsed}. The \code{samples} element
-#'         contains a MCMC object (from \pkg{coda} package) with the samples from the posterior
-#'         distribution. The \code{pik} is a \code{n x K} matrix with the estimated
-#'         probabilities that the observation $i$ belongs to the cluster $k$
-#' 
-#'
-#' @details
-#' The estimation is conducted using Blocked Gibbs Sampler if the output
-#' variable is gaussian distributed. It uses Metropolis-Hastings inside Gibbs if
-#' the output variable is binomial or multinomial distributed.
-#' This is specified using the parameter \code{family}. See
-#'
-#' Ishwaran, H., & James, L. F., Gibbs sampling methods for stick-breaking priors,
-#' Journal of the American Statistical Association, 96(453), 161–173 (2001). 
-#'
-#' Neal, R. M., Markov chain sampling methods for dirichlet process mixture models,
-#' Journal of computational and graphical statistics, 9(2), 249–265 (2000).
-#'
-## }}}
-hdpGLM_xxr <- function(formula1, formula2=NULL, data, mcmc, K=50, fix=NULL, family='gaussian', epsilon=0.01, leapFrog=40, n.display=1000, hmc_iter=1, weights=NULL)
+hdpGLM_xxr <- function(formula1, formula2=NULL, data, mcmc, K=50, fix=NULL,
+                       family='gaussian', epsilon=0.01, leapFrog=40,
+                       n.display=1000, hmc_iter=1, weights=NULL)
 {
+## ' Hierarchical Dirichlet Process GLM
+## '
+## ' The function estimates a semi-parametric mixture of Generalized
+## ' Linear Models. It uses a (hierarchical) Dependent Dirichlet Process
+## ' Prior for the mixture probabilities. 
+## '
+## ' @param formula1 a single symbolic description of the linear model of the
+## '                 mixture GLM components to be fitted. The syntax is the same
+## '                 as used in the \code{\link{lm}} function.
+## ' @param formula2 eihter NULL (default) or a single symbolic description of the
+## '                 linear model of the hierarchical component of the model.
+## '                 It specifies how the average parameter of the base measure
+## '                 of the Dirichlet Process Prior varies linearly as a function
+## '                 of group level covariates. If \code{NULL}, it will use
+## '                 a single base measure to the DPP mixture model.
+## ' @param data a data.frame with all the variables specified in \code{formula1}
+## '             and \code{formula2}
+## ' @param weights numeric vector with the same size as the number of rows of the data. It must contains the weights of the observations in the data set. NOTE: FEATURE NOT IMPLEMENTED YET
+## ' @param mcmc a list containing elements named \code{burn.in} (required, an
+## '             integer greater or equal to 0 indicating the number iterations used in the
+## '             burn-in period of the MCMC) and \code{n.iter} (required, an integer greater or
+## '             equal to 1 indicating the number of iterations to record after the burn-in
+## '             period for the MCMC).
+## ' @param K an integer indicating the maximum number of clusters to truncate the
+## '          Dirichlet Process Prior in order to use the blocked Gibbs sampler.
+## ' @param fix either NULL or a list with the constants of the model. If not NULL,
+## '            it must contain a vector named \code{mu_beta}, whose size must be
+## '            equal to the number of covariates specified in \code{formula1}
+## '            plus one for the constant term; \code{Sigma_beta}, which must be a squared
+## '            matrix, and each dimension must be equal to the size of the vector \code{mu_beta}; 
+## '            and \code{alpha}, which must a single number. If @param family is 'gaussian',
+## '            then it must also contain \code{s2_sigma} and \code{df_sigma}, both
+## '            single numbers. If NULL, the defaults are \code{mu_beta=0},
+## '            \code{Sigma_beta=diag(10)}, \code{alpha=1}, \code{df_sigma=10},
+## '            \code{d2_sigma=10} (all with the dimension automatically set to the
+## '            correct values).
+## ' @param family a character with either 'gaussian', 'binomial', or 'multinomial'.
+## '               It indicates the family of the GLM components of the mixture model.
+## ' @param epsilon numeric, used when \code{family='binomial'} or \code{family='multinomial'}.
+## '                It is used in the Stormer-Verlet Integrator (a.k.a leapfrog integrator)
+## '                to solve the Hamiltonian Monte Carlo in the estimation of the model.
+## '                Default is 0.01.
+## ' @param leapFrog an integer, used when \code{family='binomial'} or \code{family='multinomial'}.
+## '                 It indicates the number of steps taken at each iteration of the Hamiltonian
+## '                 Monte Carlo for the Stormer-Verlet Integrator. Default is 40.
+## ' @param n.display an integer indicating the number of iterations to display information
+## '                  about the estimation process. If zero, it does not display any information.
+## '                  Note: displaying informaiton at every iteration (n.display=1) may increase
+## '                  the time to estimate the model slightly. 
+## ' @param hmc_iter an integer, used when \code{family='binomial'} or \code{family='multinomial'}.
+## '                 It indicates the number of HMC interation for each Gibbs iteration.
+## '                 Default is 1.
+## ' @return The function returns a list with elements \code{samples}, \code{pik}, \code{max_active},
+## '         \code{n.iter}, \code{burn.in}, and \code{time.elapsed}. The \code{samples} element
+## '         contains a MCMC object (from \pkg{coda} package) with the samples from the posterior
+## '         distribution. The \code{pik} is a \code{n x K} matrix with the estimated
+## '         probabilities that the observation $i$ belongs to the cluster $k$
+## ' 
+## '
+## ' @details
+## ' The estimation is conducted using Blocked Gibbs Sampler if the output
+## ' variable is gaussian distributed. It uses Metropolis-Hastings inside Gibbs if
+## ' the output variable is binomial or multinomial distributed.
+## ' This is specified using the parameter \code{family}. See
+## '
+## ' Ishwaran, H., & James, L. F., Gibbs sampling methods for stick-breaking priors,
+## ' Journal of the American Statistical Association, 96(453), 161–173 (2001). 
+## '
+## ' Neal, R. M., Markov chain sampling methods for dirichlet process mixture models,
+## ' Journal of computational and graphical statistics, 9(2), 249–265 (2000).
+
     if(! family %in% c('gaussian', 'binomial', 'multinomial'))
         stop(paste0('Error: Parameter -family- must be a string with one of the following options : \"gaussian\", \"binomial\", or \"multinomial\"'))
 

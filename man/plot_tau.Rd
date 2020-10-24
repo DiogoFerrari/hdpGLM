@@ -15,7 +15,7 @@ plot_tau(samples, X = NULL, W = NULL, title = NULL,
 
 \item{X}{a string vector with the name of the first-level covariates whose associated tau should be displayed}
 
-\item{W}{a string vector with the name of a context-level covariate(s) whose linear effect will be displayed. If \code{NULL}, the linear effect tau of all context-level covariates are displayed. Note: the context-level covariate must have been included in the estimation of the model.}
+\item{W}{a string vector with the name of the context-level covariate(s) whose linear effect will be displayed. If \code{NULL}, the linear effect tau of all context-level covariates are displayed. Note: the context-level covariate must have been included in the estimation of the model.}
 
 \item{title}{string, title of the plot}
 
