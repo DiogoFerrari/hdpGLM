@@ -4,7 +4,7 @@
 \alias{predict.dpGLM}
 \title{dpGLM Predicted values}
 \usage{
-\method{predict}{dpGLM}(object, ...)
+\method{predict}{dpGLM}(object, new_data, ...)
 }
 \arguments{
 \item{object}{outcome of the function hdpLGM}

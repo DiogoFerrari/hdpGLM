@@ -19,15 +19,15 @@ plot_hdpglm(samples, X = NULL, W = NULL, ncol.taus = 1,
 
 \item{X}{a string vector with the name of the first-level covariates whose associated tau should be displayed}
 
-\item{W}{a string vector with the name of a context-level covariate(s) whose linear effect will be displayed. If \code{NULL}, the linear effect tau of all context-level covariates are displayed. Note: the context-level covariate must have been included in the estimation of the model.}
+\item{W}{a string vector with the name of the context-level covariate(s) whose linear effect will be displayed. If \code{NULL}, the linear effect tau of all context-level covariates are displayed. Note: the context-level covariate must have been included in the estimation of the model.}
 
 \item{ncol.taus}{integer with the number of columns of the grid containing the posterior distribution of tau}
 
 \item{ncol.betas}{integer with the number of columns of the posterior expectation of betas as function of context-level features}
 
-\item{ncol.w}{integer with the number of columns to use to diaplay the different context-level covariates}
+\item{ncol.w}{integer with the number of columns to use to display the different context-level covariates}
 
-\item{nrow.w}{integer with the number of rows to use to diaplay the different context-level covariates}
+\item{nrow.w}{integer with the number of rows to use to display the different context-level covariates}
 
 \item{smooth.line}{boolean, if \code{TRUE} the plot will display a regression line representing the regression of the posterior expectation of the linear coefficients betas on the context-level covariates. Default \code{FALSE}}
 

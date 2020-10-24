@@ -15,7 +15,7 @@ plot_pexp_beta(samples, X = NULL, W = NULL, pred.pexp.beta = FALSE,
 
 \item{X}{a string vector with the name of the first-level covariates whose associated tau should be displayed}
 
-\item{W}{a string vector with the name of a context-level covariate(s) whose linear effect will be displayed. If \code{NULL}, the linear effect tau of all context-level covariates are displayed. Note: the context-level covariate must have been included in the estimation of the model.}
+\item{W}{a string vector with the name of the context-level covariate(s) whose linear effect will be displayed. If \code{NULL}, the linear effect tau of all context-level covariates are displayed. Note: the context-level covariate must have been included in the estimation of the model.}
 
 \item{pred.pexp.beta}{boolean, if \code{TRUE} the plots will display a line with the predicted posterior expectation of betas obtained using the posterior expectation of taus, the linear coefficients of the expectation of beta}
 

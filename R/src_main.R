@@ -153,7 +153,7 @@ hdpglm_exclude_nas <- function(data, formula1, formula2, context.id)
 #' Prior for the mixture probabilities. 
 #'
 #' @param formula1 a single symbolic description of the linear model of the
-#'                 mixture GLM components to be fitted. The sintax is the same
+#'                 mixture GLM components to be fitted. The syntax is the same
 #'                 as used in the \code{\link{lm}} function.
 #' @param formula2 eihter NULL (default) or a single symbolic description of the
 #'                 linear model of the hierarchical component of the model.
@@ -162,8 +162,8 @@ hdpglm_exclude_nas <- function(data, formula1, formula2, context.id)
 #'                 of group level covariates. If \code{NULL}, it will use
 #'                 a single base measure to the DPP mixture model.
 #' @param data a data.frame with all the variables specified in \code{formula1} and \code{formula2}. Note: it is advisable to scale the variables before the estimation
-#' @param context.id string with the name of the column in the data that identify uniquely the contexts. If \code{NULL} (default) contexts will be identified by numerical indexes and unique context-level variables. The user is advised to pre-process the data to provide meaninful labels for the contexts to facilitate later visualization and analyses of the results.
-#' @param weights numeric vector with the same size as the number of rows of the data. It must contains the weights of the observations in the data set. NOTE: FEATURE NOT IMPLEMENTED YET
+#' @param context.id string with the name of the column in the data that uniquely identifies the contexts. If \code{NULL} (default) contexts will be identified by numerical indexes and unique context-level variables. The user is advised to pre-process the data to provide meaningful labels for the contexts to facilitate later visualization and analysis of the results.
+#' @param weights numeric vector with the same size as the number of rows of the data. It must contain the weights of the observations in the data set. NOTE: FEATURE NOT IMPLEMENTED YET
 #' @param mcmc a list containing elements named \code{burn.in} (required, an
 #'             integer greater or equal to 0 indicating the number iterations used in the
 #'             burn-in period of the MCMC) and \code{n.iter} (required, an integer greater or
@@ -172,12 +172,12 @@ hdpglm_exclude_nas <- function(data, formula1, formula2, context.id)
 #' @param K an integer indicating the maximum number of clusters to truncate the
 #'          Dirichlet Process Prior in order to use the blocked Gibbs sampler.
 #' @param fix either NULL or a list with the constants of the model. If not NULL,
-#'            if must contain a vector named \code{mu_beta}, whose size must be
+#'            it must contain a vector named \code{mu_beta}, whose size must be
 #'            equal to the number of covariates specified in \code{formula1}
 #'            plus one for the constant term; \code{Sigma_beta}, which must be a squared
-#'            matrix, and each dimension must equal to the size of the vector \code{mu_beta}; 
-#'            and \code{alpha}, which must a single number. If @param family is 'gaussian',
-#'            then it must also contains \code{s2_sigma} and \code{df_sigma}, both
+#'            matrix, and each dimension must be equal to the size of the vector \code{mu_beta}; 
+#'            and \code{alpha}, which must be a single number. If @param family is 'gaussian',
+#'            then it must also contain \code{s2_sigma} and \code{df_sigma}, both
 #'            single numbers. If NULL, the defaults are \code{mu_beta=0},
 #'            \code{Sigma_beta=diag(10)}, \code{alpha=1}, \code{df_sigma=10},
 #'            \code{d2_sigma=10} (all with the dimension automatically set to the
@@ -189,14 +189,14 @@ hdpglm_exclude_nas <- function(data, formula1, formula2, context.id)
 #'                to solve the Hamiltonian Monte Carlo in the estimation of the model.
 #'                Default is 0.01.
 #' @param leapFrog an integer, used when \code{family='binomial'} or \code{family='multinomial'}.
-#'                 It indicates the number of steps taken at each iteration Hamiltonian
+#'                 It indicates the number of steps taken at each iteration of the Hamiltonian
 #'                 Monte Carlo for the Stormer-Verlet Integrator. Default is 40.
-#' @param n.display an integer indicating the iteration to display information
+#' @param n.display an integer indicating the number of iterations to wait before printing information
 #'                  about the estimation process. If zero, it does not display any information.
 #'                  Note: displaying informaiton at every iteration (n.display=1) may increase
 #'                  the time to estimate the model slightly. 
 #' @param hmc_iter an integer, used when \code{family='binomial'} or \code{family='multinomial'}.
-#'                 It indicates the number of HMC interation for each Gibbs iteration.
+#'                 It indicates the number of HMC iteration(s) for each Gibbs iteration.
 #'                 Default is 1.
 #' @param imp.bin string, either "R" or "Cpp" indicating the language of the implementation of the binomial model.
 #' @param na.action string with action to be taken for the \code{NA} values. (currently, only \code{exclude} is available)
@@ -250,6 +250,7 @@ hdpglm_exclude_nas <- function(data, formula1, formula2, context.id)
 #' 
 #'  
 #' @export
+
 ## }}}
 hdpGLM <- function(formula1, formula2=NULL, data, context.id=NULL, weights=NULL, mcmc, K=100, fix=NULL, family='gaussian', epsilon=0.01, leapFrog=40, n.display=1000, hmc_iter=1, imp.bin="R", na.action = "exclude")
 {
@@ -338,7 +339,7 @@ hdpGLM <- function(formula1, formula2=NULL, data, context.id=NULL, weights=NULL,
         if (family=='binomial') {
             stop("\n\nHierarchical version of hdpGLM is not implemented for binomial family yet. \n\nIn the current implementation, you can use the binomial family to estimate hdpGLM in a single context only. \n\n")
         }else{
-            samples            =  hdpGLM_mcmc(y, X, W, C, weights, K, fix, family, mcmc, epsilon, leapFrog, n.display, hmc_iter)
+            samples        =  hdpGLM_mcmc(y, X, W, C, weights, K, fix, family, mcmc, epsilon, leapFrog, n.display, hmc_iter)
         }
     }
     T.mcmc  = Sys.time() - T.mcmc

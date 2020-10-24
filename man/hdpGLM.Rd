@@ -11,7 +11,7 @@ hdpGLM(formula1, formula2 = NULL, data, context.id = NULL,
 }
 \arguments{
 \item{formula1}{a single symbolic description of the linear model of the
-mixture GLM components to be fitted. The sintax is the same
+mixture GLM components to be fitted. The syntax is the same
 as used in the \code{\link{lm}} function.}
 
 \item{formula2}{eihter NULL (default) or a single symbolic description of the
@@ -23,9 +23,9 @@ a single base measure to the DPP mixture model.}
 
 \item{data}{a data.frame with all the variables specified in \code{formula1} and \code{formula2}. Note: it is advisable to scale the variables before the estimation}
 
-\item{context.id}{string with the name of the column in the data that identify uniquely the contexts. If \code{NULL} (default) contexts will be identified by numerical indexes and unique context-level variables. The user is advised to pre-process the data to provide meaninful labels for the contexts to facilitate later visualization and analyses of the results.}
+\item{context.id}{string with the name of the column in the data that uniquely identifies the contexts. If \code{NULL} (default) contexts will be identified by numerical indexes and unique context-level variables. The user is advised to pre-process the data to provide meaningful labels for the contexts to facilitate later visualization and analysis of the results.}
 
-\item{weights}{numeric vector with the same size as the number of rows of the data. It must contains the weights of the observations in the data set. NOTE: FEATURE NOT IMPLEMENTED YET}
+\item{weights}{numeric vector with the same size as the number of rows of the data. It must contain the weights of the observations in the data set. NOTE: FEATURE NOT IMPLEMENTED YET}
 
 \item{mcmc}{a list containing elements named \code{burn.in} (required, an
 integer greater or equal to 0 indicating the number iterations used in the
@@ -37,12 +37,12 @@ period for the MCMC).}
 Dirichlet Process Prior in order to use the blocked Gibbs sampler.}
 
 \item{fix}{either NULL or a list with the constants of the model. If not NULL,
-if must contain a vector named \code{mu_beta}, whose size must be
+it must contain a vector named \code{mu_beta}, whose size must be
 equal to the number of covariates specified in \code{formula1}
 plus one for the constant term; \code{Sigma_beta}, which must be a squared
-matrix, and each dimension must equal to the size of the vector \code{mu_beta}; 
-and \code{alpha}, which must a single number. If @param family is 'gaussian',
-then it must also contains \code{s2_sigma} and \code{df_sigma}, both
+matrix, and each dimension must be equal to the size of the vector \code{mu_beta}; 
+and \code{alpha}, which must be a single number. If @param family is 'gaussian',
+then it must also contain \code{s2_sigma} and \code{df_sigma}, both
 single numbers. If NULL, the defaults are \code{mu_beta=0},
 \code{Sigma_beta=diag(10)}, \code{alpha=1}, \code{df_sigma=10},
 \code{d2_sigma=10} (all with the dimension automatically set to the
@@ -57,16 +57,16 @@ to solve the Hamiltonian Monte Carlo in the estimation of the model.
 Default is 0.01.}
 
 \item{leapFrog}{an integer, used when \code{family='binomial'} or \code{family='multinomial'}.
-It indicates the number of steps taken at each iteration Hamiltonian
+It indicates the number of steps taken at each iteration of the Hamiltonian
 Monte Carlo for the Stormer-Verlet Integrator. Default is 40.}
 
-\item{n.display}{an integer indicating the iteration to display information
+\item{n.display}{an integer indicating the number of iterations to wait before printing information
 about the estimation process. If zero, it does not display any information.
 Note: displaying informaiton at every iteration (n.display=1) may increase
 the time to estimate the model slightly.}
 
 \item{hmc_iter}{an integer, used when \code{family='binomial'} or \code{family='multinomial'}.
-It indicates the number of HMC interation for each Gibbs iteration.
+It indicates the number of HMC iteration(s) for each Gibbs iteration.
 Default is 1.}
 
 \item{imp.bin}{string, either "R" or "Cpp" indicating the language of the implementation of the binomial model.}

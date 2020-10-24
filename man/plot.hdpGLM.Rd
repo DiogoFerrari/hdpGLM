@@ -17,9 +17,9 @@
 
 \item{terms}{string vector with the name of the individual-level covariates to plot. If \code{NULL} (default), all covariates are plotted.}
 
-\item{j.label}{string vector with the names of the contexts to plot. An alterntive is to use the context indexes with the parameter \code{j.idx} instead of the context labels. If \code{NULL} (default) and j.idx is also \code{NULL}, the posterior distribution of all contexts are plotted. Note: if contexts to plot are selected using \code{j.label}, the parameter \code{context.id} must also be provided.}
+\item{j.label}{string vector with the names of the contexts to plot. An alternative is to use the context indexes with the parameter \code{j.idx} instead of the context labels. If \code{NULL} (default) and j.idx is also \code{NULL}, the posterior distribution of all contexts are plotted. Note: if contexts to plot are selected using \code{j.label}, the parameter \code{context.id} must also be provided.}
 
-\item{j.idx}{integer vector with the index of the contexts to plot. An alterntive is to use the context labels with the parameter \code{j.label} instead of the indexes. If \code{NULL} (default) and j.label is also \code{NULL}, the posterior distribution of all contexts are plotted}
+\item{j.idx}{integer vector with the index of the contexts to plot. An alternative is to use the context labels with the parameter \code{j.label} instead of the indexes. If \code{NULL} (default) and j.label is also \code{NULL}, the posterior distribution of all contexts are plotted}
 
 \item{title}{string, the title of the plot}
 
