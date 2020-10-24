@@ -19,7 +19,7 @@ plot_pexp_beta(samples, X = NULL, W = NULL, pred.pexp.beta = FALSE,
 
 \item{pred.pexp.beta}{boolean, if \code{TRUE} the plots will display a line with the predicted posterior expectation of betas obtained using the posterior expectation of taus, the linear coefficients of the expectation of beta}
 
-\item{ncol.beta}{integer with number of rows of the grid used for each group of context-level covariates}
+\item{ncol.beta}{integer with number of columns of the grid used for each group of context-level covariates}
 
 \item{ylab}{string, the label of the y-axis}
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/src_summaries.R
 \name{plot_beta_sim}
 \alias{plot_beta_sim}
-\title{Plot simulated data}
+\title{Plot simulated data (for hdpGLM data only)}
 \usage{
 plot_beta_sim(data, w.idx, ncol = NULL)
 }
@@ -14,5 +14,5 @@ plot_beta_sim(data, w.idx, ncol = NULL)
 \item{ncol}{integer, the number of columns in the grid of the plot}
 }
 \description{
-Create a plot with the beta sampled from its distribution, as a function of context-level feature $W$
+Create a plot with the beta sampled from its distribution, as a function of context-level feature $W$. Only works for the hierarchical model (hdpGLM), not the dpGLM
 }

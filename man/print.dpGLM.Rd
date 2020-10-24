@@ -15,5 +15,5 @@
 returns a summary of the posterior distribution of the parameters
 }
 \description{
-Generic method to print the output of a \code{hdpGLM} of \code{dpGLM} objects
+Generic method to print the output of the \code{dpGLM} function
 }
