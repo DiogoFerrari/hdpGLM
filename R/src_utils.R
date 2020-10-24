@@ -172,5 +172,6 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(c(".",
                                                         "Parameter.tau",
                                                         "beta.exp.values.tau",
                                                         "True.beta",
-                                                        "tau.idx"
+                                                        "tau.idx",
+                                                        "pk"
                                                         ))

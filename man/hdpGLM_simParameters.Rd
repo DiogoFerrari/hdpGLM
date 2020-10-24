@@ -4,7 +4,7 @@
 \alias{hdpGLM_simParameters}
 \title{Simulate the parameters that can be used to simulate data sets from the dpGLM or hdpGLM}
 \usage{
-hdpGLM_simParameters(n, K, nCov = 2, nCovj = 0, J = 1, pi = NULL,
+hdpGLM_simParameters(K, nCov = 2, nCovj = 0, J = 1, pi = NULL,
   same.K = FALSE, seed = NULL, context.effect = NULL,
   same.clusters.across.contexts = NULL,
   context.dependent.cluster = NULL)
@@ -38,7 +38,7 @@ The function returns a list with the parameters used to generate data sets from 
 This function generates parameters that can be used to simulate data sets from the Hierarchical Dirichlet Process of Generalized Linear Model (hdpGLM) or dpGLM
 }
 \examples{
-pars = hdpGLM_simulateParameters(nCov=2, K=2, nCovj=3, J=20,
+pars = hdpGLM_simParameters(nCov=2, K=2, nCovj=3, J=20,
           same.clusters.across.contexts=FALSE, context.dependent.cluster=0) 
 
 }

@@ -605,9 +605,9 @@ plot.hdpGLM <- function(x, terms=NULL, j.label=NULL, j.idx=NULL, title=NULL, sub
 #'
 #' @param object outcome of the function hdpLGM
 #' @inheritParams hdpGLM
+#' @param new_data data frame with the values of the covariates that are going to be used to generate the predicted/fitted values. The posterior mean is used to create the predicted values 
 #' @param ... 
 #' 
-#'        \code{new_data} : data frame with the values of the covariates that are going to be used to generate the predicted/fitted values. The posterior mean is used to create the predicted values 
 #'
 #'        \code{family} : a string with the family of the output variable: \code{gaussian} (default), \code{binomial}, etc...
 #' 
@@ -616,6 +616,7 @@ plot.hdpGLM <- function(x, terms=NULL, j.label=NULL, j.idx=NULL, title=NULL, sub
 #' @export
 
 ## }}}
+#        \code{new_data} : 
 predict.dpGLM <- function(object, new_data, ...)
 ## predict.dpGLM  <- function(samples, data)
 {
