@@ -9,3 +9,4 @@ TAGS
 
 # Undo-tree save-files
 *.~undo-tree
+inst/doc
