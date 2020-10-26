@@ -39,7 +39,7 @@ page in R by running `help(install_github)`).
 Usage
 =====
 
-Here is a simple example (for more information, see `help(hdpGLM)`).
+For more details, see package [website](http://www.diogoferrari.com/hdpGLM/index.html). Here is a simple example:
 
 ```
 
