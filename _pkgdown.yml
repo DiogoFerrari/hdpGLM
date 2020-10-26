@@ -1,1 +1,21 @@
-destination: docs
+title: hdpGLM
+url: http://diogoferrari.github.io/hdpGLM
+
+template:
+  params:
+    bootswatch: flatly
+
+authors:
+  Diogo Ferrari:
+    href: http://diogoferrari.com
+
+navbar:
+  components:
+    articles:
+      text: Articles
+      menu:
+      - text: 'Paper'
+        href: https://www.cambridge.org/core/journals/political-analysis/article/modeling-contextdependent-latent-effect-heterogeneity/B7B0AF067DF97A1A8F0B50646EF64F24
+    # right:
+    #   text: Diogo Ferrari
+    #   href: http://diogoferrari.com

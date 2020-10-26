@@ -3,4 +3,7 @@ pkgdown: 1.4.0
 pkgdown_sha: ~
 articles:
   hdpGLM: hdpGLM.html
+urls:
+  reference: http://diogoferrari.github.io/hdpGLM/reference
+  article: http://diogoferrari.github.io/hdpGLM/articles
 
