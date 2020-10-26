@@ -8,3 +8,8 @@ cran-comments.md
 .gitignore
 .git
 .travis.yml
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^data-raw$
+^doc$

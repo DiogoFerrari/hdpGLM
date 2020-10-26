@@ -16,19 +16,20 @@ be used with hierarchical data to estimate the effect of upper-level
 covariates on the latent heterogeneity in the effect of lower-level
 features.
 
-For details of the model and the MCMC algorithm, see my paper [Modeling
+For details of the model and the MCMC algorithm, see Ferrari, D. (2020) [Modeling
 Context-Dependent Latent Effect
-Heterogeneity](https://www.cambridge.org/core/journals/political-analysis/article/modeling-contextdependent-latent-effect-heterogeneity/B7B0AF067DF97A1A8F0B50646EF64F24),
-forthcoming at [Political
-Analysis](https://www.cambridge.org/core/journals/political-analysis).
+Heterogeneity](https://www.cambridge.org/core/journals/political-analysis/article/modeling-contextdependent-latent-effect-heterogeneity/B7B0AF067DF97A1A8F0B50646EF64F24), [Political
+Analysis](https://www.cambridge.org/core/journals/political-analysis), Volume 28, Issue 1, January, pp. 20-46.
 
 Instalation
 ===========
 
-``` {.r .rundoc-block rundoc-language="R" rundoc-exports="code"}
+```
+
 devtools::install_github("DiogoFerrari/hdpGLM")
 # If you don't want to update the dependencies, use: (you may need to install some dependencies manually)
 devtools::install_github("DiogoFerrari/hdpGLM", dependencies=F)
+
 ```
 
 NOTE: it may be necessary to create a token to install the package from
@@ -40,7 +41,7 @@ Usage
 
 Here is a simple example (for more information, see `help(hdpGLM)`).
 
-``` {.r .rundoc-block rundoc-language="R" rundoc-exports="code"}
+```
 
 set.seed(10)
 K    = 3 # number of latent clusters

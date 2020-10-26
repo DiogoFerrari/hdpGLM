@@ -1,0 +1,153 @@
+---
+title: "hdpGLM"
+output: rmarkdown::html_vignette
+bibliography: references.bib
+vignette: >
+  %\VignetteIndexEntry{hdpGLM}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Introduction
+
+
+
+The package hdpGLM makes it easy to estimate semi-parametric regression models, and summarize and visualize the results. The package is useful for many purposes:
+
+1. Find clusters using semi-parametric Bayesian methods (Dirichlet Process)
+2. Find a set of generalized linear models (GLM) that apply to different latent subpopulations
+3. Estimate latent heterogeneity in the marginal effect of regression coefficients
+4. Investigate if Simpson’s Paradox occurs due to latent or omitted features
+5. Cluster the data points based on marginal effect heterogeneity
+6. All the above, but with hierarchical data from many contexts (e.g., schools, hospitals, cities, states, countries, etc.)
+7. Find the effect of context-level features (upper-level covariates) on the latent heterogeneity of within-context features (lower-level covariates)
+
+
+
+## Background
+
+The `hdpGLM` works similarly to linear regression models. It estimates coefficients of linear regressions, including generalized linear models, such as logit coefficients. But it simultaneously searches for latent clusters in the data and estimates the linear coefficients for those clusters. The result of the estimation is $K$ vectors of linear coefficients, one vector for each cluster. If there are no clusters in the data, it returns the estimated coefficients similar to classical regression models.
+
+The clustering procedure is based on a hierarchical semi-parametric Bayesian model proposed in @ferrari2020modeling. The model, called Hierarchical Dirichlet process Generalized Linear Models (hdpGLM), can be used to deal with latent heterogeneity in different situations, including those that emerge due to unobserved variables. It deals with the latent heterogeneity in two ways: (1) it finds latent clusters which can be better described by different regression models and (2) estimate the coefficient of those models. The hdpGLM can also be used with hierarchical data to estimate latent heterogeneity in multiple contexts and check if the clusters are context-dependent (see an example in section [Estimating Context-dependent latent heterogeneity](#Estimating-Context-dependent-Latent-Heterogeneity)). 
+
+The linear model is estimated by sampling from the posterior distribution using a Gibbs sampler. Non-linear models (e.g., logit with binary outcomes) use Hamiltonian Monte Carlo within Gibbs. The algorithms are presented in @ferrari2020modeling.
+
+Why should we estimate clusters of linear regressions instead of fitting a single regression model?
+
+First, it improves the predictive performance of the regression model and keeps the interpretability of the regression coefficients. `hdpGLM` is much more flexible than traditional regression and produces monotonically lower root mean square error (see @ferrari2020modeling for details).
+
+Second, latent heterogeneity emerges when there are omitted variables in the estimation of regression models. The `hdpGLM` can be used to estimate marginal effects even when interactions were omitted. It recovers the linear coefficients of each latent group.
+
+
+## Usage
+
+
+### Estimation
+
+The function `hdpGLM` estimates a semi-parametric Bayesian regression model. The syntax is similar to other R functions such as `lm()`, `glm()`, and `lmer()`.
+
+Here is a toy example. Suppose we are studying how income inequality affects support policies that help alleviate poverty in a given country A. Yet, suppose further that (1) the effect of inequality varies between groups of people; for some people, inequality increases support for welfare policies, but for others, it decreases welfare policy support; (2) we don't know which individual belongs to which group. The data set `welfare` contains simulated data for this example.
+
+
+```{r}
+## loading and looking at the data
+welfare = read.csv2('welfare.csv')
+head(welfare)
+```
+
+Now, suppose that inequality increases support for welfare only among women, but it decreases support among men. We didn't collect data on gender (male versus female). We could estimate the `hdpGLM` and recover the coefficients even if gender wasn't observed. The package provides a function called `hdpGLM`, which estimates a semi-parametric Bayesian generalized linear model using a Dirichlet mixture. Let's estimate the model. The example uses few iterations in the MCMC, but in real applications, one should use a much larger number.
+
+
+```{r setup}
+library(hdpGLM)
+```
+
+```{r, results='hide'}
+## estimating the model
+mcmc = list(burn.in=10, ## MCMC burn-in period
+            n.iter =500) ## number of MCMC iterations to keep
+mod = hdpGLM(support ~ inequality + income + ideology, data=welfare,
+             mcmc=mcmc)
+
+```
+
+
+```{r}
+## printing the outcome
+summary(mod)
+```
+
+The summary function prints the result in a tidy format. The column `k` in the summary shows the label of the estimated clusters. The column `Mean` is the average of the posterior distribution for each linear coefficient in each cluster. 
+
+The function `hdpGLM_classify` can be used to classify the data points into clusters based on the estimation.
+
+
+```{r}
+welfare_clustered = hdpGLM_classify(welfare, mod)
+head(welfare_clustered)
+tail(welfare_clustered)
+```
+
+
+
+There are a series of built-in functions, with various options, to plot the results. In the example below, you see two of those options. The `separate` parameter plot the posterior samples for each cluster separately, and the option `ncols` controls how many columns to use for the panels in the figure (to see more, run `help(plot.hdpGLM)` and `help(plot.dpGLM)`).
+
+```{r, fig.width=7.2, fig.height=5}
+plot(mod, separate=T, ncols=4)
+```
+
+
+
+### Estimating Context-dependent Latent Heterogeneity
+
+To continue the previous toy example, suppose that we are analyzing data from many countries, and we suspect that the latent heterogeneity is different in each country. The effect of inequality on support for welfare may be gender-specific only in some countries (contexts). Or maybe the way it is gender-specific varies from country to country. Suppose we didn't have data on gender, but we collect information on countries' gender gap in welfare provision. Let's look at this new data set.
+
+
+```{r}
+## loading and looking at the data
+welfare = read.csv2('welfare2.csv')
+head(welfare)
+tail(welfare)
+```
+
+The variable `country` indicates the country (context) of the observation, and the variable `gap` the gender gap in welfare provision in the respective country. The estimation is similar to the previous example, but now there is a second `formula` for the context-level variables. Again, the example below uses few iterations in the MCMC, but in practical applications, one needs to increase that).
+
+
+```{r, results='hide'}
+## estimating the model
+mcmc = list(burn.in=1, ## MCMC burn-in period
+            n.iter =50) ## number of MCMC iterations to keep
+mod = hdpGLM(support ~ inequality + income + ideology, 
+             support ~ gap,
+	     data=welfare, mcmc=mcmc)
+```
+
+
+```{r}
+summary(mod)
+```
+
+The `summary` contains more information now. As before, the column `k` indicates the estimated clusters. The column `j` indicates the country (context) of the estimated value for the respective cluster's coefficient. The second summary (`$tau`) shows the marginal effect of the context-level feature (`gap`). Details of the interpretation can be found in @ferrari2020modeling.
+
+
+There are a series of built-in functions to visualize the output. The function `plot_tau()` displays the estimation of the effect of the context-level variables.
+
+
+```{r, fig.width=7.2, fig.height=7}
+plot_tau(mod)
+```
+
+The function `plot_pexp_beta()` displays the association between the context-level features and the latent heterogeneity in the effect of the linear coefficients in each context. The paramter 'smooth.line' plots a line representing the linear association between the context-level feature (`gap`) and the posterior averages of the marginal effects in each cluster. The parameter `ncol.beta` controls the number of columns in the figure for the panels. For more options, see `help(plot_pexp_beta)`
+
+```{r, fig.width=7.2, fig.height=5}
+plot_pexp_beta(mod, smooth.line=TRUE, ncol.beta=2)
+```
+
+## Reference

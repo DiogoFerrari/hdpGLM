@@ -1086,7 +1086,7 @@ plot_tau <- function(samples, X=NULL, W=NULL, title=NULL, true.tau=NULL, show.al
                       facet     = dplyr::case_when(term.tau == 'Intercept' & term.beta == "Intercept" ~ paste0(Parameter, "~(Intercept~of~expectation~of~", beta.label,")"),
                                                    term.tau == 'Intercept' & term.beta != "Intercept" ~ paste0(Parameter, "~(Intercept~of~expectation~of~", beta.label,")"),
                                                    term.tau != 'Intercept'  ~ paste0("atop(",Parameter, "(~effect~of~",
-                                                                                     stringr::str_replace_all(string=term.tau, pattern=" ", replacement="~")  , "~on~expectation~of~effect~of~",
+                                                                                     stringr::str_replace_all(string=term.tau, pattern=" ", replacement="~")  , "~on~the~expectation~of~the~effect~of~",
                                                                                      stringr::str_replace_all(string=term.beta, pattern=" ", replacement="~") ,"(", beta.label,")))")
                                                    )
                       )

@@ -208,11 +208,16 @@ hdpglm_exclude_nas <- function(data, formula1, formula2, context.id)
 #' 
 #'
 #' @details
-#' The estimation is conducted using Blocked Gibbs Sampler if the output
+#' This function estimates a Hierarchical Dirichlet Process generalized
+#' linear model, which is a semi-parametric Bayesian approach to regression
+#' estimation with clustering. The estimation is conducted using Blocked Gibbs Sampler if the output
 #' variable is gaussian distributed. It uses Metropolis-Hastings inside Gibbs if
 #' the output variable is binomial or multinomial distributed.
-#' This is specified using the parameter \code{family}. See
+#' This is specified using the parameter \code{family}. See:
 #'
+#' Ferrari, D. (2020). Modeling Context-Dependent Latent Effect Heterogeneity,
+#' Political Analysis, 28(1), 20–46.
+#' 
 #' Ishwaran, H., & James, L. F., Gibbs sampling methods for stick-breaking priors,
 #' Journal of the American Statistical Association, 96(453), 161–173 (2001). 
 #'
@@ -228,13 +233,13 @@ hdpglm_exclude_nas <- function(data, formula1, formula2, context.id)
 #' 
 #' set.seed(10)
 #' n = 300
-#' data = tibble::data_frame(x1 = rnorm(n, -3),
-#'                           x2 = rnorm(n,  3),
-#'                           z  = sample(1:3, n, replace=TRUE),
-#'                           y  =I(z==1) * (3 + 4*x1 - x2 + rnorm(n)) +
-#'                               I(z==2) * (3 + 2*x1 + x2 + rnorm(n)) +
-#'                               I(z==3) * (3 - 4*x1 - x2 + rnorm(n)) 
-#'                           ) 
+#' data = tibble::tibble(x1 = rnorm(n, -3),
+#'                       x2 = rnorm(n,  3),
+#'                       z  = sample(1:3, n, replace=TRUE),
+#'                       y  =I(z==1) * (3 + 4*x1 - x2 + rnorm(n)) +
+#'                           I(z==2) * (3 + 2*x1 + x2 + rnorm(n)) +
+#'                           I(z==3) * (3 - 4*x1 - x2 + rnorm(n)) 
+#'                       ) 
 #' 
 #' 
 #' mcmc    = list(burn.in = 0,  n.iter = 20)
@@ -252,7 +257,10 @@ hdpglm_exclude_nas <- function(data, formula1, formula2, context.id)
 #' @export
 
 ## }}}
-hdpGLM <- function(formula1, formula2=NULL, data, context.id=NULL, weights=NULL, mcmc, K=100, fix=NULL, family='gaussian', epsilon=0.01, leapFrog=40, n.display=1000, hmc_iter=1, imp.bin="R", na.action = "exclude")
+hdpGLM <- function(formula1, formula2=NULL, data, context.id=NULL, weights=NULL,
+                   mcmc, K=100, fix=NULL, family='gaussian', epsilon=0.01,
+                   leapFrog=40, n.display=1000, hmc_iter=1, imp.bin="R",
+                   na.action = "exclude")
 {
     if (!is.null(weights)) {
         stop("\n\nNote: weights are not implemented yet. Leave \'weights=NULL.\'\n\n")
