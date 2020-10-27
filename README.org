@@ -9,7 +9,8 @@
 
 The package implements the hierarchical Dirichlet process Generalized Linear Models proposed in the paper Modeling Context-Dependent Latent Effect Heterogeneity. The model can be used to estimate latent heterogeneity in the marginal effect of GLM linear coefficients, cluster data points based on that latent heterogeneity, and investigate if Simpson’s Paradox occurs due to latent or omitted features. It also can be used with hierarchical data to estimate the effect of upper-level covariates on the latent heterogeneity in the effect of lower-level features.
 
-For details of the model and the MCMC algorithm, see my paper [[https://www.cambridge.org/core/journals/political-analysis/article/modeling-contextdependent-latent-effect-heterogeneity/B7B0AF067DF97A1A8F0B50646EF64F24][Modeling Context-Dependent Latent Effect Heterogeneity]], forthcoming at [[https://www.cambridge.org/core/journals/political-analysis][Political Analysis]].
+For details of the model and the MCMC algorithm, see Ferrari (2020) [[https://www.cambridge.org/core/journals/political-analysis/article/modeling-contextdependent-latent-effect-heterogeneity/B7B0AF067DF97A1A8F0B50646EF64F24][Modeling Context-Dependent Latent Effect Heterogeneity]], [[https://www.cambridge.org/core/journals/political-analysis][Political Analysis]], Volume 28, Issue 1January 2020 , pp. 20-46, <DOI: 10.1017/pan.2019.13>.
+
 
 * Instalation
 

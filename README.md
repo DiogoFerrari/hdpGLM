@@ -19,7 +19,7 @@ features.
 For details of the model and the MCMC algorithm, see Ferrari, D. (2020) [Modeling
 Context-Dependent Latent Effect
 Heterogeneity](https://www.cambridge.org/core/journals/political-analysis/article/modeling-contextdependent-latent-effect-heterogeneity/B7B0AF067DF97A1A8F0B50646EF64F24), [Political
-Analysis](https://www.cambridge.org/core/journals/political-analysis), Volume 28, Issue 1, January, pp. 20-46.
+Analysis](https://www.cambridge.org/core/journals/political-analysis), Volume 28, Issue 1, January, pp. 20-46. <DOI: 10.1017/pan.2019.13>.
 
 Instalation
 ===========
