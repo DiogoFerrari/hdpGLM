@@ -4,12 +4,26 @@
 \alias{plot_beta}
 \title{Plot posterior distribution of beta for each context}
 \usage{
-plot_beta(samples, X = NULL, context.id = NULL, true.beta = NULL,
-  title = NULL, subtitle = NULL, plot.mean = FALSE,
-  plot.grid = FALSE, showKhat = FALSE, col = NULL,
-  xlab.size = NULL, ylab.size = NULL, title.size = NULL,
-  legend.size = NULL, xtick.distance = NULL, left.margin = 0,
-  ytick.distance = NULL, col.border = "white")
+plot_beta(
+  samples,
+  X = NULL,
+  context.id = NULL,
+  true.beta = NULL,
+  title = NULL,
+  subtitle = NULL,
+  plot.mean = FALSE,
+  plot.grid = FALSE,
+  showKhat = FALSE,
+  col = NULL,
+  xlab.size = NULL,
+  ylab.size = NULL,
+  title.size = NULL,
+  legend.size = NULL,
+  xtick.distance = NULL,
+  left.margin = 0,
+  ytick.distance = NULL,
+  col.border = "white"
+)
 }
 \arguments{
 \item{samples}{an output of the function \code{\link{hdpGLM}}}

@@ -4,15 +4,31 @@
 \alias{plot_hdpglm}
 \title{Plot posterior distribution of tau and posterior expectation of beta}
 \usage{
-plot_hdpglm(samples, X = NULL, W = NULL, ncol.taus = 1,
-  ncol.betas = NULL, ncol.w = NULL, nrow.w = NULL,
-  smooth.line = FALSE, pred.pexp.beta = FALSE, title.tau = NULL,
-  true.tau = NULL, title.beta = NULL, tau.x.axis.size = 1.1,
-  tau.y.axis.size = 1.1, tau.title.size = 1.2,
-  tau.panel.title.size = 1.4, tau.legend.size = 1,
-  beta.x.axis.size = 1.1, beta.y.axis.size = 1.1,
-  beta.title.size = 1.2, beta.panel.title.size = 1.4,
-  beta.legend.size = 1, tau.xlab = NULL)
+plot_hdpglm(
+  samples,
+  X = NULL,
+  W = NULL,
+  ncol.taus = 1,
+  ncol.betas = NULL,
+  ncol.w = NULL,
+  nrow.w = NULL,
+  smooth.line = FALSE,
+  pred.pexp.beta = FALSE,
+  title.tau = NULL,
+  true.tau = NULL,
+  title.beta = NULL,
+  tau.x.axis.size = 1.1,
+  tau.y.axis.size = 1.1,
+  tau.title.size = 1.2,
+  tau.panel.title.size = 1.4,
+  tau.legend.size = 1,
+  beta.x.axis.size = 1.1,
+  beta.y.axis.size = 1.1,
+  beta.title.size = 1.2,
+  beta.panel.title.size = 1.4,
+  beta.legend.size = 1,
+  tau.xlab = NULL
+)
 }
 \arguments{
 \item{samples}{an output of the function \code{\link{hdpGLM}}}

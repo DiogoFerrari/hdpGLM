@@ -31,7 +31,6 @@ hdpGLM_classify <- function(data, samples)
 #' This function provides a summary of the MCMC samples from the dpGLM model
 #'
 #' @param object a \code{dpGLM} object returned by the function \code{hdpGLM}
-#' @inheritParams plot.dpGLM
 #' @param ... The additional parameters accepted are:
 #' 
 #'            true.beta: (see \link{plot.dpGLM})
@@ -604,7 +603,6 @@ plot.hdpGLM <- function(x, terms=NULL, j.label=NULL, j.idx=NULL, title=NULL, sub
 #'
 #'
 #' @param object outcome of the function hdpLGM
-#' @inheritParams hdpGLM
 #' @param new_data data frame with the values of the covariates that are going to be used to generate the predicted/fitted values. The posterior mean is used to create the predicted values 
 #' @param ... 
 #' 
@@ -680,7 +678,6 @@ getRegMatrix_main <- function(formula, data)
 #' Generic method to print the output of the \code{dpGLM} function
 #'
 #' @param x a \code{dpGLM} object returned by the function \code{hdpGLM}
-#' @inheritParams summary.hdpGLM
 #' @param ... ignore
 #'
 #' @return returns a summary of the posterior distribution of the parameters
@@ -705,7 +702,6 @@ print.dpGLM <- function(x, ...)
 #' Generic method to print the output of the \code{hdpGLM} function
 #'
 #' @param x a \code{hdpGLM} object returned by the function \code{hdpGLM}
-#' @inheritParams summary.hdpGLM
 #' @param ... ignore 
 #'
 #' @return returns a summary of the posterior distribution of the parameters

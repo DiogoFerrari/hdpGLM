@@ -4,11 +4,21 @@
 \alias{hdpGLM_simulateData}
 \title{Simulate a Data Set from hdpGLM}
 \usage{
-hdpGLM_simulateData(n, K, nCov = 2, nCovj = 0, J = 1,
-  family = "gaussian", parameters = NULL, pi = NULL,
-  same.K = FALSE, seed = NULL, context.effect = NULL,
+hdpGLM_simulateData(
+  n,
+  K,
+  nCov = 2,
+  nCovj = 0,
+  J = 1,
+  family = "gaussian",
+  parameters = NULL,
+  pi = NULL,
+  same.K = FALSE,
+  seed = NULL,
+  context.effect = NULL,
   same.clusters.across.contexts = NULL,
-  context.dependent.cluster = NULL)
+  context.dependent.cluster = NULL
+)
 }
 \arguments{
 \item{n}{integer, the sample size of the data. If there are multiple contexts, each context will have n cases.}

@@ -4,11 +4,23 @@
 \alias{plot_tau}
 \title{Plot tau}
 \usage{
-plot_tau(samples, X = NULL, W = NULL, title = NULL,
-  true.tau = NULL, show.all.taus = FALSE, show.all.betas = FALSE,
-  ncol = NULL, legend.position = "top", x.axis.size = 1.1,
-  y.axis.size = 1.1, title.size = 1.2, panel.title.size = 1.4,
-  legend.size = 1, xlab = NULL)
+plot_tau(
+  samples,
+  X = NULL,
+  W = NULL,
+  title = NULL,
+  true.tau = NULL,
+  show.all.taus = FALSE,
+  show.all.betas = FALSE,
+  ncol = NULL,
+  legend.position = "top",
+  x.axis.size = 1.1,
+  y.axis.size = 1.1,
+  title.size = 1.2,
+  panel.title.size = 1.4,
+  legend.size = 1,
+  xlab = NULL
+)
 }
 \arguments{
 \item{samples}{an output of the function \code{\link{hdpGLM}}}

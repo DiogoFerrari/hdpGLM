@@ -4,11 +4,25 @@
 \alias{plot_pexp_beta}
 \title{Plot posterior expectation of beta in each context}
 \usage{
-plot_pexp_beta(samples, X = NULL, W = NULL, pred.pexp.beta = FALSE,
-  ncol.beta = NULL, ylab = NULL, nrow.w = NULL, ncol.w = NULL,
-  smooth.line = FALSE, title = NULL, legend.position = "top",
-  col.pred.line = "red", x.axis.size = 1.1, y.axis.size = 1.1,
-  title.size = 12, panel.title.size = 1.4, legend.size = 1)
+plot_pexp_beta(
+  samples,
+  X = NULL,
+  W = NULL,
+  pred.pexp.beta = FALSE,
+  ncol.beta = NULL,
+  ylab = NULL,
+  nrow.w = NULL,
+  ncol.w = NULL,
+  smooth.line = FALSE,
+  title = NULL,
+  legend.position = "top",
+  col.pred.line = "red",
+  x.axis.size = 1.1,
+  y.axis.size = 1.1,
+  title.size = 12,
+  panel.title.size = 1.4,
+  legend.size = 1
+)
 }
 \arguments{
 \item{samples}{an output of the function \code{\link{hdpGLM}}}

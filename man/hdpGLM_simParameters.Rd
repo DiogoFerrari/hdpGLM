@@ -4,10 +4,18 @@
 \alias{hdpGLM_simParameters}
 \title{Simulate the parameters that can be used to simulate data sets from the dpGLM or hdpGLM}
 \usage{
-hdpGLM_simParameters(K, nCov = 2, nCovj = 0, J = 1, pi = NULL,
-  same.K = FALSE, seed = NULL, context.effect = NULL,
+hdpGLM_simParameters(
+  K,
+  nCov = 2,
+  nCovj = 0,
+  J = 1,
+  pi = NULL,
+  same.K = FALSE,
+  seed = NULL,
+  context.effect = NULL,
   same.clusters.across.contexts = NULL,
-  context.dependent.cluster = NULL)
+  context.dependent.cluster = NULL
+)
 }
 \arguments{
 \item{K}{integer, the number of clusters. If there are multiple contexts, K is the average number of clusters across contexts, and each context gets a number of clusters sampled from a Poisson distribution, except if \code{same.K} is \code{TRUE}.}

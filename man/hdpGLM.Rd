@@ -4,10 +4,23 @@
 \alias{hdpGLM}
 \title{Hierarchical Dirichlet Process GLM}
 \usage{
-hdpGLM(formula1, formula2 = NULL, data, context.id = NULL,
-  weights = NULL, mcmc, K = 100, fix = NULL, family = "gaussian",
-  epsilon = 0.01, leapFrog = 40, n.display = 1000, hmc_iter = 1,
-  imp.bin = "R", na.action = "exclude")
+hdpGLM(
+  formula1,
+  formula2 = NULL,
+  data,
+  context.id = NULL,
+  weights = NULL,
+  mcmc,
+  K = 100,
+  fix = NULL,
+  family = "gaussian",
+  epsilon = 0.01,
+  leapFrog = 40,
+  n.display = 1000,
+  hmc_iter = 1,
+  imp.bin = "R",
+  na.action = "exclude"
+)
 }
 \arguments{
 \item{formula1}{a single symbolic description of the linear model of the
