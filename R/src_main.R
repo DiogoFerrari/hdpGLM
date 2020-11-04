@@ -109,7 +109,7 @@
 getContextIndices <- function(W)
 {
     ## options(warn=-1)
-    on.exit(options(warn=0))
+    ## on.exit(options(warn=0))
     W = W %>% tibble::as_data_frame(.)
     cols = names(W)
     C = W %>%  
@@ -276,7 +276,7 @@ hdpGLM <- function(formula1, formula2=NULL, data, context.id=NULL, weights=NULL,
     on.exit(setwd(dir.default), add=TRUE)
     ## no warning messages
     ## options(warn=-1)
-    on.exit(options(warn=0))
+    ## on.exit(options(warn=0))
 
     if(! family %in% c('gaussian', 'binomial', 'multinomial'))
         stop(paste0('Error: Parameter -family- must be a string with one of the following options : \"gaussian\", \"binomial\", or \"multinomial\"'))

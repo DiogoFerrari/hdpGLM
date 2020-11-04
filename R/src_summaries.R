@@ -263,7 +263,7 @@ plot.dpGLM    <- function(x, terms=NULL, separate=FALSE, hpd=TRUE, true.beta=NUL
     on.exit(setwd(dir.default), add=TRUE)
     ## no warning messages
     ## options(warn=-1)
-    on.exit(options(warn=0))
+    ## on.exit(options(warn=0))
 
     ## Debug/Monitoring message --------------------------
     msg <- paste0('\n','\nGenerating plot...\n',  '\n'); cat(msg)
@@ -619,7 +619,7 @@ predict.dpGLM <- function(object, new_data, ...)
 ## predict.dpGLM  <- function(samples, data)
 {
     ## options(warn=-1)
-    on.exit(options(warn=0))
+    ## on.exit(options(warn=0))
 
     samples = object
     data = new_data
@@ -1056,7 +1056,7 @@ plot_tau <- function(samples, X=NULL, W=NULL, title=NULL, true.tau=NULL, show.al
     on.exit(setwd(dir.default), add=TRUE)
     ## no warning messages
     ## options(warn=-1)
-    on.exit(options(warn=0))
+    ## on.exit(options(warn=0))
 
     Dw = samples$context.cov %>% ncol - 1
     Dx = samples$samples %>% colnames %>% stringr::str_detect(., pattern="beta") %>% sum - 1
@@ -1189,7 +1189,7 @@ plot_beta <- function(samples, X=NULL, context.id=NULL, true.beta=NULL, title=NU
     on.exit(setwd(dir.default), add=TRUE)
     ## no warning messages
     ## options(warn=-1)
-    on.exit(options(warn=0))
+    ## on.exit(options(warn=0))
     ## get context indexes and context labels to plot
     ## ----------------------------------------------
     C = samples$context.cov$C %>% unique %>% sort
@@ -1360,7 +1360,7 @@ plot_pexp_beta <- function(samples, X=NULL, W=NULL, pred.pexp.beta=FALSE, ncol.b
     on.exit(setwd(dir.default), add=TRUE)
     ## no warning messages
     ## options(warn=-1)
-    on.exit(options(warn=0))
+    ## on.exit(options(warn=0))
 
     ## samples
     samples = hdpGLM_get_occupied_clusters(samples)
