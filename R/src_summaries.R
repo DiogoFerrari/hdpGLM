@@ -262,7 +262,7 @@ plot.dpGLM    <- function(x, terms=NULL, separate=FALSE, hpd=TRUE, true.beta=NUL
     dir.default <- getwd()
     on.exit(setwd(dir.default), add=TRUE)
     ## no warning messages
-    options(warn=-1)
+    ## options(warn=-1)
     on.exit(options(warn=0))
 
     ## Debug/Monitoring message --------------------------
@@ -618,7 +618,7 @@ plot.hdpGLM <- function(x, terms=NULL, j.label=NULL, j.idx=NULL, title=NULL, sub
 predict.dpGLM <- function(object, new_data, ...)
 ## predict.dpGLM  <- function(samples, data)
 {
-    options(warn=-1)
+    ## options(warn=-1)
     on.exit(options(warn=0))
 
     samples = object
@@ -1055,7 +1055,7 @@ plot_tau <- function(samples, X=NULL, W=NULL, title=NULL, true.tau=NULL, show.al
     dir.default <- getwd()
     on.exit(setwd(dir.default), add=TRUE)
     ## no warning messages
-    options(warn=-1)
+    ## options(warn=-1)
     on.exit(options(warn=0))
 
     Dw = samples$context.cov %>% ncol - 1
@@ -1188,7 +1188,7 @@ plot_beta <- function(samples, X=NULL, context.id=NULL, true.beta=NULL, title=NU
     dir.default <- getwd()
     on.exit(setwd(dir.default), add=TRUE)
     ## no warning messages
-    options(warn=-1)
+    ## options(warn=-1)
     on.exit(options(warn=0))
     ## get context indexes and context labels to plot
     ## ----------------------------------------------
@@ -1359,7 +1359,7 @@ plot_pexp_beta <- function(samples, X=NULL, W=NULL, pred.pexp.beta=FALSE, ncol.b
     dir.default <- getwd()
     on.exit(setwd(dir.default), add=TRUE)
     ## no warning messages
-    options(warn=-1)
+    ## options(warn=-1)
     on.exit(options(warn=0))
 
     ## samples
