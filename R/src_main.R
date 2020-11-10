@@ -180,7 +180,7 @@ hdpglm_exclude_nas <- function(data, formula1, formula2, context.id)
 #'            then it must also contain \code{s2_sigma} and \code{df_sigma}, both
 #'            single numbers. If NULL, the defaults are \code{mu_beta=0},
 #'            \code{Sigma_beta=diag(10)}, \code{alpha=1}, \code{df_sigma=10},
-#'            \code{d2_sigma=10} (all with the dimension automatically set to the
+#'            \code{s2_sigma=10} (all with the dimension automatically set to the
 #'            correct values).
 #' @param family a character with either 'gaussian', 'binomial', or 'multinomial'.
 #'               It indicates the family of the GLM components of the mixture model.
