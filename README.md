@@ -24,10 +24,18 @@ Analysis](https://www.cambridge.org/core/journals/political-analysis), Volume 28
 
 Instalation
 ===========
+From [CRAN](https://cran.r-project.org/web/packages/hdpGLM/index.html)
+
+```
+install.packages("hdpGLM")
+```
+
+To install the development version, use:
 
 ```
 
 devtools::install_github("DiogoFerrari/hdpGLM")
+
 # If you don't want to update the dependencies, use: (you may need to install some dependencies manually)
 devtools::install_github("DiogoFerrari/hdpGLM", dependencies=F)
 

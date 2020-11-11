@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Citation and Authors • hdpGLM</title>
+<title>Fake data set with 2000 observations — welfare • hdpGLM</title>
 
 
 <!-- jquery -->
@@ -18,8 +18,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
 
 <!-- bootstrap-toc -->
-<link rel="stylesheet" href="bootstrap-toc.css">
-<script src="bootstrap-toc.js"></script>
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
@@ -33,13 +33,14 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
-<link href="pkgdown.css" rel="stylesheet">
-<script src="pkgdown.js"></script>
+<link href="../pkgdown.css" rel="stylesheet">
+<script src="../pkgdown.js"></script>
 
 
 
 
-<meta property="og:title" content="Citation and Authors" />
+<meta property="og:title" content="Fake data set with 2000 observations — welfare" />
+<meta property="og:description" content="A dataset containing simulated data about public opinion" />
 
 
 
@@ -58,7 +59,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-citation-authors">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -70,7 +71,7 @@
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="index.html">hdpGLM</a>
+        <a class="navbar-link" href="../index.html">hdpGLM</a>
         <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.0</span>
       </span>
     </div>
@@ -78,16 +79,16 @@
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="index.html">
+  <a href="../index.html">
     <span class="fas fa fas fa-home fa-lg"></span>
      
   </a>
 </li>
 <li>
-  <a href="articles/hdpGLM.html">Get started</a>
+  <a href="../articles/hdpGLM.html">Get started</a>
 </li>
 <li>
-  <a href="reference/index.html">Reference</a>
+  <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
@@ -120,36 +121,40 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Citation</h1>
-      <small class="dont-index">Source: <a href='https://github.com/DiogoFerrari/hdpGLM/blob/master/inst/CITATION'><code>inst/CITATION</code></a></small>
+    <h1>Fake data set with 2000 observations</h1>
+    <small class="dont-index">Source: <a href='https://github.com/DiogoFerrari/hdpGLM/blob/master/R/hdpGLM_data.R'><code>R/hdpGLM_data.R</code></a></small>
+    <div class="hidden name"><code>welfare.Rd</code></div>
     </div>
 
-    <p>Ferrari, Diogo (2019). Modeling Context-Dependent Latent Heterogeneity Political Analysis </p>
-    <pre>@Article{,
-  title = {Hierarchial Dirichlet Process Generalized Linear Mixed Model (hdpGLM)},
-  author = {Diogo Ferrari},
-  journal = {Political Analysis},
-  year = {2019},
-  url = {https://doi.org/10.1017/pan.2019.13},
-}</pre>
-
-    <div class="page-header">
-      <h1>Authors</h1>
+    <div class="ref-description">
+    <p>A dataset containing simulated data about public opinion</p>
     </div>
 
-    <ul class="list-unstyled">
-      <li>
-        <p><strong><a href='http://diogoferrari.com'>Diogo Ferrari</a></strong>. Author, maintainer. 
-        </p>
-      </li>
-    </ul>
+    <pre class="usage"><span class='va'>welfare</span></pre>
+
+
+    <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
+
+    <p>A data frame with 2000 rows and 4 variables:</p><dl>
+  <dt>support</dt><dd><p>support for welfare policies</p></dd>
+  <dt>inequality</dt><dd><p>levels of inequality in the neighborhood</p></dd>
+  <dt>income</dt><dd><p>individual-level income</p></dd>
+  <dt>ideology</dt><dd><p>individual-level ideology</p></dd>
+
+</dl>
+    <h2 class="hasAnchor" id="source"><a class="anchor" href="#source"></a>Source</h2>
+
+    <p>Simulated data</p>
 
   </div>
-
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
+  </div>
 </div>
-
 
 
       <footer>

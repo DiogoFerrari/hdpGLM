@@ -10,23 +10,27 @@
 
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/flatly/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/flatly/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -37,7 +41,6 @@
 
 <meta property="og:title" content="Plot tau — plot_tau" />
 <meta property="og:description" content="Function to plot posterior distribution of tau" />
-<meta name="twitter:card" content="summary" />
 
 
 
@@ -55,7 +58,7 @@
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -102,7 +105,7 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/DiogoFerrari/hdpGLM">
+  <a href="https://github.com/DiogoFerrari/hdpGLM/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -129,11 +132,23 @@
     <p>Function to plot posterior distribution of tau</p>
     </div>
 
-    <pre class="usage"><span class='fu'>plot_tau</span>(<span class='no'>samples</span>, <span class='kw'>X</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>W</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>title</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>true.tau</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>show.all.taus</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>, <span class='kw'>show.all.betas</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>ncol</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>legend.position</span> <span class='kw'>=</span> <span class='st'>"top"</span>, <span class='kw'>x.axis.size</span> <span class='kw'>=</span> <span class='fl'>1.1</span>,
-  <span class='kw'>y.axis.size</span> <span class='kw'>=</span> <span class='fl'>1.1</span>, <span class='kw'>title.size</span> <span class='kw'>=</span> <span class='fl'>1.2</span>, <span class='kw'>panel.title.size</span> <span class='kw'>=</span> <span class='fl'>1.4</span>,
-  <span class='kw'>legend.size</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>xlab</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>plot_tau</span><span class='op'>(</span>
+  <span class='va'>samples</span>,
+  X <span class='op'>=</span> <span class='cn'>NULL</span>,
+  W <span class='op'>=</span> <span class='cn'>NULL</span>,
+  title <span class='op'>=</span> <span class='cn'>NULL</span>,
+  true.tau <span class='op'>=</span> <span class='cn'>NULL</span>,
+  show.all.taus <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  show.all.betas <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  ncol <span class='op'>=</span> <span class='cn'>NULL</span>,
+  legend.position <span class='op'>=</span> <span class='st'>"top"</span>,
+  x.axis.size <span class='op'>=</span> <span class='fl'>1.1</span>,
+  y.axis.size <span class='op'>=</span> <span class='fl'>1.1</span>,
+  title.size <span class='op'>=</span> <span class='fl'>1.2</span>,
+  panel.title.size <span class='op'>=</span> <span class='fl'>1.4</span>,
+  legend.size <span class='op'>=</span> <span class='fl'>1</span>,
+  xlab <span class='op'>=</span> <span class='cn'>NULL</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -203,37 +218,37 @@
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'>
-<span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>magrittr</span>)
-<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>66</span>)
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'>magrittr</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='fl'>66</span><span class='op'>)</span>
 
 <span class='co'># Note: this example is just for illustration. MCMC iterations are very reduced</span>
-<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span>(<span class='fl'>10</span>)
-<span class='no'>n</span> <span class='kw'>=</span> <span class='fl'>20</span>
-<span class='no'>data.context1</span> <span class='kw'>=</span> <span class='kw pkg'>tibble</span><span class='kw ns'>::</span><span class='fu'><a href='https://tibble.tidyverse.org/reference/deprecated.html'>data_frame</a></span>(<span class='kw'>x1</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='no'>n</span>, -<span class='fl'>3</span>),
-                                   <span class='kw'>x2</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='no'>n</span>,  <span class='fl'>3</span>),
-                                   <span class='kw'>z</span>  <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='fl'>1</span>:<span class='fl'>3</span>, <span class='no'>n</span>, <span class='kw'>replace</span><span class='kw'>=</span><span class='fl'>TRUE</span>),
-                                   <span class='kw'>y</span>  <span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span>(<span class='no'>z</span><span class='kw'>==</span><span class='fl'>1</span>) * (<span class='fl'>3</span> + <span class='fl'>4</span>*<span class='no'>x1</span> - <span class='no'>x2</span> + <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='no'>n</span>)) +
-                                       <span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span>(<span class='no'>z</span><span class='kw'>==</span><span class='fl'>2</span>) * (<span class='fl'>3</span> + <span class='fl'>2</span>*<span class='no'>x1</span> + <span class='no'>x2</span> + <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='no'>n</span>)) +
-                                       <span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span>(<span class='no'>z</span><span class='kw'>==</span><span class='fl'>3</span>) * (<span class='fl'>3</span> - <span class='fl'>4</span>*<span class='no'>x1</span> - <span class='no'>x2</span> + <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='no'>n</span>)) ,
-                                   <span class='kw'>w</span> <span class='kw'>=</span> <span class='fl'>20</span>
-                                   )
-<span class='no'>data.context2</span> <span class='kw'>=</span> <span class='kw pkg'>tibble</span><span class='kw ns'>::</span><span class='fu'><a href='https://tibble.tidyverse.org/reference/deprecated.html'>data_frame</a></span>(<span class='kw'>x1</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='no'>n</span>, -<span class='fl'>3</span>),
-                                   <span class='kw'>x2</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='no'>n</span>,  <span class='fl'>3</span>),
-                                   <span class='kw'>z</span>  <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span>(<span class='fl'>1</span>:<span class='fl'>2</span>, <span class='no'>n</span>, <span class='kw'>replace</span><span class='kw'>=</span><span class='fl'>TRUE</span>),
-                                   <span class='kw'>y</span>  <span class='kw'>=</span><span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span>(<span class='no'>z</span><span class='kw'>==</span><span class='fl'>1</span>) * (<span class='fl'>1</span> + <span class='fl'>3</span>*<span class='no'>x1</span> - <span class='fl'>2</span>*<span class='no'>x2</span> + <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='no'>n</span>)) +
-                                       <span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span>(<span class='no'>z</span><span class='kw'>==</span><span class='fl'>2</span>) * (<span class='fl'>1</span> - <span class='fl'>2</span>*<span class='no'>x1</span> +   <span class='no'>x2</span> + <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span>(<span class='no'>n</span>)),
-                                   <span class='kw'>w</span> <span class='kw'>=</span> <span class='fl'>10</span>
-                                   )
-<span class='no'>data</span> <span class='kw'>=</span> <span class='no'>data.context1</span> <span class='kw'>%&gt;%</span>
-    <span class='kw pkg'>dplyr</span><span class='kw ns'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/bind.html'>bind_rows</a></span>(<span class='no'>data.context2</span>)
+<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='fl'>10</span><span class='op'>)</span>
+<span class='va'>n</span> <span class='op'>=</span> <span class='fl'>20</span>
+<span class='va'>data.context1</span> <span class='op'>=</span> <span class='fu'>tibble</span><span class='fu'>::</span><span class='fu'><a href='https://tibble.tidyverse.org/reference/deprecated.html'>data_frame</a></span><span class='op'>(</span>x1 <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='va'>n</span>, <span class='op'>-</span><span class='fl'>3</span><span class='op'>)</span>,
+                                   x2 <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='va'>n</span>,  <span class='fl'>3</span><span class='op'>)</span>,
+                                   z  <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>, <span class='va'>n</span>, replace<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>,
+                                   y  <span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span><span class='op'>(</span><span class='va'>z</span><span class='op'>==</span><span class='fl'>1</span><span class='op'>)</span> <span class='op'>*</span> <span class='op'>(</span><span class='fl'>3</span> <span class='op'>+</span> <span class='fl'>4</span><span class='op'>*</span><span class='va'>x1</span> <span class='op'>-</span> <span class='va'>x2</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='va'>n</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span>
+                                       <span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span><span class='op'>(</span><span class='va'>z</span><span class='op'>==</span><span class='fl'>2</span><span class='op'>)</span> <span class='op'>*</span> <span class='op'>(</span><span class='fl'>3</span> <span class='op'>+</span> <span class='fl'>2</span><span class='op'>*</span><span class='va'>x1</span> <span class='op'>+</span> <span class='va'>x2</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='va'>n</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span>
+                                       <span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span><span class='op'>(</span><span class='va'>z</span><span class='op'>==</span><span class='fl'>3</span><span class='op'>)</span> <span class='op'>*</span> <span class='op'>(</span><span class='fl'>3</span> <span class='op'>-</span> <span class='fl'>4</span><span class='op'>*</span><span class='va'>x1</span> <span class='op'>-</span> <span class='va'>x2</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='va'>n</span><span class='op'>)</span><span class='op'>)</span> ,
+                                   w <span class='op'>=</span> <span class='fl'>20</span>
+                                   <span class='op'>)</span> 
+<span class='va'>data.context2</span> <span class='op'>=</span> <span class='fu'>tibble</span><span class='fu'>::</span><span class='fu'><a href='https://tibble.tidyverse.org/reference/deprecated.html'>data_frame</a></span><span class='op'>(</span>x1 <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='va'>n</span>, <span class='op'>-</span><span class='fl'>3</span><span class='op'>)</span>,
+                                   x2 <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='va'>n</span>,  <span class='fl'>3</span><span class='op'>)</span>,
+                                   z  <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>2</span>, <span class='va'>n</span>, replace<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>,
+                                   y  <span class='op'>=</span><span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span><span class='op'>(</span><span class='va'>z</span><span class='op'>==</span><span class='fl'>1</span><span class='op'>)</span> <span class='op'>*</span> <span class='op'>(</span><span class='fl'>1</span> <span class='op'>+</span> <span class='fl'>3</span><span class='op'>*</span><span class='va'>x1</span> <span class='op'>-</span> <span class='fl'>2</span><span class='op'>*</span><span class='va'>x2</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='va'>n</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>+</span>
+                                       <span class='fu'><a href='https://rdrr.io/r/base/AsIs.html'>I</a></span><span class='op'>(</span><span class='va'>z</span><span class='op'>==</span><span class='fl'>2</span><span class='op'>)</span> <span class='op'>*</span> <span class='op'>(</span><span class='fl'>1</span> <span class='op'>-</span> <span class='fl'>2</span><span class='op'>*</span><span class='va'>x1</span> <span class='op'>+</span>   <span class='va'>x2</span> <span class='op'>+</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='va'>n</span><span class='op'>)</span><span class='op'>)</span>,
+                                   w <span class='op'>=</span> <span class='fl'>10</span>
+                                   <span class='op'>)</span> 
+<span class='va'>data</span> <span class='op'>=</span> <span class='va'>data.context1</span> <span class='op'>%&gt;%</span>
+    <span class='fu'>dplyr</span><span class='fu'>::</span><span class='fu'><a href='https://dplyr.tidyverse.org/reference/bind.html'>bind_rows</a></span><span class='op'>(</span><span class='va'>data.context2</span><span class='op'>)</span>
 
 <span class='co'>## estimation</span>
-<span class='no'>mcmc</span>    <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span>(<span class='kw'>burn.in</span><span class='kw'>=</span><span class='fl'>1</span>, <span class='kw'>n.iter</span><span class='kw'>=</span><span class='fl'>50</span>)
-<span class='no'>samples</span> <span class='kw'>=</span> <span class='fu'><a href='hdpGLM.html'>hdpGLM</a></span>(<span class='no'>y</span> ~ <span class='no'>x1</span> + <span class='no'>x2</span>, <span class='no'>y</span> ~ <span class='no'>w</span>, <span class='kw'>data</span><span class='kw'>=</span><span class='no'>data</span>, <span class='kw'>mcmc</span><span class='kw'>=</span><span class='no'>mcmc</span>, <span class='kw'>n.display</span><span class='kw'>=</span><span class='fl'>1</span>)</div><div class='output co'>#&gt; 
+<span class='va'>mcmc</span>    <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>burn.in<span class='op'>=</span><span class='fl'>1</span>, n.iter<span class='op'>=</span><span class='fl'>50</span><span class='op'>)</span>
+<span class='va'>samples</span> <span class='op'>=</span> <span class='fu'><a href='hdpGLM.html'>hdpGLM</a></span><span class='op'>(</span><span class='va'>y</span> <span class='op'>~</span> <span class='va'>x1</span> <span class='op'>+</span> <span class='va'>x2</span>, <span class='va'>y</span> <span class='op'>~</span> <span class='va'>w</span>, data<span class='op'>=</span><span class='va'>data</span>, mcmc<span class='op'>=</span><span class='va'>mcmc</span>, n.display<span class='op'>=</span><span class='fl'>1</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; 
 #&gt; 
 #&gt; Preparing for estimation ...
-#&gt; 
-#&gt; 
+#&gt; </div><div class='output co'>#&gt; <span class='warning'>Warning: non-list contrasts argument ignored</span></div><div class='output co'>#&gt; <span class='warning'>Warning: non-list contrasts argument ignored</span></div><div class='output co'>#&gt; 
 #&gt; 
 #&gt; Estimation in progress ...
 #&gt; 
@@ -1667,28 +1682,29 @@
 #&gt; 
 #&gt; [=======================================================================] 100 %</div><div class='input'>
 
-<span class='fu'>plot_tau</span>(<span class='no'>samples</span>)</div><div class='output co'>#&gt; 
+<span class='fu'>plot_tau</span><span class='op'>(</span><span class='va'>samples</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; 
 #&gt; Generating summary for beta...
 #&gt; 
-#&gt; Generating summary for tau...</div><div class='img'><img src='plot_tau-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plot_tau</span>(<span class='no'>samples</span>, <span class='kw'>ncol</span><span class='kw'>=</span><span class='fl'>2</span>)</div><div class='output co'>#&gt; 
+#&gt; Generating summary for tau...</div><div class='img'><img src='plot_tau-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plot_tau</span><span class='op'>(</span><span class='va'>samples</span>, ncol<span class='op'>=</span><span class='fl'>2</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; 
 #&gt; Generating summary for beta...
 #&gt; 
-#&gt; Generating summary for tau...</div><div class='img'><img src='plot_tau-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plot_tau</span>(<span class='no'>samples</span>, <span class='kw'>X</span><span class='kw'>=</span><span class='st'>'x1'</span>, <span class='kw'>W</span><span class='kw'>=</span><span class='st'>'w'</span>)</div><div class='output co'>#&gt; 
+#&gt; Generating summary for tau...</div><div class='img'><img src='plot_tau-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plot_tau</span><span class='op'>(</span><span class='va'>samples</span>, X<span class='op'>=</span><span class='st'>'x1'</span>, W<span class='op'>=</span><span class='st'>'w'</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; 
 #&gt; Generating summary for beta...
 #&gt; 
-#&gt; Generating summary for tau...</div><div class='img'><img src='plot_tau-3.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plot_tau</span>(<span class='no'>samples</span>, <span class='kw'>show.all.taus</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>show.all.betas</span><span class='kw'>=</span><span class='fl'>TRUE</span>, <span class='kw'>ncol</span><span class='kw'>=</span><span class='fl'>2</span>)</div><div class='output co'>#&gt; 
+#&gt; Generating summary for tau...</div><div class='img'><img src='plot_tau-3.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plot_tau</span><span class='op'>(</span><span class='va'>samples</span>, show.all.taus<span class='op'>=</span><span class='cn'>TRUE</span>, show.all.betas<span class='op'>=</span><span class='cn'>TRUE</span>, ncol<span class='op'>=</span><span class='fl'>2</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; 
 #&gt; Generating summary for beta...
 #&gt; 
 #&gt; Generating summary for tau...</div><div class='img'><img src='plot_tau-4.png' alt='' width='700' height='433' /></div><div class='input'>
 </div></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#examples">Examples</a></li>
-    </ul>
-
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -1699,7 +1715,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
