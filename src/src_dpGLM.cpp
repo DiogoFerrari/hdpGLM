@@ -47,11 +47,11 @@ void dpGLM_display_message(String family, int burn_in, int n_iter, int iter, int
   Rcpp::Rcout << "Acceptance rate for beta         : " << dpGLM_ACCEPTANCE_COUNT/dpGLM_MCMC_TRIAL  << std::endl;
   Rcpp::Rcout << "Average acceptance rate for beta : " << dpGLM_ACCEPTANCE_RATE_AVERAGE << std::endl;
   Rcpp::Rcout << std::endl;
-  Rcpp::Rcout << "Maximum Number of cluster allowed (K): " << K << std::endl;
-  Rcpp::Rcout << "Maximum Number of cluster activated  : " << max_active_cluster_at_a_iter  << std::endl;
-  Rcpp::Rcout << "Current number of active clusters    : " << active_clusters_at_iter  << std::endl;
+  Rcpp::Rcout << "Maximum number of clusters allowed (K): " << K << std::endl;
+  Rcpp::Rcout << "Maximum number of clusters activated  : " << max_active_cluster_at_a_iter  << std::endl;
+  Rcpp::Rcout << "Current number of active clusters     : " << active_clusters_at_iter  << std::endl;
   Rcpp::Rcout << std::endl;
-  Rcpp::Rcout << "Percentage of data classified in each clusters k at current iteraction (displaying only clusters with more than 5% of the data)" << std::endl;
+  Rcpp::Rcout << "Percentage of data classified in each clusters k at current iteration (displaying only clusters with more than 5% of the data)" << std::endl;
   Rcpp::Rcout << A_subset.t() << std::endl;
   
 }
