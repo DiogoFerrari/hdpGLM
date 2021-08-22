@@ -60,7 +60,7 @@ summary.dpGLM <- function(object, ...)
         HPD.lower <- function(x) {return(coda::HPDinterval( coda::as.mcmc(x) )[,"lower"])}
         HPD.upper <- function(x) {return(coda::HPDinterval( coda::as.mcmc(x) )[,"upper"])}
         betas = x$samples %>%
-            tibble::as_data_frame(.)  %>% 
+            tibble::as_tibble(.)  %>% 
             tidyr::gather(key=Parameter, value=sample, -k) %>% 
             dplyr::group_by(k, Parameter) %>%
             dplyr::summarize_all(.funs=list(Mean="mean", Median="median", SD="sd", HPD.lower="HPD.lower", HPD.upper="HPD.upper")) %>%
@@ -139,7 +139,7 @@ summary.hdpGLM <- function(object, ...)
         HPD.lower <- function(x) {return(coda::HPDinterval( coda::as.mcmc(x) )[,"lower"])}
         HPD.upper <- function(x) {return(coda::HPDinterval( coda::as.mcmc(x) )[,"upper"])}
         betas = x$samples %>%
-            tibble::as_data_frame(.)  %>% 
+            tibble::as_tibble(.)  %>% 
             tidyr::gather(key=Parameter, value=sample, -k, -j) %>% 
             dplyr::group_by(k,j, Parameter) %>%
             dplyr::filter(dplyr::n()>1) %>%  # discard cases with a single draw
@@ -166,11 +166,11 @@ summary.hdpGLM <- function(object, ...)
     msg <- paste0('\n','Generating summary for tau...',  '\n'); cat(msg)
     ## ---------------------------------------------------
     tau.summ = x$tau %>% summary(.)
-    tau.summ[[1]] = tau.summ[[1]] %>% base::data.frame(Parameter=rownames(.), ., row.names=1:nrow(.)) %>% tibble::as_data_frame()
+    tau.summ[[1]] = tau.summ[[1]] %>% base::data.frame(Parameter=rownames(.), ., row.names=1:nrow(.)) %>% tibble::as_tibble()
     ## using interval from summary
-    tau.summ[[2]] = tau.summ[[2]] %>% base::data.frame(Parameter=rownames(.), ., row.names=1:nrow(.)) %>% tibble::as_data_frame() %>% dplyr::select(Parameter, X2.5., X97.5.) %>% dplyr::rename(HPD.lower=X2.5., HPD.upper=X97.5.)
+    tau.summ[[2]] = tau.summ[[2]] %>% base::data.frame(Parameter=rownames(.), ., row.names=1:nrow(.)) %>% tibble::as_tibble() %>% dplyr::select(Parameter, X2.5., X97.5.) %>% dplyr::rename(HPD.lower=X2.5., HPD.upper=X97.5.)
     ## using HPD from coda
-    ## tau.summ[[2]] = x$tau %>% coda::HPDinterval(.) %>% base::data.frame(Parameter=rownames(.), ., row.names=1:nrow(.) ) %>% tibble::as_data_frame()  %>% dplyr::rename(HPD.lower=lower, HPD.upper=upper) 
+    ## tau.summ[[2]] = x$tau %>% coda::HPDinterval(.) %>% base::data.frame(Parameter=rownames(.), ., row.names=1:nrow(.) ) %>% tibble::as_tibble()  %>% dplyr::rename(HPD.lower=lower, HPD.upper=upper) 
     taus =  tau.summ[[1]] %>% 
         dplyr::full_join(., tau.summ[[2]] , by="Parameter") %>% 
         dplyr::select(Parameter, Mean, SD, dplyr::contains("HPD"), -dplyr::contains("Naive"), -dplyr::contains("Time")) %>%
@@ -271,7 +271,7 @@ plot.dpGLM    <- function(x, terms=NULL, separate=FALSE, hpd=TRUE, true.beta=NUL
 
     x = dpGLM_get_occupied_clusters(x)
     tab = x$samples %>%
-        tibble::as_data_frame(.) %>%
+        tibble::as_tibble(.) %>%
         dplyr::select(-dplyr::contains("sigma"))  %>%
         tidyr::gather(key = Parameter, value=values, -k) %>%
         dplyr::left_join(., summary(x) %>% dplyr::select(k, Parameter, term, Mean, dplyr::contains("HPD")) , by=c("k", "Parameter"))  %>% 
@@ -475,7 +475,7 @@ plot.hdpGLM <- function(x, terms=NULL, j.label=NULL, j.idx=NULL, title=NULL, sub
             c %>%
             unlist
         tab2 = x$samples %>%
-            tibble::as_data_frame(.)  %>%
+            tibble::as_tibble(.)  %>%
             dplyr::select(-sigma)  %>% 
             tidyr::gather(key = Parameter, value=values, -j, -k) %>%
             dplyr::full_join(., summ$beta %>% dplyr::select(term, Parameter) %>% dplyr::filter(Parameter!='sigma')   , by=c('Parameter'))  %>% 
@@ -527,7 +527,7 @@ plot.hdpGLM <- function(x, terms=NULL, j.label=NULL, j.idx=NULL, title=NULL, sub
     }else{
         xlim = summ$beta %>% dplyr::summarize(lower=min(HPD.lower), upper=max(HPD.upper)) %>% c %>% unlist
         tab = x$samples %>%
-            tibble::as_data_frame(.)  %>%
+            tibble::as_tibble(.)  %>%
             dplyr::select(-sigma)  %>% 
             tidyr::gather(key = Parameter, value=values, -j, -k) %>%
             dplyr::full_join(., summ$beta %>% dplyr::select(term, Parameter) %>% dplyr::filter(Parameter!='sigma')   , by=c('Parameter'))  %>% 
@@ -742,7 +742,7 @@ summary.dpGLM_data <- function(object, ...)
     betas = x$parameters$beta %>% 
         base::do.call(base::rbind,.) %>%
         base::cbind(., k=1:nrow(.))  %>%
-        tibble::as_data_frame(.)  %>%
+        tibble::as_tibble(.)  %>%
         tidyr::gather(key = Parameter, value=True, -k) 
     return(list(data = summary(x$data),beta=betas))
 }
@@ -773,7 +773,7 @@ summary.hdpGLM_data <- function(object, ...)
                       j = as.numeric(as.character(j)),
                       k = as.numeric(as.character(k))) %>%
         dplyr::select(j,k,Parameter, True) %>%
-        dplyr::as_data_frame(.)  %>%
+        dplyr::as_tibble(.)  %>%
         dplyr::mutate(Parameter = paste0(
                           stringr::str_replace(string=Parameter, pattern="[0-9]*$", replacement=""),
                           "[",
@@ -788,6 +788,119 @@ summary.hdpGLM_data <- function(object, ...)
         dplyr::select(dw,dx,Parameter, True)  %>%
         dplyr::rename(w = dw, beta = dx) 
     return(list(data = summary(x$data),beta=betas, tau=taus))
+}
+## {{{ docs }}}
+#' Print
+#'
+#' Generic method to print the output of the \code{hdpGLM_simulateData} function
+#'
+#' @param x a \code{dpGLM_data} object returned by the function
+#'          \code{hdpGLM_simulateData}
+#' @param ... ignore 
+#'
+#' @return returns a summary of the simulated data
+#'
+#' @export
+## }}}
+print.dpGLM_data <- function(x, ...)
+{
+    cat("\n\n")
+    cat(paste("Sample size:", nrow(x$data)))
+    cat("\n")
+    cat(paste("Number of Clusters (Z):", length(unique(x$Z))))
+    cat("\n")
+    cat("\n")
+    cat("Data (head):\n")
+    cat("------------\n")
+	print(head(x$data, 3))
+    cat("...\n")
+    for (cluster in unique(x$Z))
+    {
+        cat("\n")
+        cat(paste("Cluster", cluster,
+                  ": observation", min(which(x$Z==cluster)),
+                  "to", max(which(x$Z==cluster))))
+    }
+    cat("\n\n")
+    cat("Parameters:\n")
+    cat("----------\n")
+    cat("Cluster probabilities (pi): ")
+    cat(round(x$parameters$pi, digits=4))
+    cat("\n\n")
+    cat(paste("Linear coefficients:\n"))
+    coef = x$parameters$beta
+    res = dplyr::bind_rows(coef) %>% 
+        dplyr::mutate(`Cluster` = 1:length(coef)) %>% 
+        dplyr::select("Cluster", dplyr::everything())
+    print(as.data.frame(res))
+    ## for (betas in (x$parameters$beta))
+    ## {
+    ##     cat("\n")
+    ##     cat(paste("Cluster ", i, ":\n", sep=''))
+    ##     print(betas)
+    ##     i=i+1
+    ## }
+    cat("\n\n")
+    invisible()
+}
+## {{{ docs }}}
+#' Print
+#'
+#' Generic method to print the output of the \code{hdpGLM_simulateData} function
+#'
+#' @param x a \code{hdpGLM_data} object returned by the function
+#'          \code{hdpGLM_simulateData}
+#' @param ... ignore 
+#'
+#' @return returns a summary of the simulated data
+#'
+#' @export
+## }}}
+print.hdpGLM_data <- function(x, ...)
+{
+    cat("\n\n")
+    cat(paste("Sample size:", nrow(x$data)))
+    cat("\n")
+    cat(paste("Number of Contexts (J): ", length(x$parameters$beta)))
+    cat("\n")
+    cat(paste("Number of Clusters (Z) per context (J): ", length(unique(x$Z))))
+    cat("\n\n")
+    cat("Data (head):\n")
+    cat("------------\n")
+	print(head(x$data, 3))
+    cat("...\n\n")
+    cat("Parameters:\n")
+    cat("----------\n")
+    cat("Cluster probabilities (pi): ")
+    cat(round(x$parameters$pi, digits=4))
+    cat("\n\n")
+    cat(paste("Linear coefficients (beta):"))
+    i = 1
+    nJ = length(x$parameters$beta)
+    for (i in c(1, 2, nJ))
+    {
+        cat("\n")
+        cat('Context: ', i)
+        cat("\n")
+        coef = x$parameters$beta[[i]]
+        res = dplyr::bind_rows(coef) %>% 
+            dplyr::mutate(`Cluster` = names(coef)) %>% 
+            dplyr::select("Cluster", dplyr::everything())
+        print(as.data.frame(res))
+        if (i==2) {
+            cat("... \n")
+        }
+    }
+    cat("\n\n")
+    cat("Context-level coefficients (tau) for each linear coefficient (beta)")
+    cat("\n")
+    tau = x$parameters$tau
+    row.names(tau) = stringr::str_replace(string=row.names(tau),
+                               pattern="w", replacement="tau")
+    colnames(tau) = paste('beta', 1:ncol(tau), sep='')
+    print(tau)
+    cat("\n\n")
+    invisible()
 }
 ## {{{ docs }}}
 
@@ -806,10 +919,10 @@ summary.hdpGLM_data <- function(object, ...)
 plot_beta_sim <- function(data, w.idx, ncol=NULL)
 {
     W = data$parameter$W %>%
-        tibble::as_data_frame(.)  %>% 
+        tibble::as_tibble(.)  %>% 
         dplyr::mutate(W0=1, j=1:nrow(.))
     taus = summary(data)$tau %>%
-                       tibble::as_data_frame(.)  %>%
+                       tibble::as_tibble(.)  %>%
                        dplyr::mutate(beta = paste0('beta[', beta,"]", sep=''),
                                      w = paste0('W', w, sep=''),
                                      ## tau.label = paste0(stringr::str_extract(Parameter, 'tau') , '[', stringr::str_extract(Parameter, '[0-9]+') ,']'),
@@ -940,7 +1053,7 @@ hdpGLM_get_occupied_clusters <- function(x)
         dplyr::filter(!base::duplicated(.)) %>%
         dplyr::mutate(flag = 'select')
     x$samples = x$samples %>%
-        tibble::as_data_frame(.) %>%  
+        tibble::as_tibble(.) %>%  
         dplyr::full_join(., active_in_each_context, by=c('k', 'j')) %>%
         dplyr::filter(flag=='select') %>%
         dplyr::select(-flag) %>%
@@ -966,7 +1079,7 @@ dpGLM_get_occupied_clusters <- function(x)
 dpGLM_select_non_zero <- function(x, select_perc_time_active=60)
 {
     summary_post = summary(x)
-    summary_post = data.frame(parameter=row.names(summary_post),summary_post, row.names=1:nrow(summary_post))  %>% tibble::as_data_frame()
+    summary_post = data.frame(parameter=row.names(summary_post),summary_post, row.names=1:nrow(summary_post))  %>% tibble::as_tibble()
 
     clusters_active = summary_post %>%
         dplyr::filter(parameter != "sigma") %>% 
@@ -1068,7 +1181,7 @@ plot_tau <- function(samples, X=NULL, W=NULL, title=NULL, true.tau=NULL, show.al
     }
 
     tab = samples$tau %>% 
-        tibble::as_data_frame()  %>% 
+        tibble::as_tibble()  %>% 
         tidyr::gather(key = Parameter, value=value)  %>% 
         dplyr::mutate(Parameter = as.character(Parameter)) %>%  
         dplyr::left_join(., summary.tau %>% dplyr::mutate(Parameter = as.character(Parameter)), by=c("Parameter"))  %>%
@@ -1263,7 +1376,7 @@ plot_beta <- function(samples, X=NULL, context.id=NULL, true.beta=NULL, title=NU
             K_estimated = length(Mean)
         }
         g = samples$samples %>%
-            tibble::as_data_frame()  %>%
+            tibble::as_tibble()  %>%
             dplyr::filter(j == !!j)  %>%
             dplyr::select(beta)  %>%
             dplyr::pull(.) %>% 
@@ -1463,7 +1576,7 @@ fit_pexp_beta <- function(samples, W=NULL)
                                 tidyr::separate(., col=Description, into=c("W", 'beta'), sep=' ') %>%
                                 base::split(., .$beta) %>%
                                 purrr::map(.x=., function(.x) .x %>% dplyr::arrange(Parameter) )
-    dat = samples$context.cov %>% cbind(., Intercept=1)  %>% dplyr::select(betas.list[[1]]$W)  %>% tibble::as_data_frame() 
+    dat = samples$context.cov %>% cbind(., Intercept=1)  %>% dplyr::select(betas.list[[1]]$W)  %>% tibble::as_tibble() 
     new_datas = list()
     for (i in 1:length(W))
     {
@@ -1497,7 +1610,7 @@ fit_pexp_beta <- function(samples, W=NULL)
     pred = pred %>%
         ## dplyr::left_join(., pred.lower, by=c())  %>%
         ## dplyr::left_join(., pred.upper, by=c())  %>% 
-        tibble::as_data_frame() 
+        tibble::as_tibble() 
     return(pred)
 }
 hdpglm_get_new_data          <- function(data, n, x, cat.values=NULL)
@@ -1509,7 +1622,7 @@ hdpglm_get_new_data          <- function(data, n, x, cat.values=NULL)
             dplyr::bind_rows(.) %>%
             dplyr::arrange_(.dots=names(cat.values)) 
         cat_vars2 = data %>%
-            tibble::as_data_frame(.) %>%
+            tibble::as_tibble(.) %>%
             dplyr::select_if(function(col) !is.numeric(col)) %>%
             dplyr::select(-dplyr::one_of(names(cat.values)))  %>%
             dplyr::summarize_all(function(x) sort(unique(x))[1])  %>%
@@ -1517,7 +1630,7 @@ hdpglm_get_new_data          <- function(data, n, x, cat.values=NULL)
             base::replicate(nrow(cat_vars1), ., simplify=FALSE)  %>%
             dplyr::bind_rows(.)
         cat_vars = dplyr::bind_cols(cat_vars1, cat_vars2)  %>%
-            tibble::as_data_frame(.) 
+            tibble::as_tibble(.) 
 
         num_vars = data %>%
             dplyr::select_if(is.numeric)  %>%
@@ -1537,7 +1650,7 @@ hdpglm_get_new_data          <- function(data, n, x, cat.values=NULL)
         newdata[,x] = newx
     }else{
         cat_vars = data %>%
-            tibble::as_data_frame(.) %>%
+            tibble::as_tibble(.) %>%
             dplyr::select_if(function(col) !is.numeric(col)) %>%
             dplyr::summarize_all(function(x) sort(unique(x))[1])  %>%
             dplyr::mutate_if(is.factor, as.character) %>%
