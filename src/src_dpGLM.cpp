@@ -192,13 +192,13 @@ List dpGLM_mcmc(arma::colvec y, arma::mat X, arma::colvec weights, int K, List f
 	  // resize
       samples.resize(samples.n_rows + theta_new.n_rows, samples.n_cols);
       samples_pi.resize(samples_pi.n_rows + 1, K);
-	  // store samples
+      // store samples
       for(int i = 0; i < theta_new.n_rows; i++){
-		samples.row(samples.n_rows - theta_new.n_rows +i) = theta_new.row(i);
+	samples.row(samples.n_rows - theta_new.n_rows +i) = theta_new.row(i);
       }
-	  samples_pi.row(samples_pi.n_rows - 1) = pi.t();
+      samples_pi.row(samples_pi.n_rows - 1) = pi.t();
     }
-
+    
     // update countZik and pik
     // -----------------------
     countZik = dpGLM_update_countZik(countZik, Z);

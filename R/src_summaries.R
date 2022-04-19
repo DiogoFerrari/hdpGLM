@@ -426,7 +426,12 @@ summary.hdpGLM <- function(object, ...)
 #' @export
 
 ## }}}
-plot.dpGLM    <- function(x, terms=NULL, separate=FALSE, hpd=TRUE, true.beta=NULL, title=NULL, subtitle=NULL, adjust=1, ncols=NULL, only.occupied.clusters=TRUE, focus.hpd=FALSE, legend.position="top", colour='grey', alpha=.4, display.terms=TRUE, plot.mean=TRUE, legend.label.true.value="True", ...)
+plot.dpGLM    <- function(x, terms=NULL, separate=FALSE, hpd=TRUE,
+                          true.beta=NULL, title=NULL, subtitle=NULL, adjust=1,
+                          ncols=NULL, only.occupied.clusters=TRUE,
+                          focus.hpd=FALSE, legend.position="top", colour='grey',
+                          alpha=.4, display.terms=TRUE, plot.mean=TRUE,
+                          legend.label.true.value="True", ...)
 {
     ## keep all default options
     op.default <- options()
@@ -788,14 +793,20 @@ plot.hdpGLM <- function(x, terms=NULL, j.label=NULL, j.idx=NULL, title=NULL, sub
 
 ## }}}
 #        \code{new_data} : 
-predict.dpGLM <- function(object, new_data, ...)
+predict.dpGLM <- function(object, new_data=NULL, ...)
 ## predict.dpGLM  <- function(samples, data)
 {
     ## options(warn=-1)
     ## on.exit(options(warn=0))
 
     samples = object
-    data = new_data
+    if(is.null(new_data))
+    {
+        data = samples$data
+    }else{
+        data = new_data
+    }
+        
     
     ## get data design matrix
     formula = attr(samples, 'formula1')
@@ -839,6 +850,92 @@ getRegMatrix_main <- function(formula, data)
     func.call <- match.call(expand.dots = FALSE)
     X = .getRegMatrix(func.call, data, weights=NULL, formula_number='')
     return(X)
+}
+## {{{ docs }}}
+
+#' hdpGLM Predicted values
+#'
+#' Function returns the predicted (fitted) values of the outcome variable using the estimated posterior expectation of the linear covariate betas produced by the \code{hdpGLM} function
+#'
+#'
+#' @param object outcome of the function hdpLGM
+#' @param new_data data frame with the values of the covariates that are going to be used to generate the predicted/fitted values. The posterior mean is used to create the predicted values 
+#' @param ... 
+#' 
+#'
+#'        \code{family} : a string with the family of the output variable: \code{gaussian} (default), \code{binomial}, etc...
+#' 
+#' @return It returns a data.frame with the fitted values for the outcome variable, which are produced using the estimated posterior expectation of the linear coefficients \code{beta}.
+#'
+#' @export
+
+## }}}
+predict.hdpGLM <- function(object, new_data=NULL, ...)
+## predict.dpGLM  <- function(samples, data)
+{
+    ## options(warn=-1)
+    ## on.exit(options(warn=0))
+
+    samples = object
+    if(is.null(new_data))
+    {
+        data = samples$data
+    }else{
+        data = new_data
+    }
+        
+    
+    ## get data design matrix
+    formula = attr(samples, 'formula1')
+    X = getRegMatrix_main(formula, data)$X
+
+    ## get linear coefficients
+    K = nrow(samples$sample_pi_postMean)
+    J = ncol(samples$sample_pi_postMean)
+    tab_pi=(
+        samples$sample_pi_postMean
+        %>% as.data.frame() 
+        %>% tibble::as_tibble() 
+        %>% dplyr::mutate(k=1:K) 
+        %>% tidyr::pivot_longer(cols=paste0(1:J), names_to = 'j',
+                                values_to = 'pi')
+        %>% dplyr::mutate(j = as.numeric(as.character(j))) 
+    )
+
+    betas = (
+        tab_pi
+        %>% dplyr::full_join(.,samples
+                             %>% summary_tidy(., only.occupied.clusters=TRUE)
+                             %>% .$beta,
+                             by=c("k", 'j'))
+        %>% tidyr::drop_na()   
+    )
+    
+    Js = betas$j %>% unique()
+    yhat = matrix(rep(0, times=nrow(X)), ncol=1)
+    covars = colnames(X)
+    for (j in Js)
+    {
+        contextj = samples$context.index==j
+        Ks = betas %>% dplyr::filter(j=={{j}}) %>% dplyr::pull(k)  %>% unique()
+        for (k in Ks)
+        {
+            pi = betas %>% 
+                dplyr::filter(k=={{k}} & j=={{j}})  %>%
+                dplyr::select(pi)  %>%
+                dplyr::distinct(., .keep_all=TRUE)  %>%
+                dplyr::pull(.)
+            beta = betas %>%
+                dplyr::filter(k=={{k}} & j=={{j}})  %>%
+                dplyr::select(term, Mean)   %>%
+                tidyr::spread(., key=term, value=Mean) %>%
+                dplyr::select(covars)  %>%
+                as.matrix %>%
+                t
+            yhat[contextj] = yhat[contextj] + (pi * (X[contextj,] %*% beta))
+        }
+    }
+    return(yhat)
 }
 
 ## =====================================================

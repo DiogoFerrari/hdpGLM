@@ -263,7 +263,8 @@ hdpGLM <- function(formula1, formula2=NULL, data, context.id=NULL, weights=NULL,
                    na.action = "exclude")
 {
     if (!is.null(weights)) {
-        stop("\n\nNote: weights are not implemented yet. Leave \'weights=NULL.\'\n\n")
+        stop(paste0("\n\nNote: weights are not implemented ",
+                    "yet. Leave \'weights=NULL.\'\n\n"))
     }
     ## other options
     ## par.default <- par(no.readonly = TRUE)
@@ -279,7 +280,10 @@ hdpGLM <- function(formula1, formula2=NULL, data, context.id=NULL, weights=NULL,
     ## on.exit(options(warn=0))
 
     if(! family %in% c('gaussian', 'binomial', 'multinomial'))
-        stop(paste0('Error: Parameter -family- must be a string with one of the following options : \"gaussian\", \"binomial\", or \"multinomial\"'))
+        stop(paste0('Error: Parameter -family- must be a string with one of' ,
+                    'the following options : \"gaussian\", \"binomial\",',
+                    ' or \"multinomial\"'))
+
 
     ## Debug/Monitoring message --------------------------
     msg <- paste0('\n\n','Preparing for estimation ...',  '\n\n'); cat(msg)
@@ -376,31 +380,61 @@ hdpGLM <- function(formula1, formula2=NULL, data, context.id=NULL, weights=NULL,
         samples$context.index             = C
         samples$context.cov               = tibble::as_data_frame(cbind(C=sort(unique(C)), W))  %>% dplyr::select(-dplyr::contains("Intercept"))
         if (!is.null(context.id)) {
-            context = cbind(C=C, data %>% dplyr::select(context.id) )  %>% dplyr::filter(!duplicated(.))
-            samples$context.cov = samples$context.cov %>% dplyr::left_join(., context, by=c("C")) 
+            context = cbind(C=C, data %>%
+                                 dplyr::select(context.id) )  %>%
+                dplyr::filter(!duplicated(.))
+            samples$context.cov = samples$context.cov %>%
+                dplyr::left_join(., context, by=c("C")) 
         }
     }
-    if(family=='gaussian') attr(samples$samples, 'terms') = data.frame(term = c(colnames(X), 'sigma') , Parameter=c(stringr::str_subset(colnames(samples$samples), pattern="beta"), "sigma") )
-    if(family=='binomial') attr(samples$samples, 'terms') = data.frame(term = c(colnames(X)         ) , Parameter=c(stringr::str_subset(colnames(samples$samples), pattern="beta")) )
+    if(family=='gaussian')
+        attr(samples$samples, 'terms') = data.frame(
+            term = c(colnames(X), 'sigma') ,
+            Parameter=c(stringr::str_subset(colnames(samples$samples),
+                                            pattern="beta"), "sigma") )
+    if(family=='binomial')
+        attr(samples$samples, 'terms') = data.frame(
+            term = c(colnames(X)         ) ,
+            Parameter=c(stringr::str_subset(colnames(samples$samples),
+                                            pattern="beta")) )
     attr(samples$samples, 'mcpar')[2] = mcmc$n.iter
     class(samples)                    = ifelse(is.null(W), 'dpGLM', 'hdpGLM')
     ## include context-level term names
     if (class(samples) == 'hdpGLM') {
         tau.name = samples$tau %>% colnames
-        tau.idx  = tau.name  %>% stringr::str_extract(string=., pattern="tau\\[.*\\]\\[") %>% stringr::str_replace_all(string=., pattern="tau|\\[|\\]", replacement="")  %>% as.integer 
+        tau.idx  = tau.name  %>%
+            stringr::str_extract(string=.,
+                                 pattern="tau\\[.*\\]\\[") %>%
+            stringr::str_replace_all(string=., pattern="tau|\\[|\\]",
+                                     replacement="")  %>%
+            as.integer 
+        attr(samples$sample_pi_postMean, "dimensions") = c("pi", 'context')
+        attr(samples$sample_pi_postMean, "dimnames") = list(1:K, 1:J)
         attr(samples$tau, "terms")  = data.frame(Parameter = tau.name,
                                                  tau.idx = tau.idx) %>%
-            dplyr::mutate(beta = paste0("beta", stringr::str_extract(Parameter, pattern="\\[[0-9]*\\]$") ) %>% as.character ) %>% 
-            dplyr::left_join(., attr(samples$samples, "terms") %>% dplyr::rename(beta = Parameter)  %>% dplyr::mutate(beta = as.character(beta))
+            dplyr::mutate(
+                       beta = paste0("beta",
+                                     stringr::str_extract(
+                                                  Parameter,
+                                                  pattern="\\[[0-9]*\\]$") ) %>%
+                           as.character ) %>% 
+            dplyr::left_join(., attr(samples$samples, "terms") %>%
+                                dplyr::rename(beta = Parameter)  %>%
+                                dplyr::mutate(beta = as.character(beta))
                            , by=c('beta')) %>%
             dplyr::rename(term.beta = term) %>%
             dplyr::arrange(tau.idx)  %>% 
-            dplyr::bind_cols(., data.frame(term.tau = lapply(colnames(W), function(x) rep(x, times=d+1) ) %>% unlist) ) 
+            dplyr::bind_cols(.,
+                             data.frame(term.tau = lapply(colnames(W),
+                                                          function(x)
+                                                              rep(x, times=d+1) ) %>%
+                                            unlist) ) 
     }
 
     samples$time_elapsed = T.mcmc
     attr(samples, 'formula1') = formula1
     attr(samples, 'formula2') = formula2
+    samples$data=data
     return(samples)
 }
 

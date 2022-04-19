@@ -52,7 +52,7 @@ NULL
             results$residuals <- y - offset
         }
     } else {
-        x <- stats::model.matrix(mt1, reg.matrix, stats::contrasts)
+        x <- stats::model.matrix(mt1, reg.matrix)
     }
     return(list(y=y, X=x, w=w))
 }
