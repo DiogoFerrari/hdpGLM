@@ -46,9 +46,11 @@ arma::colvec set_diff(arma::colvec& v1, arma::colvec& v2)
 }
 arma::mat rmvnormArma(int n, arma::vec mu, arma::mat sigma)
 {
-   int ncols = sigma.n_cols;
-   arma::mat Y = arma::randn(n, ncols);
-   return arma::repmat(mu, 1, n).t() + Y * arma::chol(sigma);
+
+  int ncols = sigma.n_cols;
+  arma::mat Y = arma::randn(n, ncols);
+  arma::mat betaK = arma::repmat(mu, 1, n).t() + Y * arma::chol(sigma);
+  return betaK;
 }
 arma::colvec inv_scaled_chisq(int n, double df, double scale)
 {

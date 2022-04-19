@@ -44,14 +44,14 @@ void dpGLM_display_message(String family, int burn_in, int n_iter, int iter, int
   Rcpp::Rcout << std::endl;
   Rcpp::Rcout << "Iteration: " << iter+1 << std::endl;
   Rcpp::Rcout << std::endl;
-  Rcpp::Rcout << "Acceptance rate for beta         : " << dpGLM_ACCEPTANCE_COUNT/dpGLM_MCMC_TRIAL  << std::endl;
-  Rcpp::Rcout << "Average acceptance rate for beta : " << dpGLM_ACCEPTANCE_RATE_AVERAGE << std::endl;
+  Rcpp::Rcout << "Acceptance Rate for beta         : " << dpGLM_ACCEPTANCE_COUNT/dpGLM_MCMC_TRIAL  << std::endl;
+  Rcpp::Rcout << "Average Acceptance Rate for beta : " << dpGLM_ACCEPTANCE_RATE_AVERAGE << std::endl;
   Rcpp::Rcout << std::endl;
-  Rcpp::Rcout << "Maximum number of clusters allowed (K): " << K << std::endl;
-  Rcpp::Rcout << "Maximum number of clusters activated  : " << max_active_cluster_at_a_iter  << std::endl;
-  Rcpp::Rcout << "Current number of active clusters     : " << active_clusters_at_iter  << std::endl;
+  Rcpp::Rcout << "Maximum Number of Clusters Allowed (K): " << K << std::endl;
+  Rcpp::Rcout << "Maximum Number of Clusters Activated  : " << max_active_cluster_at_a_iter  << std::endl;
+  Rcpp::Rcout << "Current Number of Active Clusters     : " << active_clusters_at_iter  << std::endl;
   Rcpp::Rcout << std::endl;
-  Rcpp::Rcout << "Percentage of data classified in each clusters k at current iteration (displaying only clusters with more than 5% of the data)" << std::endl;
+  Rcpp::Rcout << "Percentage of data classified in each cluster k at current iteraction (displaying only clusters with more than 5% of the data)" << std::endl;
   Rcpp::Rcout << A_subset.t() << std::endl;
   
 }
@@ -84,6 +84,7 @@ arma::mat dpGLM_get_theta_active(arma::mat theta, arma::colvec Z)
 
 
 // {{{ constants and inits }}}
+
 
 arma::mat dpGLM_get_inits(int K,int d, String family, List fix)
 {

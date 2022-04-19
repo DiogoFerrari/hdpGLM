@@ -71,7 +71,7 @@ This function generates desity plots with the posterior distribution generated b
 # Note: this example is just for illustration. MCMC iterations are very reduced
 set.seed(10)
 n = 20
-data = tibble::data_frame(x1 = rnorm(n, -3),
+data = tibble::tibble(x1 = rnorm(n, -3),
                                    x2 = rnorm(n,  3),
                                    z  = sample(1:3, n, replace=TRUE),
                                    y  =I(z==1) * (3 + 4*x1 - x2 + rnorm(n)) +

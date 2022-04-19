@@ -31,16 +31,16 @@ void hdpGLM_display_message(String family, int burn_in, int n_iter, int iter, in
   Rcpp::Rcout << "Family of the distribution of the outcome variable of the mixture components: " << family.get_cstring() << std::endl;
   Rcpp::Rcout << std::endl;
   Rcpp::Rcout << "Burn-in: " << burn_in << std::endl;
-  Rcpp::Rcout << "Number of MCMC iterations : " << n_iter << std::endl;
+  Rcpp::Rcout << "Number of MCMC Iterations : " << n_iter << std::endl;
   Rcpp::Rcout << std::endl;
   Rcpp::Rcout << "Iteration: " << iter+1 << std::endl;
   Rcpp::Rcout << std::endl;
-  Rcpp::Rcout << "Acceptance rate for beta         : " << hdpGLM_ACCEPTANCE_COUNT/hdpGLM_MCMC_TRIAL  << std::endl;
-  Rcpp::Rcout << "Average acceptance rate for beta : " << hdpGLM_ACCEPTANCE_RATE_AVERAGE << std::endl;
+  Rcpp::Rcout << "Acceptance Rate for beta         : " << hdpGLM_ACCEPTANCE_COUNT/hdpGLM_MCMC_TRIAL  << std::endl;
+  Rcpp::Rcout << "Average Acceptance Rate for beta : " << hdpGLM_ACCEPTANCE_RATE_AVERAGE << std::endl;
   Rcpp::Rcout << std::endl;
-  Rcpp::Rcout << "Maximum number of clusters allowed (K)                      : " << K << std::endl;
-  Rcpp::Rcout << "Maximum number of clusters activated among all contexts     : " << max_active_cluster_at_a_iter  << std::endl;
-  Rcpp::Rcout << "Maximum number of clusters active in the current iteration  : " << active_clusters_at_iter  << std::endl;
+  Rcpp::Rcout << "Maximum Number of Clusters Allowed (K)                      : " << K << std::endl;
+  Rcpp::Rcout << "Maximum Number of Clusters Activated Among All Contexts     : " << max_active_cluster_at_a_iter  << std::endl;
+  Rcpp::Rcout << "Maximum Number of Clusters Active in the Current Iteration : " << active_clusters_at_iter  << std::endl;
   Rcpp::Rcout << std::endl;
   Rcpp::Rcout << "(displaying only clusters with more than 5% of the data)" << std::endl;
   
@@ -58,7 +58,7 @@ void hdpGLM_display_message(String family, int burn_in, int n_iter, int iter, in
     arma::uvec idx_col = arma::linspace<arma::uvec>(0, 1, 2);
     arma::mat tabj_subset = tabj(idx_larger_clusters, idx_col);
 
-    Rcpp::Rcout << "Clusters in context " << j << std::endl;
+    Rcpp::Rcout << "Clusters in Context " << j << std::endl;
     Rcpp::Rcout << tabj_subset.t() << std::endl;
   }
 }

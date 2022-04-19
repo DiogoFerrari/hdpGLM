@@ -1,9 +1,8 @@
 pandoc: '2.5'
-pkgdown: 1.6.1
+pkgdown: 1.4.0
 pkgdown_sha: ~
 articles:
   hdpGLM: hdpGLM.html
-last_built: 2020-11-11T00:51Z
 urls:
   reference: http://diogoferrari.github.io/hdpGLM/reference
   article: http://diogoferrari.github.io/hdpGLM/articles

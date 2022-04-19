@@ -12,7 +12,7 @@
 \item{...}{ignored}
 }
 \value{
-It returns a list with three elements. The first is a summary of the data, the second a data_frame with the linear coefficients \code{beta} and their values used to generate the data, and the third element is also a data_frame with the true values of \code{tau} used to generate the \code{betas}.
+It returns a list with three elements. The first is a summary of the data, the second a tibble with the linear coefficients \code{beta} and their values used to generate the data, and the third element is also a tibble with the true values of \code{tau} used to generate the \code{betas}.
 }
 \description{
 This functions summarizes the data simulated by the function \code{hdpGLM_simulateData}

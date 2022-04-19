@@ -64,7 +64,7 @@ set.seed(66)
 # Note: this example is just for illustration. MCMC iterations are very reduced
 set.seed(10)
 n = 20
-data.context1 = tibble::data_frame(x1 = rnorm(n, -3),
+data.context1 = tibble::tibble(x1 = rnorm(n, -3),
                                    x2 = rnorm(n,  3),
                                    z  = sample(1:3, n, replace=TRUE),
                                    y  =I(z==1) * (3 + 4*x1 - x2 + rnorm(n)) +
@@ -72,7 +72,7 @@ data.context1 = tibble::data_frame(x1 = rnorm(n, -3),
                                        I(z==3) * (3 - 4*x1 - x2 + rnorm(n)) ,
                                    w = 20
                                    ) 
-data.context2 = tibble::data_frame(x1 = rnorm(n, -3),
+data.context2 = tibble::tibble(x1 = rnorm(n, -3),
                                    x2 = rnorm(n,  3),
                                    z  = sample(1:2, n, replace=TRUE),
                                    y  =I(z==1) * (1 + 3*x1 - 2*x2 + rnorm(n)) +

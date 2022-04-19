@@ -4,13 +4,15 @@
 \name{welfare}
 \alias{welfare}
 \title{Fake data set with 2000 observations}
-\format{A data frame with 2000 rows and 4 variables:
+\format{
+A data frame with 2000 rows and 4 variables:
 \describe{
   \item{support}{support for welfare policies}
   \item{inequality}{levels of inequality in the neighborhood}
   \item{income}{individual-level income}
   \item{ideology}{individual-level ideology}
-}}
+}
+}
 \source{
 Simulated data
 }

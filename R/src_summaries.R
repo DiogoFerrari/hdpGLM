@@ -20,10 +20,73 @@ hdpGLM_classify <- function(data, samples)
     return(data.frame(Cluster = cluster, data))
 }
 
+## =====================================================
+## Coefficients
+## =====================================================
+## {{{ docs }}}
+
+#' Default function to extract coefficients from dpGLM fitted model
+#'
+#' This function gives the posterior mean of the coefficients
+#'
+#' @param object a \code{dpGLM} object returned by the function \code{hdpGLM}
+#' @param ... The additional parameters accepted are:
+#' 
+#'
+#' 
+#' @export
+
+## }}}
+coef.dpGLM <- function(object, ...)
+{
+    s = summary_tidy(object)
+    coefs = s$Mean
+    cluster = paste('(Cluster ', s$k, ')', sep='')
+    names(coefs) = paste(s$term, cluster)
+    cat("\n")
+    cat("Note: Coefficients are the posterior mean")
+    cat("\n")
+    cat("\n")
+    return(coefs)
+}
+
+## {{{ docs }}}
+
+#' Default function to extract coefficients from hdpGLM fitted model
+#'
+#' This function gives the posterior mean of the coefficients
+#'
+#' @param object a \code{dpGLM} object returned by the function \code{hdpGLM}
+#' @param ... The additional parameters accepted are:
+#' 
+#'
+#' 
+#' @export
+
+## }}}
+coef.hdpGLM <- function(object, ...)
+{
+    summ =  summary_tidy(object)
+    s = summ$beta
+    coefs = s$Mean
+    cluster_context = paste('(Cluster ', s$k, ', context',s$j,')', sep='')
+    names(coefs) = paste(s$term, cluster_context)
+    ##
+    s =  summ$tau
+    coefs_tau = s$Mean
+    names(coefs_tau) = paste(s$Description)
+    res = list('beta'=coefs, 'tau'=coefs_tau)
+    cat("\n")
+    cat("Note: Coefficients are the posterior mean")
+    cat("\n")
+    cat("\n")
+    return(res)
+}
 
 ## =====================================================
 ## summary
 ## =====================================================
+## tidy
 ## {{{ docs }}}
 
 #' Default Summary function for dpGLM class
@@ -40,7 +103,16 @@ hdpGLM_classify <- function(data, samples)
 #' @export
 
 ## }}}
-summary.dpGLM <- function(object, ...)
+summary_tidy <- function(object, ...)
+{
+    if (class(object)=='dpGLM') {
+        return(summary_dpGLM(object))
+    }
+    if (class(object)=='hdpGLM') {
+        return(summary_hdpGLM(object))
+    }
+}
+summary_dpGLM <- function(object, ...)
 {
     x = object
     ## get additional parameters ...
@@ -80,31 +152,9 @@ summary.dpGLM <- function(object, ...)
         betas = betas %>%
             dplyr::select(True.Cluster.match, k, Parameter, term, True, Mean, Median, SD, dplyr::contains("HPD"), dplyr::everything()) 
     }
-
-
     return(betas)
 }
-## {{{ docs }}}
-
-#' Summary of samples from hdpGLM
-#'
-#' This is a generic summary function that describes the output of the function \link{hdpGLM}
-#'
-#' @param object an object of the class \code{hdpGLM} generted by the function \link{hdpGLM}
-#' @param ... Additional arguments accepted are:
-#'
-#'            \code{true.beta}: a \code{data.frame} with the true values of the linear coefficients \code{beta} if they are known. The \code{data.frame} must contain a column named \code{j} with the index of the context associated with that particular linear coefficient \code{beta}. It must match the indexes used in the data set for each context. Another column named \code{k} must be provided, indicating the cluster of \code{beta}, and a column named \code{Parameter} with the name of the linear coefficients (\code{beta1}, \code{beta2}, ..., \code{beta_dx}, where \code{dx} is the number of covariates at the individual level, and beta1 is the coefficient of the intercept term). It must contain a column named \code{True} with the true value of the \code{betas}. Finally, the \code{data.frame} must contain columns with the context-level covariates as used in the estimation of the \link{hdpGLM} function (see Details below).
-#' 
-#'            \code{true.tau}: a \code{data.frame} with four columns. The first must be named \code{w} and it indicates the index of each context-level covariate, starting with 0 for the intercept term. The second column named \code{beta} must contain the indexes of the betas of individual-level covariates, starting with 0 for the intercept term. The third column named \code{Parameter} must be named \code{tau<w><beta>}, where \code{w} and \code{beta} must be the actual values displayed in the columns \code{w} and \code{beta}. Finally, it must have a column named \code{True} with the true value of the parameter.
-#'
-#' @return The function returns a list with two data.frames. The first summarizes the posterior distribution of the linear coefficients \code{beta}. The mean, median, and the 95\% HPD interval are provided. The second data.frame contains the summary of the posterior distribution of the parameter \code{tau}.
-#'
-#' @details The function hdpGLM returns a list with the samples from the posterior distribution along with other elements. That list contains an element named \code{context.cov} that connects the indexed "C" created during the estimation and the context-level covariates. So each unique context-level covariate gets an index during the estimation. The algorithm only requires the context-level covariates, but it creates such index C to help the estimation. If true.beta is provided, it must contain indexes for the context as well, which indicates the context of each specific linear coefficient \code{beta}. Such index will probably be different from the one created by the algorithm. Therefore, when the \code{true.beta} is provided, we need to connect the context index C generated by the algorithm and the column j in the true.beta data.frame in order to compare the true values and the estimated value for each context. That is why we need the values of the context-level covariates as well. The summary uses them as key to merge the true and the estimated values for each context. The true and estimated clusters are matched based on the shortest distance between the estimated posterior average and the true value in each context because the labels of the clusters in the estimation can vary, even thought the same data points are classified in the same clusters.
-#' 
-#' @export
-
-## }}}
-summary.hdpGLM <- function(object, ...)
+summary_hdpGLM <- function(object, ...)
 {
 
     x = object
@@ -127,7 +177,7 @@ summary.hdpGLM <- function(object, ...)
     ## summarise beta
     ## --------------
     ## Debug/Monitoring message --------------------------
-    msg <- paste0('\n','Generating summary for beta...',  '\n'); cat(msg)
+    ## msg <- paste0('\n','Generating summary for beta...',  '\n'); cat(msg)
     ## ---------------------------------------------------
     if(only.occupied.clusters.in.contexts)   x = hdpGLM_get_occupied_clusters(x)
     if(!is.null(true.beta)){
@@ -163,7 +213,7 @@ summary.hdpGLM <- function(object, ...)
     ## summarise tau
     ## -------------
     ## Debug/Monitoring message --------------------------
-    msg <- paste0('\n','Generating summary for tau...',  '\n'); cat(msg)
+    ## msg <- paste0('\n','Generating summary for tau...',  '\n'); cat(msg)
     ## ---------------------------------------------------
     tau.summ = x$tau %>% summary(.)
     tau.summ[[1]] = tau.summ[[1]] %>% base::data.frame(Parameter=rownames(.), ., row.names=1:nrow(.)) %>% tibble::as_tibble()
@@ -201,6 +251,129 @@ summary.hdpGLM <- function(object, ...)
         
     return(list(beta=betas, tau=taus))
 }
+## default
+## {{{ docs }}}
+
+#' Default summary function for dpGLM class
+#'
+#' This function provides a summary of the MCMC samples from the dpGLM model
+#'
+#' @param object a \code{dpGLM} object returned by the function \code{hdpGLM}
+#' @param ... The additional parameters accepted are:
+#' 
+#'            true.beta: (see \link{plot.dpGLM})
+#'
+#' @details Data points are assigned to clusters according to the highest estimated probability of belonging to that cluster
+#' 
+#' @export
+
+## }}}
+summary.dpGLM <- function(object, ...)
+{
+    print(object)
+    cat("\nSummary statistics of clusters with data points\n")
+
+    s = summary_tidy(object)
+    k = unique(s$k)
+    for (i in 1:length(k))
+    {
+        cat("\n")
+        cat("--------------------------------")
+        cat("\n")
+        cat(paste("Coefficients for cluster ", i, " (cluster label "
+                , k[i], ")", sep=''))
+        cat("\n")
+        cat("\n")
+        stmp = (
+            s
+            %>% dplyr::filter(k==k[i])
+            %>% dplyr::select(` `="term",
+                              `Post.Mean`="Mean",
+                              `Post.Median`="Median",
+                              dplyr::contains("HPD"),
+                              ## `Cluster label`="k",
+                              )
+            %>% as.data.frame
+        )
+        print(stmp)
+    }
+    cat("\n")
+    cat("--------------------------------")
+    cat("\n")
+    invisible()
+}
+## {{{ docs }}}
+
+#' Default summary function for hdpGLM class
+#'
+#' This is a generic summary function that describes the output of the function \link{hdpGLM}
+#'
+#' @param object an object of the class \code{hdpGLM} generted by the function \link{hdpGLM}
+#' @param ... Additional arguments accepted are:
+#'
+#'            \code{true.beta}: a \code{data.frame} with the true values of the linear coefficients \code{beta} if they are known. The \code{data.frame} must contain a column named \code{j} with the index of the context associated with that particular linear coefficient \code{beta}. It must match the indexes used in the data set for each context. Another column named \code{k} must be provided, indicating the cluster of \code{beta}, and a column named \code{Parameter} with the name of the linear coefficients (\code{beta1}, \code{beta2}, ..., \code{beta_dx}, where \code{dx} is the number of covariates at the individual level, and beta1 is the coefficient of the intercept term). It must contain a column named \code{True} with the true value of the \code{betas}. Finally, the \code{data.frame} must contain columns with the context-level covariates as used in the estimation of the \link{hdpGLM} function (see Details below).
+#' 
+#'            \code{true.tau}: a \code{data.frame} with four columns. The first must be named \code{w} and it indicates the index of each context-level covariate, starting with 0 for the intercept term. The second column named \code{beta} must contain the indexes of the betas of individual-level covariates, starting with 0 for the intercept term. The third column named \code{Parameter} must be named \code{tau<w><beta>}, where \code{w} and \code{beta} must be the actual values displayed in the columns \code{w} and \code{beta}. Finally, it must have a column named \code{True} with the true value of the parameter.
+#'
+#' @return The function returns a list with two data.frames. The first summarizes the posterior distribution of the linear coefficients \code{beta}. The mean, median, and the 95\% HPD interval are provided. The second data.frame contains the summary of the posterior distribution of the parameter \code{tau}.
+#'
+#' @details The function hdpGLM returns a list with the samples from the posterior distribution along with other elements. That list contains an element named \code{context.cov} that connects the indexed "C" created during the estimation and the context-level covariates. So each unique context-level covariate gets an index during the estimation. The algorithm only requires the context-level covariates, but it creates such index C to help the estimation. If true.beta is provided, it must contain indexes for the context as well, which indicates the context of each specific linear coefficient \code{beta}. Such index will probably be different from the one created by the algorithm. Therefore, when the \code{true.beta} is provided, we need to connect the context index C generated by the algorithm and the column j in the true.beta data.frame in order to compare the true values and the estimated value for each context. That is why we need the values of the context-level covariates as well. The summary uses them as key to merge the true and the estimated values for each context. The true and estimated clusters are matched based on the shortest distance between the estimated posterior average and the true value in each context because the labels of the clusters in the estimation can vary, even thought the same data points are classified in the same clusters.
+#' 
+#' @export
+
+## }}}
+summary.hdpGLM <- function(object, ...)
+{
+    print(object)
+    summ = summary_tidy(object)
+    s = summ[['beta']] %>% dplyr::filter(Parameter!='sigma') 
+    J = unique(s$j)
+    cat("\n")
+    cat("\nSummary statistics of clusters with data points in each context\n")
+    for (j in J)
+    {
+        cat("\n")
+        cat("--------------------------------")
+        cat("\n")
+        cat(paste("Coefficients and clusters for context ", j, sep=''))
+        cat("\n")
+        cat("\n")
+        stmp = (
+            s
+            %>% dplyr::filter(j==!!j) 
+            %>% dplyr::select(` `="term",
+                              `Post.Mean`="Mean",
+                              `Post.Median`="Median",
+                              dplyr::contains("HPD"),
+                              `Cluster`="k",
+                              )
+            %>% as.data.frame
+        )
+        print(stmp)
+    }
+    ## Context-level effect
+    ## --------------------
+    cat("\n")
+    cat("--------------------------------")
+    cat("\n")
+    cat("Context-level coefficients:")
+    stau = summ[['tau']] %>% dplyr::filter(Parameter!='sigma') 
+    tmp = (
+        stau
+        %>% dplyr::select( "Description", `Post.Mean`="Mean",
+                          dplyr::contains("HPD")
+                          )
+        %>% dplyr::mutate(Description = stringr::str_replace(string=Description,
+                                                             pattern="W",
+                                                             replacement="context term ")) 
+    )
+    cat('\n')
+    print(as.data.frame(tmp))
+    cat("\n")
+    cat("--------------------------------")
+    cat("\n")
+    invisible()
+}
 ## =====================================================
 ## plots
 ## =====================================================
@@ -235,7 +408,7 @@ summary.hdpGLM <- function(object, ...)
 #' # Note: this example is just for illustration. MCMC iterations are very reduced
 #' set.seed(10)
 #' n = 20
-#' data = tibble::data_frame(x1 = rnorm(n, -3),
+#' data = tibble::tibble(x1 = rnorm(n, -3),
 #'                                    x2 = rnorm(n,  3),
 #'                                    z  = sample(1:3, n, replace=TRUE),
 #'                                    y  =I(z==1) * (3 + 4*x1 - x2 + rnorm(n)) +
@@ -274,7 +447,7 @@ plot.dpGLM    <- function(x, terms=NULL, separate=FALSE, hpd=TRUE, true.beta=NUL
         tibble::as_tibble(.) %>%
         dplyr::select(-dplyr::contains("sigma"))  %>%
         tidyr::gather(key = Parameter, value=values, -k) %>%
-        dplyr::left_join(., summary(x) %>% dplyr::select(k, Parameter, term, Mean, dplyr::contains("HPD")) , by=c("k", "Parameter"))  %>% 
+        dplyr::left_join(., summary_tidy(x) %>% dplyr::select(k, Parameter, term, Mean, dplyr::contains("HPD")) , by=c("k", "Parameter"))  %>% 
         ## dplyr::full_join(., summary(x) %>% dplyr::select(term, Parameter) %>% dplyr::filter(Parameter!='sigma')   , by=c('Parameter'))  %>% 
         dplyr::mutate(Parameter = paste0(stringr::str_extract(Parameter, 'beta') , '[', stringr::str_extract(Parameter, '[0-9]+') ,']'),
                       k = paste0("Cluster~", k, sep='')) 
@@ -461,7 +634,7 @@ plot.hdpGLM <- function(x, terms=NULL, j.label=NULL, j.idx=NULL, title=NULL, sub
         }
     }
     x = hdpGLM_get_occupied_clusters(x)
-    summ = summary(x)
+    summ = summary_tidy(x)
     if (!is.null(true.beta)) {
         ## first we need to match the index of the contexts provided by the user and the one used by the algorithm (see details in the function help)
         true.beta      = true.beta  %>% dplyr::full_join(.,  x$context.cov, by=c("j"="C"))
@@ -631,7 +804,7 @@ predict.dpGLM <- function(object, new_data, ...)
     ## get linear coefficients
     K = ncol(samples$pik)
     betas = tibble::tibble(k = 1:K, pk = samples$samples_pi %>% colMeans) %>% 
-        dplyr::full_join(., samples %>% summary(., only.occupied.clusters=TRUE) , by=c("k"))  %>%
+        dplyr::full_join(., samples %>% summary_tidy(., only.occupied.clusters=TRUE) , by=c("k"))  %>%
         tidyr::drop_na() 
     Ks = betas$k %>% unique()
     yhat = matrix(rep(0, times=nrow(X)), ncol=1)
@@ -687,16 +860,21 @@ getRegMatrix_main <- function(formula, data)
 ## }}}
 print.dpGLM <- function(x, ...)
 {
+    cat(" \n")
+    cat("--------------------------------")
+    cat(" \n")
+    cat(paste0("dpGLM model object"))
+    cat("\n")
     cat(paste0("\nMaximum number of clusters activated during the estimation: ", x$max_active, sep=''))
     cat(paste0("\nNumer of MCMC iterations: ", x$n.iter, sep=''))
     cat(paste0("\nburn-in: ", x$burn.in, "\n", sep=''))
-    cat("\nSummary statistics of cluster with data points\n")
-    s = summary(x)
     ## s = s[,-ncol(s)]
-    print(s)
+    cat("--------------------------------")
+    cat(" \n")
     invisible()
 }
 ## {{{ docs }}}
+
 #' Print
 #'
 #' Generic method to print the output of the \code{hdpGLM} function
@@ -707,15 +885,57 @@ print.dpGLM <- function(x, ...)
 #' @return returns a summary of the posterior distribution of the parameters
 #'
 #' @export
+
 ## }}}
 print.hdpGLM <- function(x, ...)
 {
-    cat(paste0("\nMaximum number of clusters activated during the estimation: ", x$max_active, sep=''))
+    s = summary_tidy(x)[['beta']]
+    s = s %>% dplyr::filter(Parameter!='sigma') 
+    J = unique(s$j)
+    ## Summary
+    ## -------
+    summ_nclusters = (
+        s
+        %>% dplyr::group_by(j)
+        %>% dplyr::summarise(nclusters = length(unique(k))) 
+    )
+    context_min = (
+        summ_nclusters
+        %>% dplyr::filter(nclusters==min(nclusters))  
+        %>% dplyr::pull(j)
+    )
+    context_max = (
+        summ_nclusters
+        %>% dplyr::filter(nclusters==max(nclusters))  
+        %>% dplyr::pull(j)
+    )
+    cat(" \n")
+    cat("--------------------------------")
+    cat(" \n")
+    cat("hdpGLM Object")
+    cat(" \n")
+    summ_nclusters =  summ_nclusters  %>% dplyr::pull(nclusters)
+    cat(paste0("\nMaximum number of clusters activated during the estimation: ",
+               x$max_active, sep=''))
     cat(paste0("\nNumer of MCMC iterations: ", x$n.iter, sep=''))
-    cat(paste0("\nburn-in: ", x$burn.in, "\n", sep=''))
-    cat("\nSummary statistics of cluster with data points\n")
-    s = summary(x)
-    print(s)
+    cat(paste0("\nBurn-in: ", x$burn.in, "\n", sep=''))
+    cat("\n")
+    cat('Number of contexts : ')
+    cat(length(J))
+    cat("\n")
+    cat("\n")
+    cat('Number of clusters (summary across contexts): ')
+    cat("\n")
+    cat("\n")
+    tmp = data.frame(Average=mean(summ_nclusters),
+               Std.Dev=sd(summ_nclusters),
+               Median=median(summ_nclusters),
+               Min.=min(summ_nclusters), 
+               Max.=max(summ_nclusters)
+               )
+    print(tmp)
+    cat("--------------------------------")
+    cat(" \n")
     invisible()
 }
 ## =====================================================
@@ -755,7 +975,7 @@ summary.dpGLM_data <- function(object, ...)
 #' @param object an object of the class \code{hdpGLM_data}, which is produced by the function \code{hdpGLM_simulateData} 
 #' @param ... ignored 
 #'
-#' @return It returns a list with three elements. The first is a summary of the data, the second a data_frame with the linear coefficients \code{beta} and their values used to generate the data, and the third element is also a data_frame with the true values of \code{tau} used to generate the \code{betas}.
+#' @return It returns a list with three elements. The first is a summary of the data, the second a tibble with the linear coefficients \code{beta} and their values used to generate the data, and the third element is also a tibble with the true values of \code{tau} used to generate the \code{betas}.
 #'
 #' @export
 
@@ -790,6 +1010,7 @@ summary.hdpGLM_data <- function(object, ...)
     return(list(data = summary(x$data),beta=betas, tau=taus))
 }
 ## {{{ docs }}}
+
 #' Print
 #'
 #' Generic method to print the output of the \code{hdpGLM_simulateData} function
@@ -801,6 +1022,7 @@ summary.hdpGLM_data <- function(object, ...)
 #' @return returns a summary of the simulated data
 #'
 #' @export
+
 ## }}}
 print.dpGLM_data <- function(x, ...)
 {
@@ -844,6 +1066,7 @@ print.dpGLM_data <- function(x, ...)
     invisible()
 }
 ## {{{ docs }}}
+
 #' Print
 #'
 #' Generic method to print the output of the \code{hdpGLM_simulateData} function
@@ -855,6 +1078,7 @@ print.dpGLM_data <- function(x, ...)
 #' @return returns a summary of the simulated data
 #'
 #' @export
+
 ## }}}
 print.hdpGLM_data <- function(x, ...)
 {
@@ -989,13 +1213,13 @@ hdpGLM_match_clusters <- function(samples, true)
 ## ' @export
     if(class(samples) == 'dpGLM'){
         true = true  %>% dplyr::mutate(Parameter = as.character(Parameter))
-        tab = summary(samples) %>%
+        tab = summary_tidy(samples) %>%
             data.frame(., row.names=1:nrow(.)) %>%
             dplyr::filter(Parameter!="sigma") %>% 
             ## dplyr::select(Parameter, Cluster, Mean) %>% 
             dplyr::group_by(k) %>%
             dplyr::mutate(Parameter=as.character(Parameter),
-                          True.Cluster.match = purrr::pmap_dbl(.l = list(estimate = list(tibble::data_frame(Parameter=Parameter, Mean=Mean)),
+                          True.Cluster.match = purrr::pmap_dbl(.l = list(estimate = list(tibble::tibble(Parameter=Parameter, Mean=Mean)),
                                                                          true     = list(true) ),
                                                                .f=function(estimate, true) hdpGLM_match_clusters_aux(estimate, true) ) ) %>%
             dplyr::ungroup(.) %>%
@@ -1004,8 +1228,8 @@ hdpGLM_match_clusters <- function(samples, true)
             dplyr::arrange(True.Cluster.match) 
     }
     if(class(samples) == 'hdpGLM'){
-        estimates = summary(samples)$beta 
-        tab       = tibble::data_frame() 
+        estimates = summary_tidy(samples)$beta 
+        tab       = tibble::tibble() 
         for (j in unique(estimates$j))
         {
             truej = true[true$j==j,]
@@ -1013,7 +1237,7 @@ hdpGLM_match_clusters <- function(samples, true)
             tabj = tabj %>%
                 dplyr::filter(Parameter!="sigma")  %>%
                 dplyr::group_by(k) %>%
-                dplyr::mutate(True.Cluster.match = purrr::pmap_dbl(.l = list(estimate = list(tibble::data_frame(Parameter=Parameter, Mean=Mean)),
+                dplyr::mutate(True.Cluster.match = purrr::pmap_dbl(.l = list(estimate = list(tibble::tibble(Parameter=Parameter, Mean=Mean)),
                                                                              true     = list(truej) ),
                                                                    .f=function(estimate, true) hdpGLM_match_clusters_aux(estimate, true) ),
                               Parameter=as.character(Parameter)) %>%
@@ -1049,7 +1273,7 @@ hdpGLM_get_occupied_clusters <- function(x)
 # This function take the sample from the posterior and returns only the samples from the linear coefficients \code{beta} of the clusters with data points assigned to them.
     terms = attr(x$samples, 'terms')
     active = apply(x$pik, 1, which.max)
-    active_in_each_context = tibble::data_frame(k=active, j = x$context.index) %>%
+    active_in_each_context = tibble::tibble(k=active, j = x$context.index) %>%
         dplyr::filter(!base::duplicated(.)) %>%
         dplyr::mutate(flag = 'select')
     x$samples = x$samples %>%
@@ -1078,7 +1302,7 @@ dpGLM_get_occupied_clusters <- function(x)
 }
 dpGLM_select_non_zero <- function(x, select_perc_time_active=60)
 {
-    summary_post = summary(x)
+    summary_post = summary_tidy(x)
     summary_post = data.frame(parameter=row.names(summary_post),summary_post, row.names=1:nrow(summary_post))  %>% tibble::as_tibble()
 
     clusters_active = summary_post %>%
@@ -1128,7 +1352,7 @@ dpGLM_select_non_zero <- function(x, select_perc_time_active=60)
 #' # Note: this example is just for illustration. MCMC iterations are very reduced
 #' set.seed(10)
 #' n = 20
-#' data.context1 = tibble::data_frame(x1 = rnorm(n, -3),
+#' data.context1 = tibble::tibble(x1 = rnorm(n, -3),
 #'                                    x2 = rnorm(n,  3),
 #'                                    z  = sample(1:3, n, replace=TRUE),
 #'                                    y  =I(z==1) * (3 + 4*x1 - x2 + rnorm(n)) +
@@ -1136,7 +1360,7 @@ dpGLM_select_non_zero <- function(x, select_perc_time_active=60)
 #'                                        I(z==3) * (3 - 4*x1 - x2 + rnorm(n)) ,
 #'                                    w = 20
 #'                                    ) 
-#' data.context2 = tibble::data_frame(x1 = rnorm(n, -3),
+#' data.context2 = tibble::tibble(x1 = rnorm(n, -3),
 #'                                    x2 = rnorm(n,  3),
 #'                                    z  = sample(1:2, n, replace=TRUE),
 #'                                    y  =I(z==1) * (1 + 3*x1 - 2*x2 + rnorm(n)) +
@@ -1174,7 +1398,7 @@ plot_tau <- function(samples, X=NULL, W=NULL, title=NULL, true.tau=NULL, show.al
     Dw = samples$context.cov %>% ncol - 1
     Dx = samples$samples %>% colnames %>% stringr::str_detect(., pattern="beta") %>% sum - 1
     terms = attr(samples$tau, "terms")   %>% dplyr::rename(beta.label = beta)
-    summary.tau = summary(samples)$tau
+    summary.tau = summary_tidy(samples)$tau
     if (!is.null(true.tau)) {
         summary.tau = summary.tau %>%
             dplyr::left_join(., true.tau, by=c("Parameter", "w", "beta"))  
@@ -1315,9 +1539,9 @@ plot_beta <- function(samples, X=NULL, context.id=NULL, true.beta=NULL, title=NU
     ## get summary of the estimation
     ## -----------------------------
     if (!is.null(true.beta)) {
-        summ   = summary(samples, true.beta=true.beta)
+        summ   = summary_tidy(samples, true.beta=true.beta)
     }else{
-        summ   = summary(samples)
+        summ   = summary_tidy(samples)
     }
     beta   = summ$beta %>% dplyr::filter(term == !!X) %>% dplyr::select(Parameter)  %>% unique %>% dplyr::pull(.)
     xlim   = summ$beta %>% dplyr::summarise(lower = min(HPD.lower), upper=max(HPD.upper)) 
@@ -1429,7 +1653,7 @@ plot_beta <- function(samples, X=NULL, context.id=NULL, true.beta=NULL, title=NU
 #' # Note: this example is just for illustration. MCMC iterations are very reduced
 #' set.seed(10)
 #' n = 20
-#' data.context1 = tibble::data_frame(x1 = rnorm(n, -3),
+#' data.context1 = tibble::tibble(x1 = rnorm(n, -3),
 #'                                    x2 = rnorm(n,  3),
 #'                                    z  = sample(1:3, n, replace=TRUE),
 #'                                    y  =I(z==1) * (3 + 4*x1 - x2 + rnorm(n)) +
@@ -1437,7 +1661,7 @@ plot_beta <- function(samples, X=NULL, context.id=NULL, true.beta=NULL, title=NU
 #'                                        I(z==3) * (3 - 4*x1 - x2 + rnorm(n)) ,
 #'                                    w = 20
 #'                                    ) 
-#' data.context2 = tibble::data_frame(x1 = rnorm(n, -3),
+#' data.context2 = tibble::tibble(x1 = rnorm(n, -3),
 #'                                    x2 = rnorm(n,  3),
 #'                                    z  = sample(1:2, n, replace=TRUE),
 #'                                    y  =I(z==1) * (1 + 3*x1 - 2*x2 + rnorm(n)) +
@@ -1489,7 +1713,7 @@ plot_pexp_beta <- function(samples, X=NULL, W=NULL, pred.pexp.beta=FALSE, ncol.b
     ##     dplyr::select(W)  %>%
     ##     dplyr::filter(!duplicated(.)) %>%
     ##     dplyr::left_join(., samples$context.cov) 
-    summ = summary(samples)
+    summ = summary_tidy(samples)
     taus  = summ$tau
     betas = summ$beta %>%
         dplyr::filter(Parameter != 'sigma')  %>%
@@ -1571,7 +1795,7 @@ plot_pexp_beta <- function(samples, X=NULL, W=NULL, pred.pexp.beta=FALSE, ncol.b
 }
 fit_pexp_beta <- function(samples, W=NULL)
 {
-    betas.list = summary(samples)$tau %>%
+    betas.list = summary_tidy(samples)$tau %>%
                                 dplyr::mutate(Description = stringr::str_replace_all(string=Description, pattern="of |Effect of | on", replacement=""))  %>%
                                 tidyr::separate(., col=Description, into=c("W", 'beta'), sep=' ') %>%
                                 base::split(., .$beta) %>%
@@ -1700,7 +1924,7 @@ hdpglm_get_new_data          <- function(data, n, x, cat.values=NULL)
 #' # Note: this example is just for illustration. MCMC iterations are very reduced
 #' set.seed(10)
 #' n = 20
-#' data.context1 = tibble::data_frame(x1 = rnorm(n, -3),
+#' data.context1 = tibble::tibble(x1 = rnorm(n, -3),
 #'                                    x2 = rnorm(n,  3),
 #'                                    z  = sample(1:3, n, replace=TRUE),
 #'                                    y  =I(z==1) * (3 + 4*x1 - x2 + rnorm(n)) +
@@ -1708,7 +1932,7 @@ hdpglm_get_new_data          <- function(data, n, x, cat.values=NULL)
 #'                                        I(z==3) * (3 - 4*x1 - x2 + rnorm(n)) ,
 #'                                    w = 20
 #'                                    ) 
-#' data.context2 = tibble::data_frame(x1 = rnorm(n, -3),
+#' data.context2 = tibble::tibble(x1 = rnorm(n, -3),
 #'                                    x2 = rnorm(n,  3),
 #'                                    z  = sample(1:2, n, replace=TRUE),
 #'                                    y  =I(z==1) * (1 + 3*x1 - 2*x2 + rnorm(n)) +
