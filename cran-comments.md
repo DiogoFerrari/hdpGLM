@@ -5,7 +5,8 @@
 
 ## R CMD check results
 
-0 errors | 0 warnings | 1 note
+0 errors | 0 warnings | 2 note
 
 * This is a new release.
 * "1 Note" refers to the size of the package.
+* "1 Note" refers to number of depedencies (23)

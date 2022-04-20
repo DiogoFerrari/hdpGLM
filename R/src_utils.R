@@ -77,9 +77,9 @@ NULL
 .onAttach<- function(libname, pkgname)
 {
     packageStartupMessage(paste0('
-## =======================================================================
+## ===============================================================
 ## Hierarchial Dirichlet Process Generalized Linear Model (hdpGLM)
-## ==================================================================
+## ===============================================================
 
 Author: Diogo Ferrari
 Usage : http://www.diogoferrari.com/hdpGLM/index.html

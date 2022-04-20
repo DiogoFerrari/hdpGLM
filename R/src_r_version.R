@@ -36,7 +36,6 @@ print.accept.rate <- function(mh.accept.info, accepted, Z, n.display, iter, mcmc
     return(mh.accept.info)
 }
 
-
 ## }}}
 ## {{{ constants }}}
 
