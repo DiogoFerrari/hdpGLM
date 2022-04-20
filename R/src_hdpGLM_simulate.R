@@ -322,7 +322,8 @@ hdpGLM_simulateParameters <- function(nCov, K=NULL, nCovj=NULL, J=NULL, pi=NULL,
             epsilon   <- stats::rnorm(n=n[k], 0, 1)
 
             if(nCov!=0){
-                X_tmp <- MASS::mvrnorm(n=n[k], mu = rep(0,nCov), Sigma = diag(nCov))
+                X_tmp <- MASS::mvrnorm(n=n[k], mu = rep(0,nCov),
+                                       Sigma = diag(nCov))
                 y_tmp <- base::cbind(1,X_tmp) %*% betas[[j]][[k]] + epsilon
             }else{
                 X_tmp <- NULL
@@ -337,7 +338,9 @@ hdpGLM_simulateParameters <- function(nCov, K=NULL, nCovj=NULL, J=NULL, pi=NULL,
     if(nCov!=0){
         data = data.frame(y=y, X=X, C=C) %>%
             stats::setNames(., nm = c('y', paste0('X', 1:nCov, sep=''), 'C')) %>%
-            dplyr::full_join(., parameters$W %>% tibble::as_data_frame(.) %>% dplyr::mutate(C=1:J), by='C' )
+            dplyr::full_join(., parameters$W %>%
+                                tibble::as_tibble()  %>% 
+                                dplyr::mutate(C=1:J), by='C' )
     }else{
         data  = data.frame(y = y, C=C)
     }
@@ -362,7 +365,8 @@ hdpGLM_simulateParameters <- function(nCov, K=NULL, nCovj=NULL, J=NULL, pi=NULL,
             epsilon  <- stats::rnorm(n=n[k], 0, 1)
             
             if(nCov!=0){
-                X_tmp  <- MASS::mvrnorm(n=n[k], mu = rep(0,nCov), Sigma = diag(nCov))
+                X_tmp  <- MASS::mvrnorm(n=n[k], mu = rep(0,nCov),
+                                        Sigma = diag(nCov))
                 nu     <- base::cbind(1,X_tmp) %*% betas[[j]][[k]]
                 p_tmp  <- 1/(1+exp(-nu))
             }else{
@@ -371,7 +375,8 @@ hdpGLM_simulateParameters <- function(nCov, K=NULL, nCovj=NULL, J=NULL, pi=NULL,
                 p_tmp  <- 1/(1+exp(-nu))
             }
             y_tmp = rep(NA, n[k])
-            for (i in 1:n[k]) y_tmp[i] = stats::rbinom(n=1, size=1, prob=p_tmp[i])
+            for (i in 1:n[k]) y_tmp[i] = stats::rbinom(n=1, size=1,
+                                                       prob=p_tmp[i])
 
             if(!is.null(X_tmp)) X = base::rbind(X, X_tmp)
             Z = c(Z, rep(k, n[k]))
@@ -382,7 +387,9 @@ hdpGLM_simulateParameters <- function(nCov, K=NULL, nCovj=NULL, J=NULL, pi=NULL,
     if(nCov!=0){
         data = data.frame(y=y, X=X, C=C) %>%
             stats::setNames(., nm = c('y', paste0('X', 1:nCov, sep=''), 'C')) %>%
-            dplyr::full_join(., parameters$W %>% tibble::as_data_frame(.) %>% dplyr::mutate(C=1:J), by='C' )
+            dplyr::full_join(., parameters$W %>%
+                                tibble::as_tibble()  %>% 
+                                dplyr::mutate(C=1:J), by='C' )
     }else{
         data  = data.frame(y = y, C=C)
     }
@@ -502,7 +509,7 @@ hdpGLM_simulateData <- function(n, K, nCov=2, nCovj=0, J=1, family='gaussian',
 
 ## {{{ docs }}}
 
-#' Simulate the parameters that can be used to simulate data sets from the dpGLM or hdpGLM
+#' Simulate the parameters of the model
 #'
 #' This function generates parameters that can be used to simulate data sets from the Hierarchical Dirichlet Process of Generalized Linear Model (hdpGLM) or dpGLM
 #'

@@ -2,7 +2,7 @@
 % Please edit documentation in R/src_summaries.R
 \name{summary.hdpGLM}
 \alias{summary.hdpGLM}
-\title{Default summary function for hdpGLM class}
+\title{Summary for hdpGLM class}
 \usage{
 \method{summary}{hdpGLM}(object, ...)
 }

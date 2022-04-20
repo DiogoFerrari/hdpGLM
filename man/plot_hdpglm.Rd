@@ -2,7 +2,7 @@
 % Please edit documentation in R/src_summaries.R
 \name{plot_hdpglm}
 \alias{plot_hdpglm}
-\title{Plot posterior distribution of tau and posterior expectation of beta}
+\title{Plot posterior distributions}
 \usage{
 plot_hdpglm(
   samples,
@@ -78,7 +78,9 @@ plot_hdpglm(
 \item{tau.xlab}{string, the label of the x-axis for the plot with tau}
 }
 \description{
-this function creates a plot with two grids. One is the grid with posterior expectation of betas as function of context-level covariates. The other is the posterior distribution of tau
+this function creates a plot with two grids. One is the grid with posterior
+expectation of betas as function of context-level covariates. The other is
+the posterior distribution of tau
 }
 \examples{
 

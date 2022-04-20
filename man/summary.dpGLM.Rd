@@ -2,7 +2,7 @@
 % Please edit documentation in R/src_summaries.R
 \name{summary.dpGLM}
 \alias{summary.dpGLM}
-\title{Default summary function for dpGLM class}
+\title{Summary for dpGLM class}
 \usage{
 \method{summary}{dpGLM}(object, ...)
 }

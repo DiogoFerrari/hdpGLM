@@ -2,7 +2,7 @@
 % Please edit documentation in R/src_summaries.R
 \name{plot_beta}
 \alias{plot_beta}
-\title{Plot posterior distribution of beta for each context}
+\title{Plot beta posterior distribution}
 \usage{
 plot_beta(
   samples,

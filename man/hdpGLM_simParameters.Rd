@@ -2,7 +2,7 @@
 % Please edit documentation in R/src_hdpGLM_simulate.R
 \name{hdpGLM_simParameters}
 \alias{hdpGLM_simParameters}
-\title{Simulate the parameters that can be used to simulate data sets from the dpGLM or hdpGLM}
+\title{Simulate the parameters of the model}
 \usage{
 hdpGLM_simParameters(
   K,

@@ -2,7 +2,7 @@
 % Please edit documentation in R/src_main.R
 \name{hdpGLM}
 \alias{hdpGLM}
-\title{Hierarchical Dirichlet Process GLM}
+\title{Fit Hierarchical Dirichlet Process GLM}
 \usage{
 hdpGLM(
   formula1,

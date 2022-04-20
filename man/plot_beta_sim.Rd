@@ -2,7 +2,7 @@
 % Please edit documentation in R/src_summaries.R
 \name{plot_beta_sim}
 \alias{plot_beta_sim}
-\title{Plot simulated data (for hdpGLM data only)}
+\title{Plot simulated data}
 \usage{
 plot_beta_sim(data, w.idx, ncol = NULL)
 }

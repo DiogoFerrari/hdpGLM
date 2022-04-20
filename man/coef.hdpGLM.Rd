@@ -2,7 +2,7 @@
 % Please edit documentation in R/src_summaries.R
 \name{coef.hdpGLM}
 \alias{coef.hdpGLM}
-\title{Default function to extract coefficients from hdpGLM fitted model}
+\title{Extract hdpGLM fitted coefficients}
 \usage{
 \method{coef}{hdpGLM}(object, ...)
 }

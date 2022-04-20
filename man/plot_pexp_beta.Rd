@@ -2,7 +2,7 @@
 % Please edit documentation in R/src_summaries.R
 \name{plot_pexp_beta}
 \alias{plot_pexp_beta}
-\title{Plot posterior expectation of beta in each context}
+\title{Plot beta posterior expectation}
 \usage{
 plot_pexp_beta(
   samples,

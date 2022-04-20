@@ -2,7 +2,7 @@
 % Please edit documentation in R/src_summaries.R
 \name{summary_tidy}
 \alias{summary_tidy}
-\title{Default Summary function for dpGLM class}
+\title{Tidy summary}
 \usage{
 summary_tidy(object, ...)
 }

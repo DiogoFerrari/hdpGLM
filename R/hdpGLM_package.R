@@ -1,0 +1,40 @@
+#' hdpGLM: A package for computating Hierarchical Dirichlet Process Generalized
+#' Linear Models
+#'
+#'
+#' The package implements a hierarchical Dirichlet process Generalized Linear
+#' Model as proposed in Ferrari (2020) Modeling Context-Dependent Latent Effect
+#' Heterogeneity, which expands the non-parametric Bayesian models proposed in
+#' Mukhopadhyay and Gelfand (1997), Hannah (2011), and Heckman and
+#' Vytlacil (2007) to deal with context-dependent cases. The package can be used
+#' to estimate latent heterogeneity in the marginal effect of GLM linear coeffi-
+#' cients, to cluster data points based on that latent heterogeneity, and to
+#' investigate the occurrence of Simpson’s Paradox due to latent or omitted fea-
+#' tures. 
+#'
+#' @description 
+#'
+#' Further information is available at:
+#' http://www.diogoferrari.com/hdpGLM/index.html
+#' 
+#' References:
+#' 
+#' - Ferrari, D. (2020). Modeling Context-Dependent Latent Effect Heterogeneity.
+#'   Political Analysis, 28(1), 20–46.
+#' 
+#' - Mukhopadhyay, S., & Gelfand, A. E. (1997). Dirichlet Process Mixed Generali-
+#'   zed Linear Models. Journal of the American Statistical Association, 92(438),
+#'   633–639.
+#'
+#' - Hannah, L. A., Blei, D. M., & Powell, W. B. (2011). Dirichlet Process Mix-
+#'   tures of Generalized Linear Models. Journal of Machine Learning Research,
+#'   12(Jun), 1923–1953.
+#'
+#' - Heckman, J. J., & Vytlacil, E. J. (2007). Econometric Evaluation of Social
+#'   Programs, Part I: Causal Models, Structural Models and Econometric Policy
+#'   Evaluation. Handbook of Econometrics, 6(), 4779–4874.
+#'
+#'
+#' @docType package
+#' @name hdpGLM_package
+NULL

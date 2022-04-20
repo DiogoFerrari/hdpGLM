@@ -9,13 +9,20 @@
 \arguments{
 \item{object}{outcome of the function hdpLGM}
 
-\item{new_data}{data frame with the values of the covariates that are going to be used to generate the predicted/fitted values. The posterior mean is used to create the predicted values}
+\item{new_data}{data frame with the values of the covariates that are going
+to be used to generate the predicted/fitted values. The posterior mean is
+used to create the predicted values}
 
-\item{...}{\code{family} : a string with the family of the output variable: \code{gaussian} (default), \code{binomial}, etc...}
+\item{...}{\code{family} : a string with the family of the output variable:
+\code{gaussian} (default), \code{binomial}, etc...}
 }
 \value{
-It returns a data.frame with the fitted values for the outcome variable, which are produced using the estimated posterior expectation of the linear coefficients \code{beta}.
+It returns a data.frame with the fitted values for the outcome
+variable, which are produced using the estimated posterior expectation of the
+linear coefficients \code{beta}.
 }
 \description{
-Function returns the predicted (fitted) values of the outcome variable using the estimated posterior expectation of the linear covariate betas produced by the \code{hdpGLM} function
+Function returns the predicted (fitted) values of the outcome variable using
+the estimated posterior expectation of the linear covariate betas produced by
+the \code{hdpGLM} function
 }

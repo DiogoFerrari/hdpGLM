@@ -256,6 +256,18 @@ dphGLM_update_sigma_gaussian_xxr  <- function(yk,Xk, Nk, betak, fix){
 ## }}}
 ## {{{ HMC   : betas (binomial family) }}}
 
+log_bin <- function(y, B)
+{
+    log1B = log(1+B)
+    return(sum(y*log1B) - sum((1-y)*log1B))
+}
+log_mvnorm <- function(beta, mu_beta, Sigma_beta)
+{
+    return(
+        mvtnorm::dmvnorm(c(beta), mean=c(mu_beta), sigma=Sigma_beta,
+                         log = TRUE)
+    )
+}
 U_xxr      <- function(theta,fix){
     X    = fix$X ## note: this is X = Xk
     y    = fix$y ## note: this is y = yk
@@ -263,9 +275,14 @@ U_xxr      <- function(theta,fix){
     Sigma_beta     = fix$Sigma_beta
     Sigma_beta.inv = solve(Sigma_beta)
     mu_beta       = matrix(fix$mu_beta, nrow=length(fix$mu_beta))
+    expXbeta      = exp(- X %*% beta)
 
-    d              = nrow(mu_beta) -1       ## -1 to exclude the intercept
-    log.p = (-(d+1)/2)*log(2*3.141593) - (1/2)*log(det(Sigma_beta)) - (1/2)*t(beta - mu_beta) %*% Sigma_beta.inv %*% (beta - mu_beta) - sum(y*log(1+exp(- X %*% beta))) - sum((1-y)*log(1+exp( X %*% beta)))
+    ## d              = nrow(mu_beta) -1       ## -1 to exclude the intercept
+    ## log.p = (-(d+1)/2)*log(2*3.141593) - (1/2)*log(det(Sigma_beta)) -
+    ##     (1/2)*t(beta - mu_beta) %*% Sigma_beta.inv %*% (beta - mu_beta) -
+    ##     sum(y*log(1+expXbeta)) - sum((1-y)*log(1+expXbeta))
+    log.p = log_mvnorm(beta, mu_beta, Sigma_beta) - log_bin(y, expXbeta)
+        
 
     ## checking overflow
     ## print(  'betak')
@@ -440,7 +457,8 @@ hmc_update_xxr <- function(theta_t, epsilon, L, U_xxr, grad_U_xxr, G_xxr, fix)
 }
 
 ## MCMC
-dpGLM_mcmc_xxr  <- function(y, X, weights, K, fix, family, mcmc, epsilon, leapFrog, n.display, hmc.iter=1)
+dpGLM_mcmc_xxr  <- function(y, X, weights, K, fix, family, mcmc, epsilon,
+                            leapFrog, n.display, hmc.iter=1)
 {
     ## Constants
     ## ---------

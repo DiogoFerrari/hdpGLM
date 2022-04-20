@@ -2,7 +2,7 @@
 % Please edit documentation in R/src_summaries.R
 \name{coef.dpGLM}
 \alias{coef.dpGLM}
-\title{Default function to extract coefficients from dpGLM fitted model}
+\title{Extract dpGLM fitted coefficients}
 \usage{
 \method{coef}{dpGLM}(object, ...)
 }

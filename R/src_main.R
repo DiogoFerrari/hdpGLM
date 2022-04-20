@@ -34,7 +34,8 @@
 {
     ## check type of 'fix'
     ## ------------------
-    if (class(fix) != 'list')
+    ## if (class(fix) != 'list')
+    if (!is(fix, 'list'))
     {
         stop("The parameter \'fix\" must be a list")
     }
@@ -110,7 +111,7 @@ getContextIndices <- function(W)
 {
     ## options(warn=-1)
     ## on.exit(options(warn=0))
-    W = W %>% tibble::as_data_frame(.)
+    W = W %>% tibble::as_tibble() 
     cols = names(W)
     C = W %>%  
         dplyr::distinct(.) %>%
@@ -125,7 +126,7 @@ getUniqueW <- function(W, C)
 {
     return(
         base::cbind(W,C) %>%
-        tibble::as_data_frame(.)  %>%
+        tibble::as_tibble(.) %>%
         dplyr::filter(!base::duplicated(W)) %>%
         dplyr::arrange(C) %>% 
         dplyr::select(-C) %>%
@@ -146,7 +147,7 @@ hdpglm_exclude_nas <- function(data, formula1, formula2, context.id)
 
 ## {{{ doc }}}
 
-#' Hierarchical Dirichlet Process GLM
+#' Fit Hierarchical Dirichlet Process GLM
 #'
 #' The function estimates a semi-parametric mixture of Generalized
 #' Linear Models. It uses a (hierarchical) Dependent Dirichlet Process
@@ -299,12 +300,13 @@ hdpGLM <- function(formula1, formula2=NULL, data, context.id=NULL, weights=NULL,
         data    = hdpglm_exclude_nas(data, formula1, formula2, context.id)
     }else{
         ## Debug/Monitoring message --------------------------
-        msg <- paste0('\n','Note: only action currently available to deal with NA\'s is \'exclude\'',  '\n'); cat(msg)
+        msg <- paste0('\n','Note: only action currently available to deal ',
+                      'with NA\'s is \'exclude\'',  '\n'); cat(msg)
         ## ---------------------------------------------------
     }
 
-    ## ## construct the regression matrices (data.frames) based on the formula provided
-    ## ## -----------------------------------------------------------------------------
+    ## ## construct the reg matrices (data.frames) based on the formula provided
+    ## ## ----------------------------------------------------------------------
     func.call <- match.call(expand.dots = FALSE)
     mat     = .getRegMatrix(func.call, data, weights, formula_number=1)
     y       = mat$y
@@ -319,14 +321,18 @@ hdpGLM <- function(formula1, formula2=NULL, data, context.id=NULL, weights=NULL,
         C = getContextIndices(W)
         W = getUniqueW(W, C)
     } 
+    J = length(unique(C))
 
     ## get constants
     ## -------------
-    d   = ncol(X)  - 1                        # d is the number of covars, we subtract the intercept as X has a column with ones
-    Dw  = unlist( ifelse(is.null(W), list(NULL), list(ncol(W) - 1)) ) # list and unlist only b/c ifelse() do not allow to return NULL
+    ## d is the number of covars; subtract the intercept as X has a col with 1's
+    d   = ncol(X)  - 1      
+    ## list and unlist only b/c ifelse() do not allow to return NULL
+    Dw  = unlist( ifelse(is.null(W), list(NULL), list(ncol(W) - 1)) ) 
 
     if (is.null(fix)) {
-        fix = .hdpGLM_get_constants(family=family, d=d, Dw=Dw) # list with values of the parameters of the priors/hyperpriors
+        ## list with values of the parameters of the priors/hyperpriors
+        fix = .hdpGLM_get_constants(family=family, d=d, Dw=Dw)
     }else {
         .dphGLM_check_constants(family=family, d=d, Dw=Dw, fix=fix)
     }
@@ -341,17 +347,28 @@ hdpGLM <- function(formula1, formula2=NULL, data, context.id=NULL, weights=NULL,
     if (is.null(W))
     {
         if (family=='binomial') {
-            if (imp.bin=="R")   samples =  dpGLM_mcmc_xxr( y, X, weights, K, fix,  family, mcmc, epsilon, leapFrog, n.display, hmc_iter)
-            if (imp.bin=="cpp") samples =  dpGLM_mcmc    ( y, X, weights, K, fix,  family, mcmc, epsilon, leapFrog, n.display, hmc_iter) 
+            if (imp.bin=="R")   samples = dpGLM_mcmc_xxr( y, X, weights, K, fix,
+                                                         family, mcmc, epsilon,
+                                                         leapFrog, n.display,
+                                                         hmc_iter)
+            if (imp.bin=="cpp") samples = dpGLM_mcmc   ( y, X, weights, K, fix,
+                                                        family, mcmc, epsilon,
+                                                        leapFrog, n.display,
+                                                        hmc_iter) 
         }else{
-            samples        =  dpGLM_mcmc( y, X,       weights, K, fix,  family, mcmc, epsilon, leapFrog, n.display, hmc_iter) #
+            samples =  dpGLM_mcmc( y, X, weights, K, fix,  family, mcmc,
+                                  epsilon, leapFrog, n.display, hmc_iter) 
         }
     }else
     {
         if (family=='binomial') {
-            stop("\n\nHierarchical version of hdpGLM is not implemented for binomial family yet. \n\nIn the current implementation, you can use the binomial family to estimate hdpGLM in a single context only. \n\n")
+            stop(paste0("\n\nHierarchical version of hdpGLM is not implemented",
+                        " for binomial family yet. \n\nIn the current",
+                        " implementation, you can use the binomial family",
+                        " to estimate hdpGLM in a single context only. \n\n"))
         }else{
-            samples        =  hdpGLM_mcmc(y, X, W, C, weights, K, fix, family, mcmc, epsilon, leapFrog, n.display, hmc_iter)
+            samples =  hdpGLM_mcmc(y, X, W, C, weights, K, fix, family, mcmc,
+                                   epsilon, leapFrog, n.display, hmc_iter)
         }
     }
     T.mcmc  = Sys.time() - T.mcmc
@@ -361,16 +378,30 @@ hdpGLM <- function(formula1, formula2=NULL, data, context.id=NULL, weights=NULL,
     ## -------------------------------------------
     if (is.null(W)){
         if(family=='gaussian'){
-            colnames(samples$samples)  <- c('k', paste0('beta',1:(ncol(samples$samples)-2),  sep=''),'sigma')
+            colnames(samples$samples)  <- c('k',
+                                            paste0('beta',
+                                                   1:(ncol(samples$samples)-2),
+                                                   sep=''),'sigma')
         }else{
-            colnames(samples$samples)  <- c('k', paste0('beta',1:(ncol(samples$samples)-1),  sep=''))
+            colnames(samples$samples)  <- c('k',
+                                            paste0('beta',
+                                                   1:(ncol(samples$samples)-1),
+                                                   sep=''))
         }
     }else{
-        colnames(samples$tau)      <- paste0(rep(paste0('tau[', 0:(Dw)), d+1), "][", unlist(lapply(0:(d), function(d) rep(d, Dw+1))), ']',sep='')
+        colnames(samples$tau)      <- paste0(rep(paste0('tau[', 0:(Dw)), d+1),
+                                             "][",
+                                             unlist(
+                                                 lapply(0:(d),
+                                                        function(d)
+                                                            rep(d, Dw+1))),
+                                             ']',sep='')
         if(family=='gaussian'){
-            colnames(samples$samples)  <- c('k', 'j', paste0('beta[',0:(d), "]",  sep=''), 'sigma')
+            colnames(samples$samples)  <- c('k', 'j', paste0('beta[',0:(d), "]",
+                                                             sep=''), 'sigma')
         }else{
-            colnames(samples$samples)  <- c('k', 'j', paste0('beta[',0:(d), "]", sep=''))
+            colnames(samples$samples)  <- c('k', 'j', paste0('beta[',0:(d), "]",
+                                                             sep=''))
         }
     }
 
@@ -378,7 +409,10 @@ hdpGLM <- function(formula1, formula2=NULL, data, context.id=NULL, weights=NULL,
     if (!is.null(W)){
         samples$tau                       = coda::as.mcmc(samples$tau)
         samples$context.index             = C
-        samples$context.cov               = tibble::as_data_frame(cbind(C=sort(unique(C)), W))  %>% dplyr::select(-dplyr::contains("Intercept"))
+        samples$context.cov               = (
+          tibble::as_tibble(cbind(C=sort(unique(C)), W))
+            %>% dplyr::select(-dplyr::contains("Intercept"))  
+        )
         if (!is.null(context.id)) {
             context = cbind(C=C, data %>%
                                  dplyr::select(context.id) )  %>%
@@ -400,7 +434,7 @@ hdpGLM <- function(formula1, formula2=NULL, data, context.id=NULL, weights=NULL,
     attr(samples$samples, 'mcpar')[2] = mcmc$n.iter
     class(samples)                    = ifelse(is.null(W), 'dpGLM', 'hdpGLM')
     ## include context-level term names
-    if (class(samples) == 'hdpGLM') {
+    if (is(samples, 'hdpGLM')) {
         tau.name = samples$tau %>% colnames
         tau.idx  = tau.name  %>%
             stringr::str_extract(string=.,
@@ -434,6 +468,7 @@ hdpGLM <- function(formula1, formula2=NULL, data, context.id=NULL, weights=NULL,
     samples$time_elapsed = T.mcmc
     attr(samples, 'formula1') = formula1
     attr(samples, 'formula2') = formula2
+    attr(samples, 'family') = family
     samples$data=data
     return(samples)
 }
