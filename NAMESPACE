@@ -2,10 +2,6 @@
 
 S3method(coef,dpGLM)
 S3method(coef,hdpGLM)
-S3method(family,dpGLM)
-S3method(family,hdpGLM)
-S3method(nobs,dpGLM)
-S3method(nobs,hdpGLM)
 S3method(plot,dpGLM)
 S3method(plot,hdpGLM)
 S3method(predict,dpGLM)
