@@ -16,11 +16,11 @@
 summary_tidy <- function(object, ...)
 {
     ## if (class(object)=='dpGLM') {
-    if (is(object,'dpGLM')) {
+    if (methods::is(object,'dpGLM')) {
         return(summary_dpGLM(object))
     }
     ## if (class(object)=='hdpGLM') {
-    if (is(object, 'hdpGLM')) {
+    if (methods::is(object, 'hdpGLM')) {
         return(summary_hdpGLM(object))
     }
 }
@@ -1328,7 +1328,7 @@ hdpGLM_match_clusters <- function(samples, true)
 ## ' @return The function returns a table with the labels of the clusters from the MCMC estimation provided by the function \code{\link{hdpGLM}} and the labels used to generate the data, which is in the column \code{True.Cluster.match} of the output. The output table also contains the true value of the linear coefficients that were used to generate the data.
 ## '
 ## ' @export
-    if(is(samples, 'dpGLM')){
+    if(methods::is(samples, 'dpGLM')){
         true = true  %>% dplyr::mutate(Parameter = as.character(Parameter))
         tab = summary_tidy(samples) %>%
             data.frame(., row.names=1:nrow(.)) %>%
@@ -1344,7 +1344,7 @@ hdpGLM_match_clusters <- function(samples, true)
             dplyr::select(k, True.Cluster.match, Parameter, True, Mean, Median, SD, dplyr::contains("HPD"))  %>%
             dplyr::arrange(True.Cluster.match) 
     }
-    if(is(samples, 'hdpGLM')){
+    if(methods::is(samples, 'hdpGLM')){
         estimates = summary_tidy(samples)$beta 
         tab       = tibble::tibble() 
         for (j in unique(estimates$j))

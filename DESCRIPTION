@@ -11,28 +11,29 @@ Encoding: UTF-8
 LazyData: true
 LinkingTo: Rcpp, RcppArmadillo
 Imports: coda,
+    data.table,
     dplyr,
+    formula.tools,
+    ggjoy,
+    ggplot2,
+    stringr,
+    ggridges,
+    ggpubr,
     Hmisc,
     isotone,
     questionr,
     LaplacesDemon,
     magrittr,
+	methods,
     MASS,
     MCMCpack,
     mvtnorm,
     Rcpp,
-    purrr,
     rprojroot,
-    tidyverse,
+    purrr,
     tibble,
-    data.table,
-    ggjoy,
-    ggplot2,
-    stringr,
     tidyr,
-    ggridges,
-    ggpubr,
-    formula.tools
+    tidyverse
 RoxygenNote: 7.1.1
 Suggests: 
     knitr,

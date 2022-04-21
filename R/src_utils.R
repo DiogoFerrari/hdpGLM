@@ -3,6 +3,9 @@
 #' @importFrom Rcpp sourceCpp
 #' @importFrom magrittr %>%
 #' @importFrom Hmisc wtd.quantile
+#' @importFrom stats median
+#' @importFrom stats sd
+#' @importFrom utils head
 NULL
  
 
@@ -169,6 +172,7 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(c(".",
                                                         "Parameter.label",
                                                         "beta.label",
                                                         "value",
+                                                        "nclusters",
                                                         "tau.label",
                                                         "w.label",
                                                         "beta.exp",

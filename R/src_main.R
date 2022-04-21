@@ -35,7 +35,7 @@
     ## check type of 'fix'
     ## ------------------
     ## if (class(fix) != 'list')
-    if (!is(fix, 'list'))
+    if (!methods::is(fix, 'list'))
     {
         stop("The parameter \'fix\" must be a list")
     }
@@ -434,7 +434,7 @@ hdpGLM <- function(formula1, formula2=NULL, data, context.id=NULL, weights=NULL,
     attr(samples$samples, 'mcpar')[2] = mcmc$n.iter
     class(samples)                    = ifelse(is.null(W), 'dpGLM', 'hdpGLM')
     ## include context-level term names
-    if (is(samples, 'hdpGLM')) {
+    if (methods::is(samples, 'hdpGLM')) {
         tau.name = samples$tau %>% colnames
         tau.idx  = tau.name  %>%
             stringr::str_extract(string=.,
