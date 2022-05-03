@@ -197,7 +197,7 @@ summary.dpGLM <- function(object, ...)
         cat("\n")
         stmp = (
             s
-            %>% dplyr::filter(k==k[i])
+            %>% dplyr::filter(k==!!k[i])
             %>% dplyr::select(` `="term",
                               `Post.Mean`="Mean",
                               `Post.Median`="Median",
@@ -947,6 +947,7 @@ print.hdpGLM <- function(x, ...)
     cat(" \n")
     invisible()
 }
+
 ## ** coef
 
 

@@ -1,4 +1,31 @@
 
+get_mcmc_epsilon <- function(mcmc)
+{
+    if ('epsilon' %in% names(mcmc)) {
+        epsilon=epsilon
+    }else {
+        epsilon=0.01
+    } 
+    return(epsilon)
+}
+get_mcmc_leapFrog <- function(mcmc)
+{
+    if ('leapFrog' %in% names(mcmc)) {
+        leapFrog=leapFrog
+    }else {
+        leapFrog=40
+    } 
+    return(leapFrog)
+}
+get_mcmc_hmc_iter <- function(mcmc)
+{
+    if ('hmc_iter' %in% names(mcmc)) {
+        hmc_iter=hmc_iter
+    }else {
+        hmc_iter=1
+    } 
+    return(hmc_iter)
+}
 
 .hdpGLM_get_constants      <- function(family, d, Dw)
 {
@@ -163,16 +190,39 @@ hdpglm_exclude_nas <- function(data, formula1, formula2, context.id)
 #'                 of group level covariates. If \code{NULL}, it will use
 #'                 a single base measure to the DPP mixture model.
 #' @param data a data.frame with all the variables specified in \code{formula1} and \code{formula2}. Note: it is advisable to scale the variables before the estimation
-#' @param context.id string with the name of the column in the data that uniquely identifies the contexts. If \code{NULL} (default) contexts will be identified by numerical indexes and unique context-level variables. The user is advised to pre-process the data to provide meaningful labels for the contexts to facilitate later visualization and analysis of the results.
-#' @param weights numeric vector with the same size as the number of rows of the data. It must contain the weights of the observations in the data set. NOTE: FEATURE NOT IMPLEMENTED YET
-#' @param mcmc a list containing elements named \code{burn.in} (required, an
-#'             integer greater or equal to 0 indicating the number iterations used in the
-#'             burn-in period of the MCMC) and \code{n.iter} (required, an integer greater or
-#'             equal to 1 indicating the number of iterations to record after the burn-in
-#'             period for the MCMC).
+#' @param mcmc a named list with the following elements
+#' 
+#'             - \code{burn.in} (required): an integer greater or equal to 0
+#'                              indicating the number iterations used in the
+#'                              burn-in period of the MCMC.
+#' 
+#'             - \code{n.iter}  (required): an integer greater or equal to 1
+#'                              indicating the number of iterations to record
+#'                              after the burn-in period for the MCMC.
+#' 
+#'             - \code{epsilon} (optional): a positive number. Default is 0.01.
+#'                               Used when \code{family='binomial'} or
+#'                              \code{family='multinomial'}. It is used in the
+#'                               Stormer-Verlet Integrator (a.k.a leapfrog
+#'                               integrator) to solve the Hamiltonian Monte
+#'                               Carlo in the estimation of the model.
+#'                
+#'             - \code{leapFrog} (optional) an integer. Default is 40. Used when
+#'                               \code{family='binomial'} or \code{family='multinomial'}.
+#'                               It indicates the number of steps taken at each
+#'                               iteration of the Hamiltonian Monte Carlo for
+#'                               the Stormer-Verlet Integrator.
+#' 
+#'             - \code{hmc_iter} (optional) an integer. Default is 1. Used when 
+#'                               \code{family='binomial'} or \code{family='multinomial'}.
+#'                               It indicates the number of HMC iteration(s)
+#'                               for each Gibbs iteration.
+#'                 
+#' @param family a character with either 'gaussian', 'binomial', or 'multinomial'.
+#'               It indicates the family of the GLM components of the mixture model.
 #' @param K an integer indicating the maximum number of clusters to truncate the
 #'          Dirichlet Process Prior in order to use the blocked Gibbs sampler.
-#' @param fix either NULL or a list with the constants of the model. If not NULL,
+#' @param constants either NULL or a list with the constants of the model. If not NULL,
 #'            it must contain a vector named \code{mu_beta}, whose size must be
 #'            equal to the number of covariates specified in \code{formula1}
 #'            plus one for the constant term; \code{Sigma_beta}, which must be a squared
@@ -183,24 +233,15 @@ hdpglm_exclude_nas <- function(data, formula1, formula2, context.id)
 #'            \code{Sigma_beta=diag(10)}, \code{alpha=1}, \code{df_sigma=10},
 #'            \code{s2_sigma=10} (all with the dimension automatically set to the
 #'            correct values).
-#' @param family a character with either 'gaussian', 'binomial', or 'multinomial'.
-#'               It indicates the family of the GLM components of the mixture model.
-#' @param epsilon numeric, used when \code{family='binomial'} or \code{family='multinomial'}.
-#'                It is used in the Stormer-Verlet Integrator (a.k.a leapfrog integrator)
-#'                to solve the Hamiltonian Monte Carlo in the estimation of the model.
-#'                Default is 0.01.
-#' @param leapFrog an integer, used when \code{family='binomial'} or \code{family='multinomial'}.
-#'                 It indicates the number of steps taken at each iteration of the Hamiltonian
-#'                 Monte Carlo for the Stormer-Verlet Integrator. Default is 40.
+#' @param context.id string with the name of the column in the data that uniquely identifies the contexts. If \code{NULL} (default) contexts will be identified by numerical indexes and unique context-level variables. The user is advised to pre-process the data to provide meaningful labels for the contexts to facilitate later visualization and analysis of the results.
+#' @param weights numeric vector with the same size as the number of rows of the data. It must contain the weights of the observations in the data set. NOTE: FEATURE NOT IMPLEMENTED YET
 #' @param n.display an integer indicating the number of iterations to wait before printing information
 #'                  about the estimation process. If zero, it does not display any information.
 #'                  Note: displaying informaiton at every iteration (n.display=1) may increase
 #'                  the time to estimate the model slightly. 
-#' @param hmc_iter an integer, used when \code{family='binomial'} or \code{family='multinomial'}.
-#'                 It indicates the number of HMC iteration(s) for each Gibbs iteration.
-#'                 Default is 1.
 #' @param imp.bin string, either "R" or "Cpp" indicating the language of the implementation of the binomial model.
 #' @param na.action string with action to be taken for the \code{NA} values. (currently, only \code{exclude} is available)
+#' 
 #' @return The function returns a list with elements \code{samples}, \code{pik}, \code{max_active},
 #'         \code{n.iter}, \code{burn.in}, and \code{time.elapsed}. The \code{samples} element
 #'         contains a MCMC object (from \pkg{coda} package) with the samples from the posterior
@@ -258,10 +299,9 @@ hdpglm_exclude_nas <- function(data, formula1, formula2, context.id)
 #' @export
 
 ## }}}
-hdpGLM <- function(formula1, formula2=NULL, data, context.id=NULL, weights=NULL,
-                   mcmc, K=100, fix=NULL, family='gaussian', epsilon=0.01,
-                   leapFrog=40, n.display=1000, hmc_iter=1, imp.bin="R",
-                   na.action = "exclude")
+hdpGLM <- function(formula1, formula2=NULL, data, mcmc, family='gaussian', K=100,
+                   context.id=NULL, constants=NULL, weights=NULL,
+                   n.display=1000, na.action = "exclude", imp.bin="R")
 {
     if (!is.null(weights)) {
         stop(paste0("\n\nNote: weights are not implemented ",
@@ -285,6 +325,14 @@ hdpGLM <- function(formula1, formula2=NULL, data, context.id=NULL, weights=NULL,
                     'the following options : \"gaussian\", \"binomial\",',
                     ' or \"multinomial\"'))
 
+    ## MCMC tunning parameters
+    ## -----------------------
+    fix = constants
+    epsilon  = get_mcmc_epsilon(mcmc)
+    leapFrog = get_mcmc_leapFrog(mcmc)
+    hmc_iter = get_mcmc_hmc_iter(mcmc)
+
+        
 
     ## Debug/Monitoring message --------------------------
     msg <- paste0('\n\n','Preparing for estimation ...',  '\n\n'); cat(msg)
