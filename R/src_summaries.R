@@ -164,6 +164,33 @@ summary_hdpGLM <- function(object, ...)
     return(list(beta=betas, tau=taus))
 }
 
+#' nclusters
+#'
+#' This function returns the number of clusters found in the estimation
+#'
+#' @param object a \code{dpGLM} object returned by the function \code{hdpGLM}
+#'
+#' @export
+nclusters <- function(object, ...)
+{
+    if (methods::is(object,'dpGLM')) {
+        nclusters=length(unique(summary_tidy(object)$k))
+    }
+    if (methods::is(object, 'hdpGLM')) {
+        nclusters = (
+            summary_tidy(object)$beta
+            %>% dplyr::group_by(j)
+            %>% dplyr::summarise(nclusters=length(unique(k))) 
+            %>% dplyr::rename(Context=j) 
+            %>% as.data.frame
+        )
+        nclusters=res$nclusters
+        names(nclusters)= paste('Context', res$Context)
+        nclusters
+    }
+    return(nclusters)
+}
+
 ## * Methods
 ## ** summary
 
@@ -1065,10 +1092,19 @@ mcmc_info.hdpGLM = function(x, ...)
 #' @param samples the output of \code{\link{hdpGLM}} 
 #'
 #' @export
-hdpGLM_classify <- function(data, samples)
+classify <- function(data, samples)
 {
     cluster = apply(samples$pik, 1, which.max)
     return(data.frame(Cluster = cluster, data))
+}
+
+#' Deprecated
+#'
+#' @export
+hdpGLM_classify <- function(data, samples)
+{
+    cat("Note: use classify(). hdpGLM_classify() will be removed in future versions.")
+    return(classify(data, samples))
 }
 
 
