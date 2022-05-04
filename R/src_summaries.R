@@ -1,4 +1,5 @@
 
+
 ## * tidy summary
 
 #' Tidy summary
@@ -177,7 +178,7 @@ nclusters <- function(object, ...)
         nclusters=length(unique(summary_tidy(object)$k))
     }
     if (methods::is(object, 'hdpGLM')) {
-        nclusters = (
+        res = (
             summary_tidy(object)$beta
             %>% dplyr::group_by(j)
             %>% dplyr::summarise(nclusters=length(unique(k))) 
@@ -186,8 +187,8 @@ nclusters <- function(object, ...)
         )
         nclusters=res$nclusters
         names(nclusters)= paste('Context', res$Context)
-        nclusters
     }
+    cat('\n')
     return(nclusters)
 }
 
