@@ -172,7 +172,7 @@ summary_hdpGLM <- function(object, ...)
 #' @param object a \code{dpGLM} object returned by the function \code{hdpGLM}
 #'
 #' @export
-nclusters <- function(object, ...)
+nclusters <- function(object)
 {
     if (methods::is(object,'dpGLM')) {
         nclusters=length(unique(summary_tidy(object)$k))
@@ -1101,10 +1101,13 @@ classify <- function(data, samples)
 
 #' Deprecated
 #'
+#' @param data a data frame with the data set used to estimate the \code{\link{hdpGLM}} model
+#' @param samples the output of \code{\link{hdpGLM}}
+#' 
 #' @export
 hdpGLM_classify <- function(data, samples)
 {
-    cat("Note: use classify(). hdpGLM_classify() will be removed in future versions.")
+    cat("\n\nNote: use classify(). hdpGLM_classify() will be removed in future versions.\n\n")
     return(classify(data, samples))
 }
 

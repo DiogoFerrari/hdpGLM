@@ -86,11 +86,11 @@ summary(mod)
 
 The summary function prints the result in a tidy format. The column `k` in the summary shows the label of the estimated clusters. The column `Mean` is the average of the posterior distribution for each linear coefficient in each cluster. 
 
-The function `hdpGLM_classify` can be used to classify the data points into clusters based on the estimation.
+The function `classify` can be used to classify the data points into clusters based on the estimation.
 
 
 ```{r}
-welfare_clustered = hdpGLM_classify(welfare, mod)
+welfare_clustered = classify(welfare, mod)
 head(welfare_clustered)
 tail(welfare_clustered)
 ```
