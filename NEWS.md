@@ -8,6 +8,7 @@
 
 * A function `nclusters()` was added. It returns the number of clusters estimated.
 
+* A function txtProgressBar now loaded in the namespace. 
 
 # hdpGLM 1.0.1
 
