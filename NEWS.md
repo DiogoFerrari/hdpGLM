@@ -2,13 +2,13 @@
 
 # hdpGLM 1.0.2
 
-* The MCMC tunning parameters of the function `hdpGLM()`, namely  `epsilon`, `leapFrog`, and `hmc_iter` were removed from that function's signature. Now, when the users want to tune those parameters, they must provided it part of the named list of the argument `mcmc`. It makes the code and the function signature cleaner.
+- The MCMC tunning parameters of the function `hdpGLM()`, namely  `epsilon`, `leapFrog`, and `hmc_iter` were removed from that function's signature. Now, when the users want to tune those parameters, they must provide it as part of the named list that is used for the argument `mcmc`. It makes the code and the function signature cleaner.
 
-* The function `classify()` replaced the function `hdpGLM_classify()`. The latter will be removed in future versions.
+- The function `classify()` replaced the function `hdpGLM_classify()`. The latter will be removed in future versions.
 
-* A function `nclusters()` was added. It returns the number of clusters estimated.
+- A function `nclusters()` was added. It returns the number of clusters estimated.
 
-* A function txtProgressBar now loaded in the namespace. 
+- A function txtProgressBar is now loaded in the namespace. 
 
 # hdpGLM 1.0.1
 
