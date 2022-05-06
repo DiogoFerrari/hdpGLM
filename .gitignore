@@ -11,3 +11,5 @@ TAGS
 *.~undo-tree
 inst/doc
 docs
+/doc/
+/Meta/

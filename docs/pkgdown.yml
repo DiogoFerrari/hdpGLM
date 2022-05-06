@@ -3,7 +3,7 @@ pkgdown: 2.0.3
 pkgdown_sha: ~
 articles:
   hdpGLM: hdpGLM.html
-last_built: 2022-05-06T22:23Z
+last_built: 2022-05-06T22:37Z
 urls:
   reference: http://diogoferrari.github.io/hdpGLM/reference
   article: http://diogoferrari.github.io/hdpGLM/articles
