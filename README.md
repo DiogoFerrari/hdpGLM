@@ -1,4 +1,4 @@
-# hdpGLM <img src='man/figures/hdpGLM_logo.png'  align="right" height="139" />
+# hdpGLM <img src='man/figures/hdpGLM_logo.png'   align="right" height="139" style="float:right; height:139px;" />
 
 [![CRAN status](https://www.r-pkg.org/badges/version/hdpGLM?color=green)](https://cran.r-project.org/package=hdpGLM)
 [![](https://travis-ci.org/DiogoFerrari/hdpGLM.svg)](https://travis-ci.org/DiogoFerrari/hdpGLM)
