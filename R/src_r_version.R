@@ -81,7 +81,7 @@ dphGLM_check_constants_xxr <- function(family=family, d=d, dj=NULL, fix)
 {
     ## check type of 'fix'
     ## ------------------
-    if (class(fix) != 'list')
+    if (!methods::is(fix, "list"))
     {
         stop("The parameter \'fix\" must be a list")
     }

@@ -1,7 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://diogoferrari.github.io/hdpGLM/404.html</loc>
+  </url>
+  <url>
+    <loc>http://diogoferrari.github.io/hdpGLM/LICENSE-text.html</loc>
+  </url>
+  <url>
+    <loc>http://diogoferrari.github.io/hdpGLM/articles/hdpGLM.html</loc>
+  </url>
+  <url>
+    <loc>http://diogoferrari.github.io/hdpGLM/articles/index.html</loc>
+  </url>
+  <url>
+    <loc>http://diogoferrari.github.io/hdpGLM/authors.html</loc>
+  </url>
+  <url>
     <loc>http://diogoferrari.github.io/hdpGLM/index.html</loc>
+  </url>
+  <url>
+    <loc>http://diogoferrari.github.io/hdpGLM/news/index.html</loc>
+  </url>
+  <url>
+    <loc>http://diogoferrari.github.io/hdpGLM/reference/classify.html</loc>
+  </url>
+  <url>
+    <loc>http://diogoferrari.github.io/hdpGLM/reference/coef.dpGLM.html</loc>
+  </url>
+  <url>
+    <loc>http://diogoferrari.github.io/hdpGLM/reference/coef.hdpGLM.html</loc>
   </url>
   <url>
     <loc>http://diogoferrari.github.io/hdpGLM/reference/hdpGLM.html</loc>
@@ -10,10 +37,25 @@
     <loc>http://diogoferrari.github.io/hdpGLM/reference/hdpGLM_classify.html</loc>
   </url>
   <url>
+    <loc>http://diogoferrari.github.io/hdpGLM/reference/hdpGLM_package.html</loc>
+  </url>
+  <url>
     <loc>http://diogoferrari.github.io/hdpGLM/reference/hdpGLM_simParameters.html</loc>
   </url>
   <url>
     <loc>http://diogoferrari.github.io/hdpGLM/reference/hdpGLM_simulateData.html</loc>
+  </url>
+  <url>
+    <loc>http://diogoferrari.github.io/hdpGLM/reference/index.html</loc>
+  </url>
+  <url>
+    <loc>http://diogoferrari.github.io/hdpGLM/reference/mcmc_info.dpGLM.html</loc>
+  </url>
+  <url>
+    <loc>http://diogoferrari.github.io/hdpGLM/reference/mcmc_info.hdpGLM.html</loc>
+  </url>
+  <url>
+    <loc>http://diogoferrari.github.io/hdpGLM/reference/nclusters.html</loc>
   </url>
   <url>
     <loc>http://diogoferrari.github.io/hdpGLM/reference/plot.dpGLM.html</loc>
@@ -40,10 +82,19 @@
     <loc>http://diogoferrari.github.io/hdpGLM/reference/predict.dpGLM.html</loc>
   </url>
   <url>
+    <loc>http://diogoferrari.github.io/hdpGLM/reference/predict.hdpGLM.html</loc>
+  </url>
+  <url>
     <loc>http://diogoferrari.github.io/hdpGLM/reference/print.dpGLM.html</loc>
   </url>
   <url>
+    <loc>http://diogoferrari.github.io/hdpGLM/reference/print.dpGLM_data.html</loc>
+  </url>
+  <url>
     <loc>http://diogoferrari.github.io/hdpGLM/reference/print.hdpGLM.html</loc>
+  </url>
+  <url>
+    <loc>http://diogoferrari.github.io/hdpGLM/reference/print.hdpGLM_data.html</loc>
   </url>
   <url>
     <loc>http://diogoferrari.github.io/hdpGLM/reference/summary.dpGLM.html</loc>
@@ -58,6 +109,12 @@
     <loc>http://diogoferrari.github.io/hdpGLM/reference/summary.hdpGLM_data.html</loc>
   </url>
   <url>
-    <loc>http://diogoferrari.github.io/hdpGLM/articles/hdpGLM.html</loc>
+    <loc>http://diogoferrari.github.io/hdpGLM/reference/summary_tidy.html</loc>
+  </url>
+  <url>
+    <loc>http://diogoferrari.github.io/hdpGLM/reference/welfare.html</loc>
+  </url>
+  <url>
+    <loc>http://diogoferrari.github.io/hdpGLM/reference/welfare2.html</loc>
   </url>
 </urlset>

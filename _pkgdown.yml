@@ -19,3 +19,6 @@ navbar:
     # right:
     #   text: Diogo Ferrari
     #   href: http://diogoferrari.com
+
+# figures:
+#    dev: grDevices::png
