@@ -1,4 +1,4 @@
-hdpGLM <img src='man/figures/hdpGLM_logo.png'  style="float:right; height:139px;" />
+hdpGLM <img src='man/figures/hdpGLM_logo.png'  style="float:right; height:139px; align=right;" />
 ===========================================================================
 
 [![CRAN status](https://www.r-pkg.org/badges/version/hdpGLM?color=green)](https://cran.r-project.org/package=hdpGLM)
