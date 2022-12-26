@@ -42,7 +42,10 @@ Usage
 For more details, see package [website](http://www.diogoferrari.com/hdpGLM/index.html). Here is a simple example:
 
 ```
+library(hdpGLM)
 
+## Example for the dpGLM (no hierarchical structure)
+## -------------- ------
 set.seed(10)
 K    = 3 # number of latent clusters
 nCov = 3 # number of observed covariates
@@ -52,10 +55,29 @@ mcmc    = list(burn.in=1, n.iter=400)
 samples = hdpGLM(y~., data=data, mcmc=mcmc, n.display=200)
 
 summary(samples)
+coef(samples)
+classify(data, samples)
 plot(samples)
 plot(samples, terms="X1")
 plot(samples, separate=T)
 plot(samples, true.beta=summary(simdata)$beta)
 plot(samples, true.beta=summary(simdata)$beta, separate=T)
+
+## Example for the hdpGLM (with hierarchical structure)
+## -------------- -------
+set.seed(6667)
+simdata = hdpGLM_simulateData(40, 3, 2, nCovj=2, J=4, family='gaussian')
+data    = simdata$data
+mcmc    = list(burn.in=1, n.iter=100)
+samples = hdpGLM(y~X1+X2, y~W1+W2, data=data, mcmc=mcmc, n.display=10)
+
+summary(samples)
+classify(data, samples)
+coef(samples)
+plot(samples)
+plot(samples, terms = 'X1', j.idx=2:4)
+plot_hdpglm(samples, ncol.tau=2)
+plot_tau(samples)
+plot_tau(samples, X='X1')
 
 ```
