@@ -258,7 +258,11 @@ hdpglm_exclude_nas <- function(data, formula1, formula2, context.id)
 #' This is specified using the parameter \code{family}. See:
 #'
 #' Ferrari, D. (2020). Modeling Context-Dependent Latent Effect Heterogeneity,
-#' Political Analysis, 28(1), 20–46.
+#' Political Analysis, 28(1), 20–46. doi:10.1017/pan.2019.13.
+#'
+#' Ferrari, D. (2023). "hdpGLM: An R Package to Estimate Heterogeneous Effects
+#' in Generalized Linear Models Using Hierarchical Dirichlet Process."
+#' Journal of Statistical Software, 107(10), 1-37. doi:10.18637/jss.v107.i10.
 #' 
 #' Ishwaran, H., & James, L. F., Gibbs sampling methods for stick-breaking priors,
 #' Journal of the American Statistical Association, 96(453), 161–173 (2001). 
