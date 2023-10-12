@@ -19,7 +19,7 @@ the hdpGLM function"><!-- mathjax --><script src="https://cdnjs.cloudflare.com/a
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">hdpGLM</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.3</span>
       </span>
     </div>
 
@@ -70,25 +70,32 @@ the <code>hdpGLM</code> function</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="co"># S3 method for hdpGLM</span>
-<span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">object</span>, new_data <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for hdpGLM</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">object</span>, new_data <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>object</dt>
 <dd><p>outcome of the function hdpLGM</p></dd>
+
+
 <dt>new_data</dt>
 <dd><p>data frame with the values of the covariates that are going
 to be used to generate the predicted/fitted values. The posterior mean is
 used to create the predicted values</p></dd>
+
+
 <dt>...</dt>
 <dd><p><code>family</code> : a string with the family of the output variable:
 <code>gaussian</code> (default), <code>binomial</code>, etc...</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>It returns a data.frame with the fitted values for the outcome
+    
+
+<p>It returns a data.frame with the fitted values for the outcome
 variable, which are produced using the estimated posterior expectation of the
 linear coefficients <code>beta</code>.</p>
     </div>
@@ -105,7 +112,7 @@ linear coefficients <code>beta</code>.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

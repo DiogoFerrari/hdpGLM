@@ -1,7 +1,7 @@
 
 ## {{{ print acceptance rate }}}
 
-print.accept.rate <- function(mh.accept.info, accepted, Z, n.display, iter, mcmc, K, Khat, family)
+print_accept_rate <- function(mh.accept.info, accepted, Z, n.display, iter, mcmc, K, Khat, family)
 {
     ## update acceptance rate
     mh.accept.info$trial    = mh.accept.info$trial + 1 
@@ -520,7 +520,7 @@ dpGLM_mcmc_xxr  <- function(y, X, weights, K, fix, family, mcmc, epsilon,
         ## print message with acceptance rate
         accepted       = theta.tmp$accepted
         Khat           = max(Khat,length(table(Z)))
-        mh.accept.info = print.accept.rate(mh.accept.info, accepted, Z, n.display, iter, mcmc, K, Khat, family)
+        mh.accept.info = print_accept_rate(mh.accept.info, accepted, Z, n.display, iter, mcmc, K, Khat, family)
 
 
     }

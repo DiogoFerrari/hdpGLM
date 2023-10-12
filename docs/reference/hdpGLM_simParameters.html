@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">hdpGLM</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.3</span>
       </span>
     </div>
 
@@ -66,54 +66,77 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">hdpGLM_simParameters</span><span class="op">(</span>
-  <span class="va">K</span>,
-  nCov <span class="op">=</span> <span class="fl">2</span>,
-  nCovj <span class="op">=</span> <span class="fl">0</span>,
-  J <span class="op">=</span> <span class="fl">1</span>,
-  pi <span class="op">=</span> <span class="cn">NULL</span>,
-  same.K <span class="op">=</span> <span class="cn">FALSE</span>,
-  seed <span class="op">=</span> <span class="cn">NULL</span>,
-  context.effect <span class="op">=</span> <span class="cn">NULL</span>,
-  same.clusters.across.contexts <span class="op">=</span> <span class="cn">NULL</span>,
-  context.dependent.cluster <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">hdpGLM_simParameters</span><span class="op">(</span></span>
+<span>  <span class="va">K</span>,</span>
+<span>  nCov <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  nCovj <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  J <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  pi <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  same.K <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  seed <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  context.effect <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  same.clusters.across.contexts <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  context.dependent.cluster <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>K</dt>
 <dd><p>integer, the number of clusters. If there are multiple contexts, K is the average number of clusters across contexts, and each context gets a number of clusters sampled from a Poisson distribution, except if <code>same.K</code> is <code>TRUE</code>.</p></dd>
+
+
 <dt>nCov</dt>
 <dd><p>integer, the number of covariates of the
 GLM components</p></dd>
+
+
 <dt>nCovj</dt>
 <dd><p>an integer indicating the number of covariates determining the average parameter of the base measure of the Dirichlet process prior</p></dd>
+
+
 <dt>J</dt>
 <dd><p>an integer representing the number of contexts  @param parameters either NULL or a list with the parameters  to generate the model. If not NULL, it must  contain a sublist name beta, a vector named tau,  and a vector named pi. The sublist beta must be  a list of vectors, each one with size nCov+1  to be the coefficients of the GLM mixtures  components that will generate the data.  For the vector tau, if nCovj=0 (single-context case)  then it must be a 1x1 matrix containing 1.  If ncovj&gt;0, it must be a (nCov+1)x(nCovj+1) matrix.  The vector pi must add up to 1 and have length K.</p></dd>
+
+
 <dt>pi</dt>
 <dd><p>either NULL or a vector with length K that add up to 1. If not NULL, it determines the mixture probabilities</p></dd>
+
+
 <dt>same.K</dt>
 <dd><p>boolean, used when data is sampled from more than one context. If <code>TRUE</code> all contexts get the same number of clusters. If <code>FALSE</code>, each context gets a number of clusters sampled from a Poisson distribution with expectation equals to <code>K</code> (current not implemented)</p></dd>
+
+
 <dt>seed</dt>
 <dd><p>a seed for <code>set.seed</code></p></dd>
+
+
 <dt>context.effect</dt>
 <dd><p>either <code>NULL</code> or a two dimensional integer vector. If it is <code>NULL</code>, all the coefficients (<code>beta</code>) of the individual level covariates are functions of context-level features (<code>tau</code>). If it is not <code>NULL</code>, the first component of the vector indicates the index of the lower level covariate (<code>X</code>) whose linear effect <code>beta</code> depends on context (<code>tau</code>) (0 is the intercept). The second component indicates the index context-level covariate (<code>W</code>) whose linear coefficient (<code>tau</code>) is non-zero.</p></dd>
+
+
 <dt>same.clusters.across.contexts</dt>
 <dd><p>boolean, if <code>TRUE</code> all the contexts will have the same number of clusters AND each cluster will have the same coefficient <code>beta</code>.</p></dd>
+
+
 <dt>context.dependent.cluster</dt>
 <dd><p>integer, indicates which cluster will be context-dependent. If <code>zero</code>, all clusters will be context-dependent</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>The function returns a list with the parameters used to generate data sets from the hdpGLM model. This list can be used in the function <code>hdpGLM_simulateData</code></p>
+    
+
+<p>The function returns a list with the parameters used to generate data sets from the hdpGLM model. This list can be used in the function <code>hdpGLM_simulateData</code></p>
+
+
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="va">pars</span> <span class="op">=</span> <span class="fu">hdpGLM_simParameters</span><span class="op">(</span>nCov<span class="op">=</span><span class="fl">2</span>, K<span class="op">=</span><span class="fl">2</span>, nCovj<span class="op">=</span><span class="fl">3</span>, J<span class="op">=</span><span class="fl">20</span>,</span>
-<span class="r-in">          same.clusters.across.contexts<span class="op">=</span><span class="cn">FALSE</span>, context.dependent.cluster<span class="op">=</span><span class="fl">0</span><span class="op">)</span> </span>
-<span class="r-in"></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">pars</span> <span class="op">=</span> <span class="fu">hdpGLM_simParameters</span><span class="op">(</span>nCov<span class="op">=</span><span class="fl">2</span>, K<span class="op">=</span><span class="fl">2</span>, nCovj<span class="op">=</span><span class="fl">3</span>, J<span class="op">=</span><span class="fl">20</span>,</span></span>
+<span class="r-in"><span>          same.clusters.across.contexts<span class="op">=</span><span class="cn">FALSE</span>, context.dependent.cluster<span class="op">=</span><span class="fl">0</span><span class="op">)</span> </span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -128,7 +151,7 @@ GLM components</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

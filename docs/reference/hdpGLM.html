@@ -19,7 +19,7 @@ Prior for the mixture probabilities."><!-- mathjax --><script src="https://cdnjs
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">hdpGLM</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.3</span>
       </span>
     </div>
 
@@ -70,20 +70,20 @@ Prior for the mixture probabilities.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">hdpGLM</span><span class="op">(</span>
-  <span class="va">formula1</span>,
-  formula2 <span class="op">=</span> <span class="cn">NULL</span>,
-  <span class="va">data</span>,
-  <span class="va">mcmc</span>,
-  family <span class="op">=</span> <span class="st">"gaussian"</span>,
-  K <span class="op">=</span> <span class="fl">100</span>,
-  context.id <span class="op">=</span> <span class="cn">NULL</span>,
-  constants <span class="op">=</span> <span class="cn">NULL</span>,
-  weights <span class="op">=</span> <span class="cn">NULL</span>,
-  n.display <span class="op">=</span> <span class="fl">1000</span>,
-  na.action <span class="op">=</span> <span class="st">"exclude"</span>,
-  imp.bin <span class="op">=</span> <span class="st">"R"</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">hdpGLM</span><span class="op">(</span></span>
+<span>  <span class="va">formula1</span>,</span>
+<span>  formula2 <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">data</span>,</span>
+<span>  <span class="va">mcmc</span>,</span>
+<span>  family <span class="op">=</span> <span class="st">"gaussian"</span>,</span>
+<span>  K <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>  context.id <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  constants <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  weights <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  n.display <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>  na.action <span class="op">=</span> <span class="st">"exclude"</span>,</span>
+<span>  imp.bin <span class="op">=</span> <span class="st">"R"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -92,6 +92,8 @@ Prior for the mixture probabilities.</p>
 <dd><p>a single symbolic description of the linear model of the
 mixture GLM components to be fitted. The syntax is the same
 as used in the <code><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></code> function.</p></dd>
+
+
 <dt>formula2</dt>
 <dd><p>eihter NULL (default) or a single symbolic description of the
 linear model of the hierarchical component of the model.
@@ -99,8 +101,12 @@ It specifies how the average parameter of the base measure
 of the Dirichlet Process Prior varies linearly as a function
 of group level covariates. If <code>NULL</code>, it will use
 a single base measure to the DPP mixture model.</p></dd>
+
+
 <dt>data</dt>
 <dd><p>a data.frame with all the variables specified in <code>formula1</code> and <code>formula2</code>. Note: it is advisable to scale the variables before the estimation</p></dd>
+
+
 <dt>mcmc</dt>
 <dd><p>a named list with the following elements</p>
 <p>- <code>burn.in</code> (required): an integer greater or equal to 0
@@ -124,14 +130,22 @@ a single base measure to the DPP mixture model.</p></dd>
                               <code>family='binomial'</code> or <code>family='multinomial'</code>.
                               It indicates the number of HMC iteration(s)
                               for each Gibbs iteration.</p></dd>
+
+
 <dt>family</dt>
 <dd><p>a character with either 'gaussian', 'binomial', or 'multinomial'.
 It indicates the family of the GLM components of the mixture model.</p></dd>
+
+
 <dt>K</dt>
 <dd><p>an integer indicating the maximum number of clusters to truncate the
 Dirichlet Process Prior in order to use the blocked Gibbs sampler.</p></dd>
+
+
 <dt>context.id</dt>
 <dd><p>string with the name of the column in the data that uniquely identifies the contexts. If <code>NULL</code> (default) contexts will be identified by numerical indexes and unique context-level variables. The user is advised to pre-process the data to provide meaningful labels for the contexts to facilitate later visualization and analysis of the results.</p></dd>
+
+
 <dt>constants</dt>
 <dd><p>either NULL or a list with the constants of the model. If not NULL,
 it must contain a vector named <code>mu_beta</code>, whose size must be
@@ -144,22 +158,34 @@ single numbers. If NULL, the defaults are <code>mu_beta=0</code>,
 <code>Sigma_beta=diag(10)</code>, <code>alpha=1</code>, <code>df_sigma=10</code>,
 <code>s2_sigma=10</code> (all with the dimension automatically set to the
 correct values).</p></dd>
+
+
 <dt>weights</dt>
 <dd><p>numeric vector with the same size as the number of rows of the data. It must contain the weights of the observations in the data set. NOTE: FEATURE NOT IMPLEMENTED YET</p></dd>
+
+
 <dt>n.display</dt>
 <dd><p>an integer indicating the number of iterations to wait before printing information
 about the estimation process. If zero, it does not display any information.
 Note: displaying informaiton at every iteration (n.display=1) may increase
 the time to estimate the model slightly.</p></dd>
+
+
 <dt>na.action</dt>
 <dd><p>string with action to be taken for the <code>NA</code> values. (currently, only <code>exclude</code> is available)</p></dd>
+
+
 <dt>imp.bin</dt>
 <dd><p>string, either "R" or "Cpp" indicating the language of the implementation of the binomial model.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>The function returns a list with elements <code>samples</code>, <code>pik</code>, <code>max_active</code>,
-<code>n.iter</code>, <code>burn.in</code>, and <code>time.elapsed</code>. The <code>samples</code> element
+    
+
+<p>The function returns a list with elements <code>samples</code>, <code>pik</code>, <code>max_active</code>,</p>
+<p></p>
+<p><code>n.iter</code>, <code>burn.in</code>, and <code>time.elapsed</code>. The <code>samples</code> element
         contains a MCMC object (from <span class="pkg">coda</span> package) with the samples from the posterior
         distribution. The <code>pik</code> is a <code>n x K</code> matrix with the estimated
         probabilities that the observation $i$ belongs to the cluster $k$</p>
@@ -173,7 +199,10 @@ variable is gaussian distributed. It uses Metropolis-Hastings inside Gibbs if
 the output variable is binomial or multinomial distributed.
 This is specified using the parameter <code>family</code>. See:</p>
 <p>Ferrari, D. (2020). Modeling Context-Dependent Latent Effect Heterogeneity,
-Political Analysis, 28(1), 20–46.</p>
+Political Analysis, 28(1), 20–46. doi:10.1017/pan.2019.13.</p>
+<p>Ferrari, D. (2023). "hdpGLM: An R Package to Estimate Heterogeneous Effects
+in Generalized Linear Models Using Hierarchical Dirichlet Process."
+Journal of Statistical Software, 107(10), 1-37. doi:10.18637/jss.v107.i10.</p>
 <p>Ishwaran, H., &amp; James, L. F., Gibbs sampling methods for stick-breaking priors,
 Journal of the American Statistical Association, 96(453), 161–173 (2001).</p>
 <p>Neal, R. M., Markov chain sampling methods for dirichlet process mixture models,
@@ -182,26 +211,26 @@ Journal of computational and graphical statistics, 9(2), 249–265 (2000).</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## Note: this example is for illustration. You can run the example</span></span>
-<span class="r-in"><span class="co">## manually with increased number of iterations to see the actual</span></span>
-<span class="r-in"><span class="co">## results, as well as the data size (n)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">n</span> <span class="op">=</span> <span class="fl">300</span></span>
-<span class="r-in"><span class="va">data</span> <span class="op">=</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>x1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span>, <span class="op">-</span><span class="fl">3</span><span class="op">)</span>,</span>
-<span class="r-in">                      x2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span>,  <span class="fl">3</span><span class="op">)</span>,</span>
-<span class="r-in">                      z  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="va">n</span>, replace<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>,</span>
-<span class="r-in">                      y  <span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">z</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span> <span class="op">*</span> <span class="op">(</span><span class="fl">3</span> <span class="op">+</span> <span class="fl">4</span><span class="op">*</span><span class="va">x1</span> <span class="op">-</span> <span class="va">x2</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span class="r-in">                          <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">z</span><span class="op">==</span><span class="fl">2</span><span class="op">)</span> <span class="op">*</span> <span class="op">(</span><span class="fl">3</span> <span class="op">+</span> <span class="fl">2</span><span class="op">*</span><span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span class="r-in">                          <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">z</span><span class="op">==</span><span class="fl">3</span><span class="op">)</span> <span class="op">*</span> <span class="op">(</span><span class="fl">3</span> <span class="op">-</span> <span class="fl">4</span><span class="op">*</span><span class="va">x1</span> <span class="op">-</span> <span class="va">x2</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span> </span>
-<span class="r-in">                      <span class="op">)</span> </span>
-<span class="r-in"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">mcmc</span>    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>burn.in <span class="op">=</span> <span class="fl">0</span>,  n.iter <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">samples</span> <span class="op">=</span> <span class="fu">hdpGLM</span><span class="op">(</span><span class="va">y</span><span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span>, data<span class="op">=</span><span class="va">data</span>, mcmc<span class="op">=</span><span class="va">mcmc</span>, family<span class="op">=</span><span class="st">'gaussian'</span>,</span>
-<span class="r-in">                 n.display<span class="op">=</span><span class="fl">30</span>, K<span class="op">=</span><span class="fl">50</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## Note: this example is for illustration. You can run the example</span></span></span>
+<span class="r-in"><span><span class="co">## manually with increased number of iterations to see the actual</span></span></span>
+<span class="r-in"><span><span class="co">## results, as well as the data size (n)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">n</span> <span class="op">=</span> <span class="fl">300</span></span></span>
+<span class="r-in"><span><span class="va">data</span> <span class="op">=</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>x1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span>, <span class="op">-</span><span class="fl">3</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                      x2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span>,  <span class="fl">3</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                      z  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="va">n</span>, replace<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                      y  <span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">z</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span> <span class="op">*</span> <span class="op">(</span><span class="fl">3</span> <span class="op">+</span> <span class="fl">4</span><span class="op">*</span><span class="va">x1</span> <span class="op">-</span> <span class="va">x2</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>                          <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">z</span><span class="op">==</span><span class="fl">2</span><span class="op">)</span> <span class="op">*</span> <span class="op">(</span><span class="fl">3</span> <span class="op">+</span> <span class="fl">2</span><span class="op">*</span><span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>                          <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">z</span><span class="op">==</span><span class="fl">3</span><span class="op">)</span> <span class="op">*</span> <span class="op">(</span><span class="fl">3</span> <span class="op">-</span> <span class="fl">4</span><span class="op">*</span><span class="va">x1</span> <span class="op">-</span> <span class="va">x2</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span> </span></span>
+<span class="r-in"><span>                      <span class="op">)</span> </span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">mcmc</span>    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>burn.in <span class="op">=</span> <span class="fl">0</span>,  n.iter <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">samples</span> <span class="op">=</span> <span class="fu">hdpGLM</span><span class="op">(</span><span class="va">y</span><span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span>, data<span class="op">=</span><span class="va">data</span>, mcmc<span class="op">=</span><span class="va">mcmc</span>, family<span class="op">=</span><span class="st">'gaussian'</span>,</span></span>
+<span class="r-in"><span>                 n.display<span class="op">=</span><span class="fl">30</span>, K<span class="op">=</span><span class="fl">50</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Preparing for estimation ...</span>
@@ -211,8 +240,8 @@ Journal of computational and graphical statistics, 9(2), 249–265 (2000).</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Estimation in progress ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [========                                                               ] 10 %[===========                                                            ] 15 %[===============                                                        ] 20 %[==================                                                     ] 25 %[======================                                                 ] 30 %[=========================                                              ] 35 %[=============================                                          ] 40 %[================================                                       ] 45 %[====================================                                   ] 50 %[=======================================                                ] 55 %[===========================================                            ] 60 %[==============================================                         ] 65 %[==================================================                     ] 70 %[=====================================================                  ] 75 %[=========================================================              ] 80 %[============================================================           ] 85 %[================================================================       ] 90 %[===================================================================    ] 95 %[=======================================================================] 100 %[=======================================================================] 100 %</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">samples</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">samples</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> -------------------------------- </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> dpGLM model object</span>
@@ -252,23 +281,23 @@ Journal of computational and graphical statistics, 9(2), 249–265 (2000).</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4       sigma     1.085       1.042    0.8779     1.532</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> --------------------------------</span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">samples</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">samples</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Generating plot...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-plt img"><img src="hdpGLM-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">samples</span>, separate<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">samples</span>, separate<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Generating plot...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-plt img"><img src="hdpGLM-2.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## compare with GLM</span></span>
-<span class="r-in"><span class="co">## lm(y~ x1 + x2, data=data,  family='gaussian')</span></span>
-<span class="r-in"></span>
-<span class="r-in"> </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## compare with GLM</span></span></span>
+<span class="r-in"><span><span class="co">## lm(y~ x1 + x2, data=data,  family='gaussian')</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span> </span></span>
 </code></pre></div>
     </div>
   </div>
@@ -283,7 +312,7 @@ Journal of computational and graphical statistics, 9(2), 249–265 (2000).</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

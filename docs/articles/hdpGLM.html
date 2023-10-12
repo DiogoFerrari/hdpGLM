@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">hdpGLM</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.3</span>
       </span>
     </div>
 
@@ -78,7 +78,7 @@
 
       
 
-      </header><script src="hdpGLM_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>hdpGLM</h1>
@@ -94,26 +94,64 @@
 <div class="section level2">
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>The package hdpGLM makes it easy to estimate semi-parametric regression models, and summarize and visualize the results. The package is useful for many purposes:</p>
+<p>The package hdpGLM makes it easy to estimate semi-parametric
+regression models, and summarize and visualize the results. The package
+is useful for many purposes:</p>
 <ol style="list-style-type: decimal">
-<li>Find clusters using semi-parametric Bayesian methods (Dirichlet Process)</li>
-<li>Find a set of generalized linear models (GLM) that apply to different latent subpopulations</li>
-<li>Estimate latent heterogeneity in the marginal effect of regression coefficients</li>
-<li>Investigate if Simpson’s Paradox occurs due to latent or omitted features</li>
+<li>Find clusters using semi-parametric Bayesian methods (Dirichlet
+Process)</li>
+<li>Find a set of generalized linear models (GLM) that apply to
+different latent subpopulations</li>
+<li>Estimate latent heterogeneity in the marginal effect of regression
+coefficients</li>
+<li>Investigate if Simpson’s Paradox occurs due to latent or omitted
+features</li>
 <li>Cluster the data points based on marginal effect heterogeneity</li>
-<li>All the above, but with hierarchical data from many contexts (e.g., schools, hospitals, cities, states, countries, etc.)</li>
-<li>Find the effect of context-level features (upper-level covariates) on the latent heterogeneity of within-context features (lower-level covariates)</li>
+<li>All the above, but with hierarchical data from many contexts (e.g.,
+schools, hospitals, cities, states, countries, etc.)</li>
+<li>Find the effect of context-level features (upper-level covariates)
+on the latent heterogeneity of within-context features (lower-level
+covariates)</li>
 </ol>
 </div>
 <div class="section level2">
 <h2 id="background">Background<a class="anchor" aria-label="anchor" href="#background"></a>
 </h2>
-<p>The <code>hdpGLM</code> works similarly to linear regression models. It estimates coefficients of linear regressions, including generalized linear models, such as logit coefficients. But it simultaneously searches for latent clusters in the data and estimates the linear coefficients for those clusters. The result of the estimation is <span class="math inline">\(K\)</span> vectors of linear coefficients, one vector for each cluster. If there are no clusters in the data, it returns the estimated coefficients similar to classical regression models.</p>
-<p>The clustering procedure is based on a hierarchical semi-parametric Bayesian model proposed in <span class="citation">Ferrari (2020)</span>. The model, called Hierarchical Dirichlet process Generalized Linear Models (hdpGLM), can be used to deal with latent heterogeneity in different situations, including those that emerge due to unobserved variables. It deals with the latent heterogeneity in two ways: (1) it finds latent clusters which can be better described by different regression models and (2) estimate the coefficient of those models. The hdpGLM can also be used with hierarchical data to estimate latent heterogeneity in multiple contexts and check if the clusters are context-dependent (see an example in section <a href="#Estimating-Context-dependent-Latent-Heterogeneity">Estimating Context-dependent latent heterogeneity</a>).</p>
-<p>The linear model is estimated by sampling from the posterior distribution using a Gibbs sampler. Non-linear models (e.g., logit with binary outcomes) use Hamiltonian Monte Carlo within Gibbs. The algorithms are presented in <span class="citation">Ferrari (2020)</span>.</p>
-<p>Why should we estimate clusters of linear regressions instead of fitting a single regression model?</p>
-<p>First, it improves the predictive performance of the regression model and keeps the interpretability of the regression coefficients. <code>hdpGLM</code> is much more flexible than traditional regression and produces monotonically lower root mean square error (see <span class="citation">Ferrari (2020)</span> for details).</p>
-<p>Second, latent heterogeneity emerges when there are omitted variables in the estimation of regression models. The <code>hdpGLM</code> can be used to estimate marginal effects even when interactions were omitted. It recovers the linear coefficients of each latent group.</p>
+<p>The <code>hdpGLM</code> works similarly to linear regression models.
+It estimates coefficients of linear regressions, including generalized
+linear models, such as logit coefficients. But it simultaneously
+searches for latent clusters in the data and estimates the linear
+coefficients for those clusters. The result of the estimation is <span class="math inline">\(K\)</span> vectors of linear coefficients, one
+vector for each cluster. If there are no clusters in the data, it
+returns the estimated coefficients similar to classical regression
+models.</p>
+<p>The clustering procedure is based on a hierarchical semi-parametric
+Bayesian model proposed in <span class="citation">Ferrari (2020)</span>.
+The model, called Hierarchical Dirichlet process Generalized Linear
+Models (hdpGLM), can be used to deal with latent heterogeneity in
+different situations, including those that emerge due to unobserved
+variables. It deals with the latent heterogeneity in two ways: (1) it
+finds latent clusters which can be better described by different
+regression models and (2) estimate the coefficient of those models. The
+hdpGLM can also be used with hierarchical data to estimate latent
+heterogeneity in multiple contexts and check if the clusters are
+context-dependent (see an example in section <a href="#Estimating-Context-dependent-Latent-Heterogeneity">Estimating
+Context-dependent latent heterogeneity</a>).</p>
+<p>The linear model is estimated by sampling from the posterior
+distribution using a Gibbs sampler. Non-linear models (e.g., logit with
+binary outcomes) use Hamiltonian Monte Carlo within Gibbs. The
+algorithms are presented in <span class="citation">Ferrari
+(2020)</span>.</p>
+<p>Why should we estimate clusters of linear regressions instead of
+fitting a single regression model?</p>
+<p>First, it improves the predictive performance of the regression model
+and keeps the interpretability of the regression coefficients.
+<code>hdpGLM</code> is much more flexible than traditional regression
+and produces monotonically lower root mean square error (see <span class="citation">Ferrari (2020)</span> for details).</p>
+<p>Second, latent heterogeneity emerges when there are omitted variables
+in the estimation of regression models. The <code>hdpGLM</code> can be
+used to estimate marginal effects even when interactions were omitted.
+It recovers the linear coefficients of each latent group.</p>
 </div>
 <div class="section level2">
 <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
@@ -121,317 +159,352 @@
 <div class="section level3">
 <h3 id="estimation">Estimation<a class="anchor" aria-label="anchor" href="#estimation"></a>
 </h3>
-<p>The function <code>hdpGLM</code> estimates a semi-parametric Bayesian regression model. The syntax is similar to other R functions such as <code><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm()</a></code>, <code><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm()</a></code>, and <code>lmer()</code>.</p>
-<p>Here is a toy example. Suppose we are studying how income inequality affects support policies that help alleviate poverty in a given country A. Yet, suppose further that (1) the effect of inequality varies between groups of people; for some people, inequality increases support for welfare policies, but for others, it decreases welfare policy support; (2) we don’t know which individual belongs to which group. The data set <code>welfare</code> contains simulated data for this example.</p>
+<p>The function <code>hdpGLM</code> estimates a semi-parametric Bayesian
+regression model. The syntax is similar to other R functions such as
+<code><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm()</a></code>, <code><a href="https://rdrr.io/r/stats/glm.html" class="external-link">glm()</a></code>, and <code>lmer()</code>.</p>
+<p>Here is a toy example. Suppose we are studying how income inequality
+affects support policies that help alleviate poverty in a given country
+A. Yet, suppose further that (1) the effect of inequality varies between
+groups of people; for some people, inequality increases support for
+welfare policies, but for others, it decreases welfare policy support;
+(2) we don’t know which individual belongs to which group. The data set
+<code>welfare</code> contains simulated data for this example.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co">## loading and looking at the data</span>
-<span class="va">welfare</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv2</a></span><span class="op">(</span><span class="st">'welfare.csv'</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">welfare</span><span class="op">)</span>
-<span class="co">#&gt;       support inequality     income   ideology</span>
-<span class="co">#&gt; 1 -18.5649610  0.3392724  0.1425111  1.9225985</span>
-<span class="co">#&gt; 2  -9.3905812 -0.9906646 -0.5117102  0.2483346</span>
-<span class="co">#&gt; 3   0.9276234 -2.2318510 -0.3856288 -1.3619216</span>
-<span class="co">#&gt; 4 -12.3594498 -3.0079501 -0.9440585 -0.2088675</span>
-<span class="co">#&gt; 5  -2.4834411  0.1000455  0.8322192  0.1321378</span>
-<span class="co">#&gt; 6 -11.4187853 -0.9543883 -0.8810503  0.2916444</span></code></pre></div>
-<p>Now, suppose that inequality increases support for welfare only among women, but it decreases support among men. We didn’t collect data on gender (male versus female). We could estimate the <code>hdpGLM</code> and recover the coefficients even if gender wasn’t observed. The package provides a function called <code>hdpGLM</code>, which estimates a semi-parametric Bayesian generalized linear model using a Dirichlet mixture. Let’s estimate the model. The example uses few iterations in the MCMC, but in real applications, one should use a much larger number.</p>
+<code class="sourceCode R"><span><span class="co">## loading and looking at the data</span></span>
+<span><span class="va">welfare</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv2</a></span><span class="op">(</span><span class="st">'welfare.csv'</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">welfare</span><span class="op">)</span></span>
+<span><span class="co">#&gt;       support inequality     income   ideology</span></span>
+<span><span class="co">#&gt; 1 -18.5649610  0.3392724  0.1425111  1.9225985</span></span>
+<span><span class="co">#&gt; 2  -9.3905812 -0.9906646 -0.5117102  0.2483346</span></span>
+<span><span class="co">#&gt; 3   0.9276234 -2.2318510 -0.3856288 -1.3619216</span></span>
+<span><span class="co">#&gt; 4 -12.3594498 -3.0079501 -0.9440585 -0.2088675</span></span>
+<span><span class="co">#&gt; 5  -2.4834411  0.1000455  0.8322192  0.1321378</span></span>
+<span><span class="co">#&gt; 6 -11.4187853 -0.9543883 -0.8810503  0.2916444</span></span></code></pre></div>
+<p>Now, suppose that inequality increases support for welfare only among
+women, but it decreases support among men. We didn’t collect data on
+gender (male versus female). We could estimate the <code>hdpGLM</code>
+and recover the coefficients even if gender wasn’t observed. The package
+provides a function called <code>hdpGLM</code>, which estimates a
+semi-parametric Bayesian generalized linear model using a Dirichlet
+mixture. Let’s estimate the model. The example uses few iterations in
+the MCMC, but in real applications, one should use a much larger
+number.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/DiogoFerrari/hdpGLM" class="external-link">hdpGLM</a></span><span class="op">)</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; ## ===============================================================</span>
-<span class="co">#&gt; ## Hierarchial Dirichlet Process Generalized Linear Model (hdpGLM)</span>
-<span class="co">#&gt; ## ===============================================================</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Author: Diogo Ferrari</span>
-<span class="co">#&gt; Usage : http://www.diogoferrari.com/hdpGLM/index.html</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Attaching package: 'hdpGLM'</span>
-<span class="co">#&gt; The following object is masked _by_ '.GlobalEnv':</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     welfare</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/DiogoFerrari/hdpGLM" class="external-link">hdpGLM</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; ## ===============================================================</span></span>
+<span><span class="co">#&gt; ## Hierarchial Dirichlet Process Generalized Linear Model (hdpGLM)</span></span>
+<span><span class="co">#&gt; ## ===============================================================</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Author: Diogo Ferrari</span></span>
+<span><span class="co">#&gt; Usage : http://www.diogoferrari.com/hdpGLM/index.html</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'hdpGLM'</span></span>
+<span><span class="co">#&gt; The following object is masked _by_ '.GlobalEnv':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     welfare</span></span></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co">## estimating the model</span>
-<span class="va">mcmc</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>burn.in<span class="op">=</span><span class="fl">10</span>, <span class="co">## MCMC burn-in period</span>
-            n.iter <span class="op">=</span><span class="fl">500</span><span class="op">)</span> <span class="co">## number of MCMC iterations to keep</span>
-<span class="va">mod</span> <span class="op">=</span> <span class="fu"><a href="../reference/hdpGLM.html">hdpGLM</a></span><span class="op">(</span><span class="va">support</span> <span class="op">~</span> <span class="va">inequality</span> <span class="op">+</span> <span class="va">income</span> <span class="op">+</span> <span class="va">ideology</span>, data<span class="op">=</span><span class="va">welfare</span>,
-             mcmc<span class="op">=</span><span class="va">mcmc</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co">## estimating the model</span></span>
+<span><span class="va">mcmc</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>burn.in<span class="op">=</span><span class="fl">10</span>, <span class="co">## MCMC burn-in period</span></span>
+<span>            n.iter <span class="op">=</span><span class="fl">500</span><span class="op">)</span> <span class="co">## number of MCMC iterations to keep</span></span>
+<span><span class="va">mod</span> <span class="op">=</span> <span class="fu"><a href="../reference/hdpGLM.html">hdpGLM</a></span><span class="op">(</span><span class="va">support</span> <span class="op">~</span> <span class="va">inequality</span> <span class="op">+</span> <span class="va">income</span> <span class="op">+</span> <span class="va">ideology</span>, data<span class="op">=</span><span class="va">welfare</span>,</span>
+<span>             mcmc<span class="op">=</span><span class="va">mcmc</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co">## printing the outcome</span>
-<span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span>
-<span class="co">#&gt;  </span>
-<span class="co">#&gt; -------------------------------- </span>
-<span class="co">#&gt; dpGLM model object</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Maximum number of clusters activated during the estimation: 12</span>
-<span class="co">#&gt; Number of MCMC iterations: 500</span>
-<span class="co">#&gt; burn-in: 10</span>
-<span class="co">#&gt; -------------------------------- </span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Summary statistics of clusters with data points</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; --------------------------------</span>
-<span class="co">#&gt; Coefficients for cluster 1 (cluster label 1)</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;               Post.Mean Post.Median  HPD.lower HPD.upper</span>
-<span class="co">#&gt; 1 (Intercept) -3.823596  -3.8241322 -3.8997256 -3.751683</span>
-<span class="co">#&gt; 2  inequality -1.523853  -1.5249557 -1.5929343 -1.449925</span>
-<span class="co">#&gt; 3      income  3.882122   3.8823532  3.8160525  3.959338</span>
-<span class="co">#&gt; 4    ideology -8.260535  -8.2599947 -8.3367908 -8.189872</span>
-<span class="co">#&gt; 5       sigma  0.972212   0.9733659  0.8506181  1.063681</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; --------------------------------</span>
-<span class="co">#&gt; Coefficients for cluster 2 (cluster label 4)</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;                Post.Mean Post.Median  HPD.lower HPD.upper</span>
-<span class="co">#&gt; 1 (Intercept) -3.8689754   -3.869516 -3.9420464 -3.800124</span>
-<span class="co">#&gt; 2  inequality  2.0005294    1.999374  1.9351815  2.078626</span>
-<span class="co">#&gt; 3      income  3.8528985    3.856421  3.7631929  3.922354</span>
-<span class="co">#&gt; 4    ideology -8.3077366   -8.308183 -8.3751180 -8.230430</span>
-<span class="co">#&gt; 5       sigma  0.9991988    1.000280  0.8882188  1.074176</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; --------------------------------</span></code></pre></div>
-<p>The summary function prints the result in a tidy format. The column <code>k</code> in the summary shows the label of the estimated clusters. The column <code>Mean</code> is the average of the posterior distribution for each linear coefficient in each cluster.</p>
-<p>The function <code>classify</code> can be used to classify the data points into clusters based on the estimation.</p>
+<code class="sourceCode R"><span><span class="co">## printing the outcome</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
+<span><span class="co">#&gt;  </span></span>
+<span><span class="co">#&gt; -------------------------------- </span></span>
+<span><span class="co">#&gt; dpGLM model object</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Maximum number of clusters activated during the estimation: 14</span></span>
+<span><span class="co">#&gt; Number of MCMC iterations: 500</span></span>
+<span><span class="co">#&gt; burn-in: 10</span></span>
+<span><span class="co">#&gt; -------------------------------- </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Summary statistics of clusters with data points</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; --------------------------------</span></span>
+<span><span class="co">#&gt; Coefficients for cluster 1 (cluster label 1)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;                Post.Mean Post.Median  HPD.lower HPD.upper</span></span>
+<span><span class="co">#&gt; 1 (Intercept) -3.8174826  -3.8168864 -3.8842678 -3.747833</span></span>
+<span><span class="co">#&gt; 2  inequality -1.5244855  -1.5217828 -1.6064414 -1.448780</span></span>
+<span><span class="co">#&gt; 3      income  3.8816869   3.8822402  3.8172385  3.960788</span></span>
+<span><span class="co">#&gt; 4    ideology -8.2579824  -8.2588288 -8.3312731 -8.172078</span></span>
+<span><span class="co">#&gt; 5       sigma  0.9710744   0.9725616  0.8584848  1.076870</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; --------------------------------</span></span>
+<span><span class="co">#&gt; Coefficients for cluster 2 (cluster label 3)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;               Post.Mean Post.Median  HPD.lower HPD.upper</span></span>
+<span><span class="co">#&gt; 1 (Intercept) -3.870873  -3.8697608 -3.9448053 -3.805306</span></span>
+<span><span class="co">#&gt; 2  inequality  2.004165   2.0050848  1.9321425  2.067918</span></span>
+<span><span class="co">#&gt; 3      income  3.849968   3.8508139  3.7775220  3.915007</span></span>
+<span><span class="co">#&gt; 4    ideology -8.306840  -8.3071259 -8.3856662 -8.239346</span></span>
+<span><span class="co">#&gt; 5       sigma  1.000594   0.9996909  0.9109328  1.085462</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; --------------------------------</span></span></code></pre></div>
+<p>The summary function prints the result in a tidy format. The column
+<code>k</code> in the summary shows the label of the estimated clusters.
+The column <code>Mean</code> is the average of the posterior
+distribution for each linear coefficient in each cluster.</p>
+<p>The function <code>classify</code> can be used to classify the data
+points into clusters based on the estimation.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">welfare_clustered</span> <span class="op">=</span> <span class="fu"><a href="../reference/classify.html">classify</a></span><span class="op">(</span><span class="va">welfare</span>, <span class="va">mod</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">welfare_clustered</span><span class="op">)</span>
-<span class="co">#&gt;   Cluster     support inequality     income   ideology</span>
-<span class="co">#&gt; 1       4 -18.5649610  0.3392724  0.1425111  1.9225985</span>
-<span class="co">#&gt; 2       4  -9.3905812 -0.9906646 -0.5117102  0.2483346</span>
-<span class="co">#&gt; 3       4   0.9276234 -2.2318510 -0.3856288 -1.3619216</span>
-<span class="co">#&gt; 4       4 -12.3594498 -3.0079501 -0.9440585 -0.2088675</span>
-<span class="co">#&gt; 5       1  -2.4834411  0.1000455  0.8322192  0.1321378</span>
-<span class="co">#&gt; 6       4 -11.4187853 -0.9543883 -0.8810503  0.2916444</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="va">welfare_clustered</span><span class="op">)</span>
-<span class="co">#&gt;      Cluster     support  inequality     income   ideology</span>
-<span class="co">#&gt; 1995       1  -1.5230053 1.055855140 -0.7295937 -0.7067871</span>
-<span class="co">#&gt; 1996       1   0.4814892 0.582588091  2.0051082  0.3090389</span>
-<span class="co">#&gt; 1997       1 -14.1929956 0.391164197 -0.9607449  0.7765482</span>
-<span class="co">#&gt; 1998       1  -8.2396789 0.074437376  1.2020300  1.0874928</span>
-<span class="co">#&gt; 1999       1 -23.1583753 0.434223018 -0.6176438  2.0387294</span>
-<span class="co">#&gt; 2000       1  -7.2075582 0.008355317 -0.4538951  0.2268072</span></code></pre></div>
-<p>There are a series of built-in functions, with various options, to plot the results. In the example below, you see two of those options. The <code>separate</code> parameter plot the posterior samples for each cluster separately, and the option <code>ncols</code> controls how many columns to use for the panels in the figure (to see more, run <code><a href="../reference/plot.hdpGLM.html">help(plot.hdpGLM)</a></code> and <code><a href="../reference/plot.dpGLM.html">help(plot.dpGLM)</a></code>).</p>
+<code class="sourceCode R"><span><span class="va">welfare_clustered</span> <span class="op">=</span> <span class="fu"><a href="../reference/classify.html">classify</a></span><span class="op">(</span><span class="va">welfare</span>, <span class="va">mod</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">welfare_clustered</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   Cluster     support inequality     income   ideology</span></span>
+<span><span class="co">#&gt; 1       3 -18.5649610  0.3392724  0.1425111  1.9225985</span></span>
+<span><span class="co">#&gt; 2       3  -9.3905812 -0.9906646 -0.5117102  0.2483346</span></span>
+<span><span class="co">#&gt; 3       3   0.9276234 -2.2318510 -0.3856288 -1.3619216</span></span>
+<span><span class="co">#&gt; 4       3 -12.3594498 -3.0079501 -0.9440585 -0.2088675</span></span>
+<span><span class="co">#&gt; 5       1  -2.4834411  0.1000455  0.8322192  0.1321378</span></span>
+<span><span class="co">#&gt; 6       3 -11.4187853 -0.9543883 -0.8810503  0.2916444</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="va">welfare_clustered</span><span class="op">)</span></span>
+<span><span class="co">#&gt;      Cluster     support  inequality     income   ideology</span></span>
+<span><span class="co">#&gt; 1995       1  -1.5230053 1.055855140 -0.7295937 -0.7067871</span></span>
+<span><span class="co">#&gt; 1996       1   0.4814892 0.582588091  2.0051082  0.3090389</span></span>
+<span><span class="co">#&gt; 1997       1 -14.1929956 0.391164197 -0.9607449  0.7765482</span></span>
+<span><span class="co">#&gt; 1998       3  -8.2396789 0.074437376  1.2020300  1.0874928</span></span>
+<span><span class="co">#&gt; 1999       1 -23.1583753 0.434223018 -0.6176438  2.0387294</span></span>
+<span><span class="co">#&gt; 2000       1  -7.2075582 0.008355317 -0.4538951  0.2268072</span></span></code></pre></div>
+<p>There are a series of built-in functions, with various options, to
+plot the results. In the example below, you see two of those options.
+The <code>separate</code> parameter plot the posterior samples for each
+cluster separately, and the option <code>ncols</code> controls how many
+columns to use for the panels in the figure (to see more, run
+<code><a href="../reference/plot.hdpGLM.html">help(plot.hdpGLM)</a></code> and <code><a href="../reference/plot.dpGLM.html">help(plot.dpGLM)</a></code>).</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mod</span>, separate<span class="op">=</span><span class="cn">T</span>, ncols<span class="op">=</span><span class="fl">4</span><span class="op">)</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Generating plot...</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">mod</span>, separate<span class="op">=</span><span class="cn">T</span>, ncols<span class="op">=</span><span class="fl">4</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Generating plot...</span></span></code></pre></div>
 <p><img src="hdpGLM_files/figure-html/unnamed-chunk-6-1.png" width="691.2"></p>
 </div>
 <div class="section level3">
 <h3 id="estimating-context-dependent-latent-heterogeneity">Estimating Context-dependent Latent Heterogeneity<a class="anchor" aria-label="anchor" href="#estimating-context-dependent-latent-heterogeneity"></a>
 </h3>
-<p>To continue the previous toy example, suppose that we are analyzing data from many countries, and we suspect that the latent heterogeneity is different in each country. The effect of inequality on support for welfare may be gender-specific only in some countries (contexts). Or maybe the way it is gender-specific varies from country to country. Suppose we didn’t have data on gender, but we collect information on countries’ gender gap in welfare provision. Let’s look at this new data set.</p>
+<p>To continue the previous toy example, suppose that we are analyzing
+data from many countries, and we suspect that the latent heterogeneity
+is different in each country. The effect of inequality on support for
+welfare may be gender-specific only in some countries (contexts). Or
+maybe the way it is gender-specific varies from country to country.
+Suppose we didn’t have data on gender, but we collect information on
+countries’ gender gap in welfare provision. Let’s look at this new data
+set.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co">## loading and looking at the data</span>
-<span class="va">welfare</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv2</a></span><span class="op">(</span><span class="st">'welfare2.csv'</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">welfare</span><span class="op">)</span>
-<span class="co">#&gt;       support inequality     income   ideology country gap</span>
-<span class="co">#&gt; 1 -18.5649610  0.3392724  0.1425111  1.9225985       0 0.1</span>
-<span class="co">#&gt; 2  -9.3905812 -0.9906646 -0.5117102  0.2483346       0 0.1</span>
-<span class="co">#&gt; 3   0.9276234 -2.2318510 -0.3856288 -1.3619216       0 0.1</span>
-<span class="co">#&gt; 4 -12.3594498 -3.0079501 -0.9440585 -0.2088675       0 0.1</span>
-<span class="co">#&gt; 5  -2.4834411  0.1000455  0.8322192  0.1321378       0 0.1</span>
-<span class="co">#&gt; 6 -11.4187853 -0.9543883 -0.8810503  0.2916444       0 0.1</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="va">welfare</span><span class="op">)</span>
-<span class="co">#&gt;         support inequality     income    ideology country        gap</span>
-<span class="co">#&gt; 3195  0.3190583 -0.7504798 -0.7839583  0.92300705       4 -0.8280808</span>
-<span class="co">#&gt; 3196 -1.3837239  0.6620435 -1.5566268  0.05634618       4 -0.8280808</span>
-<span class="co">#&gt; 3197 -1.3820016 -0.4298706 -1.0945688  0.71559078       4 -0.8280808</span>
-<span class="co">#&gt; 3198  0.6878775  0.5450604  2.6175887 -1.94844469       4 -0.8280808</span>
-<span class="co">#&gt; 3199 -7.9282930  1.7846004  1.6755823  1.29160208       4 -0.8280808</span>
-<span class="co">#&gt; 3200 -1.7472485  0.5030992 -0.5395479  0.20109879       4 -0.8280808</span></code></pre></div>
-<p>The variable <code>country</code> indicates the country (context) of the observation, and the variable <code>gap</code> the gender gap in welfare provision in the respective country. The estimation is similar to the previous example, but now there is a second <code>formula</code> for the context-level variables. Again, the example below uses few iterations in the MCMC, but in practical applications, one needs to increase that).</p>
+<code class="sourceCode R"><span><span class="co">## loading and looking at the data</span></span>
+<span><span class="va">welfare</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv2</a></span><span class="op">(</span><span class="st">'welfare2.csv'</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">welfare</span><span class="op">)</span></span>
+<span><span class="co">#&gt;       support inequality     income   ideology country gap</span></span>
+<span><span class="co">#&gt; 1 -18.5649610  0.3392724  0.1425111  1.9225985       0 0.1</span></span>
+<span><span class="co">#&gt; 2  -9.3905812 -0.9906646 -0.5117102  0.2483346       0 0.1</span></span>
+<span><span class="co">#&gt; 3   0.9276234 -2.2318510 -0.3856288 -1.3619216       0 0.1</span></span>
+<span><span class="co">#&gt; 4 -12.3594498 -3.0079501 -0.9440585 -0.2088675       0 0.1</span></span>
+<span><span class="co">#&gt; 5  -2.4834411  0.1000455  0.8322192  0.1321378       0 0.1</span></span>
+<span><span class="co">#&gt; 6 -11.4187853 -0.9543883 -0.8810503  0.2916444       0 0.1</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="va">welfare</span><span class="op">)</span></span>
+<span><span class="co">#&gt;         support inequality     income    ideology country        gap</span></span>
+<span><span class="co">#&gt; 3195  0.3190583 -0.7504798 -0.7839583  0.92300705       4 -0.8280808</span></span>
+<span><span class="co">#&gt; 3196 -1.3837239  0.6620435 -1.5566268  0.05634618       4 -0.8280808</span></span>
+<span><span class="co">#&gt; 3197 -1.3820016 -0.4298706 -1.0945688  0.71559078       4 -0.8280808</span></span>
+<span><span class="co">#&gt; 3198  0.6878775  0.5450604  2.6175887 -1.94844469       4 -0.8280808</span></span>
+<span><span class="co">#&gt; 3199 -7.9282930  1.7846004  1.6755823  1.29160208       4 -0.8280808</span></span>
+<span><span class="co">#&gt; 3200 -1.7472485  0.5030992 -0.5395479  0.20109879       4 -0.8280808</span></span></code></pre></div>
+<p>The variable <code>country</code> indicates the country (context) of
+the observation, and the variable <code>gap</code> the gender gap in
+welfare provision in the respective country. The estimation is similar
+to the previous example, but now there is a second <code>formula</code>
+for the context-level variables. Again, the example below uses few
+iterations in the MCMC, but in practical applications, one needs to
+increase that).</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co">## estimating the model</span>
-<span class="va">mcmc</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>burn.in<span class="op">=</span><span class="fl">1</span>, <span class="co">## MCMC burn-in period</span>
-            n.iter <span class="op">=</span><span class="fl">50</span><span class="op">)</span> <span class="co">## number of MCMC iterations to keep</span>
-<span class="va">mod</span> <span class="op">=</span> <span class="fu"><a href="../reference/hdpGLM.html">hdpGLM</a></span><span class="op">(</span><span class="va">support</span> <span class="op">~</span> <span class="va">inequality</span> <span class="op">+</span> <span class="va">income</span> <span class="op">+</span> <span class="va">ideology</span>, 
-             <span class="va">support</span> <span class="op">~</span> <span class="va">gap</span>,
-         data<span class="op">=</span><span class="va">welfare</span>, mcmc<span class="op">=</span><span class="va">mcmc</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co">## estimating the model</span></span>
+<span><span class="va">mcmc</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>burn.in<span class="op">=</span><span class="fl">1</span>, <span class="co">## MCMC burn-in period</span></span>
+<span>            n.iter <span class="op">=</span><span class="fl">50</span><span class="op">)</span> <span class="co">## number of MCMC iterations to keep</span></span>
+<span><span class="va">mod</span> <span class="op">=</span> <span class="fu"><a href="../reference/hdpGLM.html">hdpGLM</a></span><span class="op">(</span><span class="va">support</span> <span class="op">~</span> <span class="va">inequality</span> <span class="op">+</span> <span class="va">income</span> <span class="op">+</span> <span class="va">ideology</span>, </span>
+<span>             <span class="va">support</span> <span class="op">~</span> <span class="va">gap</span>,</span>
+<span>         data<span class="op">=</span><span class="va">welfare</span>, mcmc<span class="op">=</span><span class="va">mcmc</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span>
-<span class="co">#&gt;  </span>
-<span class="co">#&gt; -------------------------------- </span>
-<span class="co">#&gt; hdpGLM Object </span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Maximum number of clusters activated during the estimation: 1</span>
-<span class="co">#&gt; Number of MCMC iterations: 50</span>
-<span class="co">#&gt; Burn-in: 1</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Number of contexts : 5</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Number of clusters (summary across contexts): </span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;   Average Std.Dev Median Min. Max.</span>
-<span class="co">#&gt; 1       5 2.54951      5    1    8</span>
-<span class="co">#&gt; -------------------------------- </span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Summary statistics of clusters with data points in each context</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; --------------------------------</span>
-<span class="co">#&gt; Coefficients and clusters for context 1</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;                 Post.Mean Post.Median  HPD.lower   HPD.upper Cluster</span>
-<span class="co">#&gt; 1  (Intercept) -3.9200103  -3.9086649 -4.0916737 -3.82826390       1</span>
-<span class="co">#&gt; 2   inequality  1.7840391   1.9800815  0.2998919  2.09073735       1</span>
-<span class="co">#&gt; 3       income  3.8695044   3.8633582  3.8097297  3.96215519       1</span>
-<span class="co">#&gt; 4     ideology -8.3401337  -8.3416590 -8.4751317 -8.21856526       1</span>
-<span class="co">#&gt; 5  (Intercept) -2.2387978  -2.3739615 -2.9418510 -1.31788601       3</span>
-<span class="co">#&gt; 6   inequality  0.1876741   0.2056964 -0.1329852  0.59241276       3</span>
-<span class="co">#&gt; 7       income  3.3937737   3.4175683  3.0055069  3.98378178       3</span>
-<span class="co">#&gt; 8     ideology -8.9133117  -8.8768780 -9.5036670 -8.55398762       3</span>
-<span class="co">#&gt; 9  (Intercept) -3.8026545  -3.8645517 -4.1865797 -2.29474105       5</span>
-<span class="co">#&gt; 10  inequality -1.6675150  -1.6128776 -2.7301152 -1.28880865       5</span>
-<span class="co">#&gt; 11      income  3.9841636   3.9104714  3.7369937  5.35167042       5</span>
-<span class="co">#&gt; 12    ideology -8.3075173  -8.3508802 -8.5203981 -7.47045973       5</span>
-<span class="co">#&gt; 13 (Intercept) -3.0352503  -3.1860882 -3.9037019 -1.66774404       6</span>
-<span class="co">#&gt; 14  inequality -0.6841269  -0.3273439 -5.6208047  0.47306063       6</span>
-<span class="co">#&gt; 15      income  2.4741670   2.3702374  1.6612408  3.46469034       6</span>
-<span class="co">#&gt; 16    ideology -6.1972911  -6.7381009 -7.6686466 -0.04033671       6</span>
-<span class="co">#&gt; 17 (Intercept) -3.5119879  -3.7405088 -4.2691582 -1.17936223       7</span>
-<span class="co">#&gt; 18  inequality -1.2734880  -1.5497967 -2.2240719  0.98049926       7</span>
-<span class="co">#&gt; 19      income  2.5102981   3.8556703 -8.1437046  4.13988368       7</span>
-<span class="co">#&gt; 20    ideology -7.5784819  -8.0673148 -8.2630251 -5.31677672       7</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; --------------------------------</span>
-<span class="co">#&gt; Coefficients and clusters for context 2</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;                 Post.Mean Post.Median   HPD.lower   HPD.upper Cluster</span>
-<span class="co">#&gt; 1  (Intercept)  0.2732003  0.24765747  0.08483171  0.59943029       1</span>
-<span class="co">#&gt; 2   inequality -0.2933128 -0.28682990 -0.49909701 -0.08830094       1</span>
-<span class="co">#&gt; 3       income -0.1901150 -0.22034064 -0.50907363  0.03505336       1</span>
-<span class="co">#&gt; 4     ideology -1.8247332 -1.83985305 -1.94757344 -1.48178348       1</span>
-<span class="co">#&gt; 5  (Intercept)  1.5106250  1.44434394  1.14550070  2.57162657       2</span>
-<span class="co">#&gt; 6   inequality  0.7313438  0.84397878  0.24219831  0.97826343       2</span>
-<span class="co">#&gt; 7       income  0.6089516  0.58867164  0.29482767  0.98329998       2</span>
-<span class="co">#&gt; 8     ideology -1.7922469 -1.80373682 -2.13723951 -1.50451308       2</span>
-<span class="co">#&gt; 9  (Intercept) -0.6740773 -0.54561991 -1.18145672 -0.16011462       3</span>
-<span class="co">#&gt; 10  inequality -1.0610592 -1.09467102 -1.42892256 -0.76787129       3</span>
-<span class="co">#&gt; 11      income -0.4313721 -0.51162903 -0.89914787  0.10423671       3</span>
-<span class="co">#&gt; 12    ideology -2.1409275 -2.24963488 -2.59008094 -1.78213644       3</span>
-<span class="co">#&gt; 13 (Intercept)  0.2728293  0.27336499 -0.56435256  1.02437997       4</span>
-<span class="co">#&gt; 14  inequality -0.1939363 -0.21738758 -1.35182344  0.70445477       4</span>
-<span class="co">#&gt; 15      income  1.4764635  1.37804585  0.97006804  2.17856349       4</span>
-<span class="co">#&gt; 16    ideology -0.2310224 -0.31869305 -0.97775407  0.79429604       4</span>
-<span class="co">#&gt; 17 (Intercept)  0.1098856  0.06146258 -0.66553895  0.81635227       6</span>
-<span class="co">#&gt; 18  inequality  1.4695401  1.29127392  0.81911049  3.79368669       6</span>
-<span class="co">#&gt; 19      income  0.7212451  0.96553924 -0.47645000  1.41363031       6</span>
-<span class="co">#&gt; 20    ideology -1.4654754 -1.62243082 -2.30369871  1.46858254       6</span>
-<span class="co">#&gt; 21 (Intercept)  1.6276353  1.48262804  1.30792052  2.24962382       7</span>
-<span class="co">#&gt; 22  inequality  0.7113141  0.82903058 -0.46386869  1.13218786       7</span>
-<span class="co">#&gt; 23      income  1.1361645  1.06517728  0.46247915  1.58836776       7</span>
-<span class="co">#&gt; 24    ideology -1.6624824 -1.75954854 -2.04260080 -0.79330943       7</span>
-<span class="co">#&gt; 25 (Intercept)  0.4072432  0.41621185 -3.78887031  1.10572603       8</span>
-<span class="co">#&gt; 26  inequality -0.9054925 -1.18160709 -2.40898157  2.33015019       8</span>
-<span class="co">#&gt; 27      income -0.3256753 -0.35885498 -1.55389285  2.19606671       8</span>
-<span class="co">#&gt; 28    ideology -2.7148582 -2.88020386 -5.44320220 -0.70872687       8</span>
-<span class="co">#&gt; 29 (Intercept)  1.3103977  1.88449134 -2.80534329  3.14981324       9</span>
-<span class="co">#&gt; 30  inequality -0.1009143  0.24892829 -5.17799840  1.29803660       9</span>
-<span class="co">#&gt; 31      income  0.6023806  0.53718538 -2.71595475  4.42419630       9</span>
-<span class="co">#&gt; 32    ideology -2.5691415 -2.15059230 -6.67724704  0.93035046       9</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; --------------------------------</span>
-<span class="co">#&gt; Coefficients and clusters for context 3</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;                  Post.Mean Post.Median   HPD.lower  HPD.upper Cluster</span>
-<span class="co">#&gt; 1  (Intercept)  0.35564122  0.39771868 -0.17949410  0.5296717       1</span>
-<span class="co">#&gt; 2   inequality -0.37263183 -0.36376692 -0.50666603 -0.2421574       1</span>
-<span class="co">#&gt; 3       income -3.44765040 -3.44133972 -3.60867765 -3.3205957       1</span>
-<span class="co">#&gt; 4     ideology  1.41949114  1.45721960  1.09362917  1.5854301       1</span>
-<span class="co">#&gt; 5  (Intercept) -0.88841237 -0.86594794 -1.40016293 -0.5328050       2</span>
-<span class="co">#&gt; 6   inequality  1.24217561  1.26110918  0.79075018  1.4786188       2</span>
-<span class="co">#&gt; 7       income -3.92865325 -3.90266303 -4.23430391 -3.7145404       2</span>
-<span class="co">#&gt; 8     ideology  0.63933943  0.67598628  0.23099717  1.0321393       2</span>
-<span class="co">#&gt; 9  (Intercept) -0.17036962 -0.18754729 -0.46262535  0.2246101       4</span>
-<span class="co">#&gt; 10  inequality -0.52397781 -0.58681966 -0.74741275  0.3269360       4</span>
-<span class="co">#&gt; 11      income -4.18745525 -4.12836207 -4.93258347 -3.7495211       4</span>
-<span class="co">#&gt; 12    ideology  0.66941139  0.65308917  0.48711278  0.9969330       4</span>
-<span class="co">#&gt; 13 (Intercept) -1.44900977 -1.42130603 -1.69258514 -1.0527716       5</span>
-<span class="co">#&gt; 14  inequality -0.42356130 -0.49683295 -1.02769761  0.1707266       5</span>
-<span class="co">#&gt; 15      income -3.56803773 -3.56385970 -3.98559706 -3.1916302       5</span>
-<span class="co">#&gt; 16    ideology  0.60509219  0.64472298  0.08901490  1.0027910       5</span>
-<span class="co">#&gt; 17 (Intercept) -0.06901937 -0.08288345 -0.67176193  0.3194388      11</span>
-<span class="co">#&gt; 18  inequality  0.43071532  0.46410603 -0.03632484  0.9808859      11</span>
-<span class="co">#&gt; 19      income -2.74875138 -2.92085366 -3.35719143 -2.3897252      11</span>
-<span class="co">#&gt; 20    ideology  2.26478128  2.29540423  1.97541757  2.7870863      11</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; --------------------------------</span>
-<span class="co">#&gt; Coefficients and clusters for context 4</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;                Post.Mean Post.Median   HPD.lower  HPD.upper Cluster</span>
-<span class="co">#&gt; 1 (Intercept)  0.1720970  0.15850410  0.01012377  0.2955098       2</span>
-<span class="co">#&gt; 2  inequality -1.0048874 -1.08837894 -1.18515241 -0.9012064       2</span>
-<span class="co">#&gt; 3      income -2.5814141 -2.57422572 -2.72440873 -2.4240009       2</span>
-<span class="co">#&gt; 4    ideology -0.0672998 -0.05576457 -0.44418144  0.1126058       2</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; --------------------------------</span>
-<span class="co">#&gt; Coefficients and clusters for context 5</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;                  Post.Mean Post.Median  HPD.lower   HPD.upper Cluster</span>
-<span class="co">#&gt; 1  (Intercept)  0.35112841  0.52737155 -0.4656270  0.68626911       2</span>
-<span class="co">#&gt; 2   inequality  1.51297868  1.54842357  1.1726519  1.78528643       2</span>
-<span class="co">#&gt; 3       income -0.05284474 -0.12501810 -0.5087275  0.62043658       2</span>
-<span class="co">#&gt; 4     ideology -1.08106484 -1.07876439 -1.4498601 -0.73146120       2</span>
-<span class="co">#&gt; 5  (Intercept)  0.90999078  0.79466967  0.4362762  2.59032047       3</span>
-<span class="co">#&gt; 6   inequality  0.09580272  0.18286358 -0.6554419  0.46875591       3</span>
-<span class="co">#&gt; 7       income -0.69039572 -0.73321986 -1.6724944  0.05068042       3</span>
-<span class="co">#&gt; 8     ideology -2.27320553 -2.33519249 -2.6504735 -1.54872959       3</span>
-<span class="co">#&gt; 9  (Intercept) -0.97141646 -0.96488526 -2.4458632  2.25946736       5</span>
-<span class="co">#&gt; 10  inequality  0.02880251  0.03212130 -1.3522789  0.42435690       5</span>
-<span class="co">#&gt; 11      income -0.48491948 -0.71713818 -4.4210062  1.82024856       5</span>
-<span class="co">#&gt; 12    ideology -1.81957932 -2.09477993 -2.4766507  7.12661004       5</span>
-<span class="co">#&gt; 13 (Intercept) -0.26533672 -0.31394080 -0.6089792  0.44469833       6</span>
-<span class="co">#&gt; 14  inequality  0.29013509  0.77884268 -1.9584716  1.16701494       6</span>
-<span class="co">#&gt; 15      income -0.23019916 -0.17114408 -1.3522853  0.30178040       6</span>
-<span class="co">#&gt; 16    ideology -1.45117753 -1.95030096 -2.3895288  0.66372491       6</span>
-<span class="co">#&gt; 17 (Intercept)  0.16204728 -0.05510382 -0.9644732  2.87125145       9</span>
-<span class="co">#&gt; 18  inequality -2.80212196 -2.65528984 -4.6829714 -1.78957332       9</span>
-<span class="co">#&gt; 19      income -0.28010501 -0.28778440 -1.3533426  0.70671335       9</span>
-<span class="co">#&gt; 20    ideology -2.20416470 -2.16349929 -4.1285586 -1.30543912       9</span>
-<span class="co">#&gt; 21 (Intercept)  0.18447917  0.23793022 -1.1654610  0.83515362      10</span>
-<span class="co">#&gt; 22  inequality -2.88017535 -2.95639761 -3.3342745 -1.90349010      10</span>
-<span class="co">#&gt; 23      income -0.24403149 -0.28208104 -1.9570586  0.41382556      10</span>
-<span class="co">#&gt; 24    ideology -2.40547313 -2.40413095 -3.3615311 -2.09991780      10</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; --------------------------------</span>
-<span class="co">#&gt; Context-level coefficients:</span>
-<span class="co">#&gt;                Description   Post.Mean HPD.lower HPD.upper</span>
-<span class="co">#&gt; 1     Intercept of beta[0] -0.75338580 -3.378839  1.314950</span>
-<span class="co">#&gt; 2     Intercept of beta[1] -0.08219604 -3.115248  2.339131</span>
-<span class="co">#&gt; 3     Intercept of beta[2] -0.06027461 -2.180591  1.772515</span>
-<span class="co">#&gt; 4     Intercept of beta[3] -1.35226270 -3.861279  1.192784</span>
-<span class="co">#&gt; 5 Effect of gap on beta[0]  0.04922494 -2.298760  2.202872</span>
-<span class="co">#&gt; 6 Effect of gap on beta[1]  0.37408227 -1.416155  1.865252</span>
-<span class="co">#&gt; 7 Effect of gap on beta[2] -0.80822913 -2.559590  1.233182</span>
-<span class="co">#&gt; 8 Effect of gap on beta[3]  0.23634060 -1.731484  2.418950</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; --------------------------------</span></code></pre></div>
-<p>The <code>summary</code> contains more information now. As before, the column <code>k</code> indicates the estimated clusters. The column <code>j</code> indicates the country (context) of the estimated value for the respective cluster’s coefficient. The second summary (<code>$tau</code>) shows the marginal effect of the context-level feature (<code>gap</code>). Details of the interpretation can be found in <span class="citation">Ferrari (2020)</span>.</p>
-<p>There are a series of built-in functions to visualize the output. The function <code><a href="../reference/plot_tau.html">plot_tau()</a></code> displays the estimation of the effect of the context-level variables.</p>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span>
+<span><span class="co">#&gt;  </span></span>
+<span><span class="co">#&gt; -------------------------------- </span></span>
+<span><span class="co">#&gt; hdpGLM Object </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Maximum number of clusters activated during the estimation: 1</span></span>
+<span><span class="co">#&gt; Number of MCMC iterations: 50</span></span>
+<span><span class="co">#&gt; Burn-in: 1</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Number of contexts : 5</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Number of clusters (summary across contexts): </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;   Average Std.Dev Median Min. Max.</span></span>
+<span><span class="co">#&gt; 1     3.8 1.30384      4    2    5</span></span>
+<span><span class="co">#&gt; -------------------------------- </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Summary statistics of clusters with data points in each context</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; --------------------------------</span></span>
+<span><span class="co">#&gt; Coefficients and clusters for context 1</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;                Post.Mean Post.Median  HPD.lower  HPD.upper Cluster</span></span>
+<span><span class="co">#&gt; 1  (Intercept) -3.850018   -3.831053 -4.0229723 -3.7761732       1</span></span>
+<span><span class="co">#&gt; 2   inequality -1.266301   -1.516352 -1.6044299  0.1208613       1</span></span>
+<span><span class="co">#&gt; 3       income  3.888059    3.888325  3.8193618  3.9482793       1</span></span>
+<span><span class="co">#&gt; 4     ideology -8.274958   -8.265861 -8.3941242 -8.2029475       1</span></span>
+<span><span class="co">#&gt; 5  (Intercept) -3.830148   -3.930795 -5.4704281 -1.7055653       3</span></span>
+<span><span class="co">#&gt; 6   inequality  2.698005    2.476961  2.0890243  4.7523562       3</span></span>
+<span><span class="co">#&gt; 7       income  2.894359    3.087680  0.5420687  3.7025250       3</span></span>
+<span><span class="co">#&gt; 8     ideology -6.326634   -6.573921 -7.1981261 -3.0954741       3</span></span>
+<span><span class="co">#&gt; 9  (Intercept) -3.683952   -3.799872 -3.9527464 -2.2439587       8</span></span>
+<span><span class="co">#&gt; 10  inequality  2.141463    2.032401  1.9139868  3.1865272       8</span></span>
+<span><span class="co">#&gt; 11      income  3.839811    3.874678  3.4707271  4.1176459       8</span></span>
+<span><span class="co">#&gt; 12    ideology -7.969450   -8.313740 -8.4020125 -1.7240427       8</span></span>
+<span><span class="co">#&gt; 13 (Intercept) -4.497681   -4.651865 -5.4672935 -2.8655485      11</span></span>
+<span><span class="co">#&gt; 14  inequality  1.680044    1.697127  1.0126947  2.1632947      11</span></span>
+<span><span class="co">#&gt; 15      income  3.177055    3.479234  0.9383592  4.4565578      11</span></span>
+<span><span class="co">#&gt; 16    ideology -8.136503   -8.326492 -9.1340563 -6.7406244      11</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; --------------------------------</span></span>
+<span><span class="co">#&gt; Coefficients and clusters for context 2</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;                  Post.Mean Post.Median  HPD.lower   HPD.upper Cluster</span></span>
+<span><span class="co">#&gt; 1  (Intercept)  0.26820457   0.2158852 -0.6387111  3.16198684       1</span></span>
+<span><span class="co">#&gt; 2   inequality -0.32966802  -0.2581746 -2.8469563  0.16958412       1</span></span>
+<span><span class="co">#&gt; 3       income -0.00474453  -0.1930250 -0.9128338  2.40068345       1</span></span>
+<span><span class="co">#&gt; 4     ideology -2.33154026  -1.8418190 -6.6065095 -1.40993445       1</span></span>
+<span><span class="co">#&gt; 5  (Intercept) -0.34614107  -0.3312663 -0.6013942  0.08909974       4</span></span>
+<span><span class="co">#&gt; 6   inequality -1.13625815  -1.1731203 -1.4213765 -0.64566896       4</span></span>
+<span><span class="co">#&gt; 7       income -0.71030796  -0.5511284 -3.1148561 -0.34972378       4</span></span>
+<span><span class="co">#&gt; 8     ideology -2.21820821  -2.2268997 -2.4605034 -1.95506546       4</span></span>
+<span><span class="co">#&gt; 9  (Intercept)  0.93766701   0.8816030 -0.2345261  3.16835754       5</span></span>
+<span><span class="co">#&gt; 10  inequality -1.08511843  -1.0759441 -2.8524324  0.66261946       5</span></span>
+<span><span class="co">#&gt; 11      income -0.37491463  -0.1981289 -4.7820876  1.64841044       5</span></span>
+<span><span class="co">#&gt; 12    ideology -1.23932565  -1.1166439 -5.8248620  0.56954897       5</span></span>
+<span><span class="co">#&gt; 13 (Intercept)  1.40590664   1.2517123  0.8869990  3.35336823       6</span></span>
+<span><span class="co">#&gt; 14  inequality  0.67213706   0.8224769 -0.6216086  1.03727770       6</span></span>
+<span><span class="co">#&gt; 15      income  0.73993881   0.9611547  0.5139214  1.74369429       6</span></span>
+<span><span class="co">#&gt; 16    ideology -1.61525012  -1.6437936 -2.2960005 -1.20174431       6</span></span>
+<span><span class="co">#&gt; 17 (Intercept)  0.72691049   0.7499653  0.1064514  1.17306937       7</span></span>
+<span><span class="co">#&gt; 18  inequality  0.93554460   1.3044385 -0.8372661  2.14568306       7</span></span>
+<span><span class="co">#&gt; 19      income  0.25019338   0.6731732 -3.6588106  1.61649759       7</span></span>
+<span><span class="co">#&gt; 20    ideology -2.67148869  -2.5133020 -4.9952761 -1.69346827       7</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; --------------------------------</span></span>
+<span><span class="co">#&gt; Coefficients and clusters for context 3</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;                  Post.Mean Post.Median  HPD.lower   HPD.upper Cluster</span></span>
+<span><span class="co">#&gt; 1  (Intercept) -0.26958132 -0.27255106 -0.4530445 -0.08352123       2</span></span>
+<span><span class="co">#&gt; 2   inequality -0.52824546 -0.52188321 -0.8275946 -0.29652662       2</span></span>
+<span><span class="co">#&gt; 3       income -3.94723633 -3.96481908 -4.1931022 -3.54475661       2</span></span>
+<span><span class="co">#&gt; 4     ideology  0.70405591  0.68623573  0.4202208  1.13490622       2</span></span>
+<span><span class="co">#&gt; 5  (Intercept)  0.06367205  0.07130943 -0.5418888  0.77731603       3</span></span>
+<span><span class="co">#&gt; 6   inequality  2.14480673  1.83807021  1.3741663  4.93870581       3</span></span>
+<span><span class="co">#&gt; 7       income -3.23920682 -3.40143934 -4.9905422  0.92275018       3</span></span>
+<span><span class="co">#&gt; 8     ideology  1.54120367  1.42790533  0.9597712  3.54438599       3</span></span>
+<span><span class="co">#&gt; 9  (Intercept) -0.15165257 -0.04072183 -2.6962179  0.44547907       6</span></span>
+<span><span class="co">#&gt; 10  inequality  0.36374283  0.39905078 -0.6200306  0.75847969       6</span></span>
+<span><span class="co">#&gt; 11      income -2.88937654 -2.86963961 -3.2771568 -2.37248370       6</span></span>
+<span><span class="co">#&gt; 12    ideology  2.47914067  2.27484585  1.8904840  6.38954636       6</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; --------------------------------</span></span>
+<span><span class="co">#&gt; Coefficients and clusters for context 4</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;                 Post.Mean Post.Median   HPD.lower    HPD.upper Cluster</span></span>
+<span><span class="co">#&gt; 1 (Intercept)  0.83021798  0.68878802 -0.03022949  3.140887559       2</span></span>
+<span><span class="co">#&gt; 2  inequality -1.58461512 -1.58336282 -2.62800294 -0.016295020       2</span></span>
+<span><span class="co">#&gt; 3      income -0.69031623 -0.84359956 -1.96976016  0.325236017       2</span></span>
+<span><span class="co">#&gt; 4    ideology  0.25754289  0.20962710 -0.24891019  1.269744923       2</span></span>
+<span><span class="co">#&gt; 5 (Intercept)  0.07794797  0.07758135 -0.01556230  0.269848348       3</span></span>
+<span><span class="co">#&gt; 6  inequality -1.06651680 -1.05076594 -1.15640203 -0.950865772       3</span></span>
+<span><span class="co">#&gt; 7      income -2.64262423 -2.64675437 -2.72896788 -2.478995363       3</span></span>
+<span><span class="co">#&gt; 8    ideology -0.11877325 -0.11887087 -0.32833111  0.008842872       3</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; --------------------------------</span></span>
+<span><span class="co">#&gt; Coefficients and clusters for context 5</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;                  Post.Mean  Post.Median   HPD.lower   HPD.upper Cluster</span></span>
+<span><span class="co">#&gt; 1  (Intercept)  1.48417683  1.391018708  0.60851304  2.24602506       2</span></span>
+<span><span class="co">#&gt; 2   inequality -2.38014590 -2.630576886 -3.25749998 -1.14669602       2</span></span>
+<span><span class="co">#&gt; 3       income -1.00959724 -1.084044609 -1.55632758 -0.03069636       2</span></span>
+<span><span class="co">#&gt; 4     ideology -1.78574735 -1.889904364 -2.62883560 -0.90764453       2</span></span>
+<span><span class="co">#&gt; 5  (Intercept) -0.52860077 -0.411695995 -2.67741256  2.20494958       3</span></span>
+<span><span class="co">#&gt; 6   inequality  1.15931178  1.632231765 -2.65927617  4.49632079       3</span></span>
+<span><span class="co">#&gt; 7       income -0.63468894 -0.596065862 -3.69850037  2.80865933       3</span></span>
+<span><span class="co">#&gt; 8     ideology -2.47701021 -2.284631615 -5.14091883 -0.37967583       3</span></span>
+<span><span class="co">#&gt; 9  (Intercept) -0.04279885  0.097158268 -2.21617514  0.73490354       5</span></span>
+<span><span class="co">#&gt; 10  inequality  0.88306251  0.852795748  0.02803985  1.93526238       5</span></span>
+<span><span class="co">#&gt; 11      income -0.57270011 -0.265389504 -4.83645159  0.52254922       5</span></span>
+<span><span class="co">#&gt; 12    ideology -2.06286047 -2.111867999 -3.42846478 -0.91525928       5</span></span>
+<span><span class="co">#&gt; 13 (Intercept) -0.18275686 -0.153757790 -0.91408210  0.39708126       7</span></span>
+<span><span class="co">#&gt; 14  inequality  0.49015382  0.748620635 -0.81026353  1.12416091       7</span></span>
+<span><span class="co">#&gt; 15      income -0.41788024 -0.250106798 -2.16417778  0.11770630       7</span></span>
+<span><span class="co">#&gt; 16    ideology -2.14437779 -2.090991691 -3.01021834 -1.59087165       7</span></span>
+<span><span class="co">#&gt; 17 (Intercept)  0.23454252 -0.006609914 -0.31626061  2.31278243       9</span></span>
+<span><span class="co">#&gt; 18  inequality -2.80125890 -2.758064654 -3.23831491 -2.40184198       9</span></span>
+<span><span class="co">#&gt; 19      income -0.24273827 -0.135219596 -0.51665601  0.38628583       9</span></span>
+<span><span class="co">#&gt; 20    ideology -2.20108192 -2.278504066 -3.58542576  0.11818932       9</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; --------------------------------</span></span>
+<span><span class="co">#&gt; Context-level coefficients:</span></span>
+<span><span class="co">#&gt;                Description  Post.Mean HPD.lower HPD.upper</span></span>
+<span><span class="co">#&gt; 1     Intercept of beta[0] -0.8167835 -3.771344  3.218372</span></span>
+<span><span class="co">#&gt; 2     Intercept of beta[1] -0.2772584 -4.453605  2.017705</span></span>
+<span><span class="co">#&gt; 3     Intercept of beta[2] -0.3300868 -3.278375  2.520085</span></span>
+<span><span class="co">#&gt; 4     Intercept of beta[3] -0.8536481 -3.537610  2.513618</span></span>
+<span><span class="co">#&gt; 5 Effect of gap on beta[0] -0.4160391 -2.639034  1.729934</span></span>
+<span><span class="co">#&gt; 6 Effect of gap on beta[1]  0.4784796 -2.361204  2.821168</span></span>
+<span><span class="co">#&gt; 7 Effect of gap on beta[2] -0.4764465 -2.342310  2.150394</span></span>
+<span><span class="co">#&gt; 8 Effect of gap on beta[3]  0.6017164 -2.020003  3.376128</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; --------------------------------</span></span></code></pre></div>
+<p>The <code>summary</code> contains more information now. As before,
+the column <code>k</code> indicates the estimated clusters. The column
+<code>j</code> indicates the country (context) of the estimated value
+for the respective cluster’s coefficient. The second summary
+(<code>$tau</code>) shows the marginal effect of the context-level
+feature (<code>gap</code>). Details of the interpretation can be found
+in <span class="citation">Ferrari (2020)</span>.</p>
+<p>There are a series of built-in functions to visualize the output. The
+function <code><a href="../reference/plot_tau.html">plot_tau()</a></code> displays the estimation of the effect
+of the context-level variables.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/plot_tau.html">plot_tau</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_tau.html">plot_tau</a></span><span class="op">(</span><span class="va">mod</span><span class="op">)</span></span></code></pre></div>
 <p><img src="hdpGLM_files/figure-html/unnamed-chunk-10-1.png" width="691.2"></p>
-<p>The function <code><a href="../reference/plot_pexp_beta.html">plot_pexp_beta()</a></code> displays the association between the context-level features and the latent heterogeneity in the effect of the linear coefficients in each context. The paramter ‘smooth.line’ plots a line representing the linear association between the context-level feature (<code>gap</code>) and the posterior averages of the marginal effects in each cluster. The parameter <code>ncol.beta</code> controls the number of columns in the figure for the panels. For more options, see <code><a href="../reference/plot_pexp_beta.html">help(plot_pexp_beta)</a></code></p>
+<p>The function <code><a href="../reference/plot_pexp_beta.html">plot_pexp_beta()</a></code> displays the association
+between the context-level features and the latent heterogeneity in the
+effect of the linear coefficients in each context. The paramter
+‘smooth.line’ plots a line representing the linear association between
+the context-level feature (<code>gap</code>) and the posterior averages
+of the marginal effects in each cluster. The parameter
+<code>ncol.beta</code> controls the number of columns in the figure for
+the panels. For more options, see <code><a href="../reference/plot_pexp_beta.html">help(plot_pexp_beta)</a></code></p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/plot_pexp_beta.html">plot_pexp_beta</a></span><span class="op">(</span><span class="va">mod</span>, smooth.line<span class="op">=</span><span class="cn">TRUE</span>, ncol.beta<span class="op">=</span><span class="fl">2</span><span class="op">)</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Generating plots ...</span>
-<span class="co">#&gt; Warning: `guides(&lt;scale&gt; = FALSE)` is deprecated. Please use `guides(&lt;scale&gt; =</span>
-<span class="co">#&gt; "none")` instead.</span>
-<span class="co">#&gt; `geom_smooth()` using formula 'y ~ x'</span>
-<span class="co">#&gt; `geom_smooth()` using formula 'y ~ x'</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_pexp_beta.html">plot_pexp_beta</a></span><span class="op">(</span><span class="va">mod</span>, smooth.line<span class="op">=</span><span class="cn">TRUE</span>, ncol.beta<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Generating plots ...</span></span>
+<span><span class="co">#&gt; Warning: The `&lt;scale&gt;` argument of `guides()` cannot be `FALSE`. Use "none" instead as</span></span>
+<span><span class="co">#&gt; of ggplot2 3.3.4.</span></span>
+<span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> The deprecated feature was likely used in the <span style="color: #0000BB;">hdpGLM</span> package.</span></span>
+<span><span class="co">#&gt;   Please report the issue at <span style="color: #0000BB; font-style: italic;">&lt;https://github.com/DiogoFerrari/hdpGLM/issues&gt;</span>.</span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">This warning is displayed once every 8 hours.</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">Call `lifecycle::last_lifecycle_warnings()` to see where this warning was</span></span></span>
+<span><span class="co">#&gt; <span style="color: #555555;">generated.</span></span></span>
+<span><span class="co">#&gt; `geom_smooth()` using formula = 'y ~ x'</span></span>
+<span><span class="co">#&gt; `geom_smooth()` using formula = 'y ~ x'</span></span></code></pre></div>
 <p><img src="hdpGLM_files/figure-html/unnamed-chunk-11-1.png" width="691.2"></p>
 </div>
 </div>
 <div class="section level2 unnumbered">
 <h2 class="unnumbered" id="reference">Reference<a class="anchor" aria-label="anchor" href="#reference"></a>
 </h2>
-<div id="refs" class="references hanging-indent">
-<div id="ref-ferrari2020modeling">
-<p>Ferrari, Diogo. 2020. “Modeling Context-Dependent Latent Effect Heterogeneity.” <em>Political Analysis</em> 28 (1): 20–46.</p>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-ferrari2020modeling" class="csl-entry">
+Ferrari, Diogo. 2020. <span>“Modeling Context-Dependent Latent Effect
+Heterogeneity.”</span> <em>Political Analysis</em> 28 (1): 20–46.
 </div>
 </div>
 </div>
@@ -454,7 +527,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>

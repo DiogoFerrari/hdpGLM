@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">hdpGLM</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.3</span>
       </span>
     </div>
 
@@ -66,95 +66,128 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">plot_pexp_beta</span><span class="op">(</span>
-  <span class="va">samples</span>,
-  X <span class="op">=</span> <span class="cn">NULL</span>,
-  W <span class="op">=</span> <span class="cn">NULL</span>,
-  pred.pexp.beta <span class="op">=</span> <span class="cn">FALSE</span>,
-  ncol.beta <span class="op">=</span> <span class="cn">NULL</span>,
-  ylab <span class="op">=</span> <span class="cn">NULL</span>,
-  nrow.w <span class="op">=</span> <span class="cn">NULL</span>,
-  ncol.w <span class="op">=</span> <span class="cn">NULL</span>,
-  smooth.line <span class="op">=</span> <span class="cn">FALSE</span>,
-  title <span class="op">=</span> <span class="cn">NULL</span>,
-  legend.position <span class="op">=</span> <span class="st">"top"</span>,
-  col.pred.line <span class="op">=</span> <span class="st">"red"</span>,
-  x.axis.size <span class="op">=</span> <span class="fl">1.1</span>,
-  y.axis.size <span class="op">=</span> <span class="fl">1.1</span>,
-  title.size <span class="op">=</span> <span class="fl">12</span>,
-  panel.title.size <span class="op">=</span> <span class="fl">1.4</span>,
-  legend.size <span class="op">=</span> <span class="fl">1</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plot_pexp_beta</span><span class="op">(</span></span>
+<span>  <span class="va">samples</span>,</span>
+<span>  X <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  W <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  pred.pexp.beta <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  ncol.beta <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ylab <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  nrow.w <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ncol.w <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  smooth.line <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  title <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  legend.position <span class="op">=</span> <span class="st">"top"</span>,</span>
+<span>  col.pred.line <span class="op">=</span> <span class="st">"red"</span>,</span>
+<span>  x.axis.size <span class="op">=</span> <span class="fl">1.1</span>,</span>
+<span>  y.axis.size <span class="op">=</span> <span class="fl">1.1</span>,</span>
+<span>  title.size <span class="op">=</span> <span class="fl">12</span>,</span>
+<span>  panel.title.size <span class="op">=</span> <span class="fl">1.4</span>,</span>
+<span>  legend.size <span class="op">=</span> <span class="fl">1</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>samples</dt>
 <dd><p>an output of the function <code><a href="hdpGLM.html">hdpGLM</a></code></p></dd>
+
+
 <dt>X</dt>
 <dd><p>a string vector with the name of the first-level covariates whose associated tau should be displayed</p></dd>
+
+
 <dt>W</dt>
 <dd><p>a string vector with the name of the context-level covariate(s) whose linear effect will be displayed. If <code>NULL</code>, the linear effect tau of all context-level covariates are displayed. Note: the context-level covariate must have been included in the estimation of the model.</p></dd>
+
+
 <dt>pred.pexp.beta</dt>
 <dd><p>boolean, if <code>TRUE</code> the plots will display a line with the predicted posterior expectation of betas obtained using the posterior expectation of taus, the linear coefficients of the expectation of beta</p></dd>
+
+
 <dt>ncol.beta</dt>
 <dd><p>integer with number of columns of the grid used for each group of context-level covariates</p></dd>
+
+
 <dt>ylab</dt>
 <dd><p>string, the label of the y-axis</p></dd>
+
+
 <dt>nrow.w</dt>
 <dd><p>integer with the number of rows of the grid</p></dd>
+
+
 <dt>ncol.w</dt>
 <dd><p>integer with the number of columns of the grid</p></dd>
+
+
 <dt>smooth.line</dt>
 <dd><p>boolean, if <code>TRUE</code> the plot will display a regression line representing the regression of the posterior expectation of the linear coefficients betas on the context-level covariates. Default <code>FALSE</code></p></dd>
+
+
 <dt>title</dt>
 <dd><p>string, title of the plot</p></dd>
+
+
 <dt>legend.position</dt>
 <dd><p>one of four options: "bottom" (default), "top", "left", or "right". It indicates the position of the legend</p></dd>
+
+
 <dt>col.pred.line</dt>
 <dd><p>string with color of fitted line. Only works if <code>pred.pexp.beta=TRUE</code></p></dd>
+
+
 <dt>x.axis.size</dt>
 <dd><p>numeric, the relative size of the label in the x-axis</p></dd>
+
+
 <dt>y.axis.size</dt>
 <dd><p>numeric, the relative size of the label in the y-axis</p></dd>
+
+
 <dt>title.size</dt>
 <dd><p>numeric, absolute size of the title</p></dd>
+
+
 <dt>panel.title.size</dt>
 <dd><p>numeric, the relative size of the titles in the panel of the plot</p></dd>
+
+
 <dt>legend.size</dt>
 <dd><p>numeric, the relative size of the legend</p></dd>
+
 </dl></div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org" class="external-link">magrittr</a></span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">66</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># Note: this example is just for illustration. MCMC iterations are very reduced</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">n</span> <span class="op">=</span> <span class="fl">20</span></span>
-<span class="r-in"><span class="va">data.context1</span> <span class="op">=</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>x1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span>, <span class="op">-</span><span class="fl">3</span><span class="op">)</span>,</span>
-<span class="r-in">                                   x2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span>,  <span class="fl">3</span><span class="op">)</span>,</span>
-<span class="r-in">                                   z  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="va">n</span>, replace<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>,</span>
-<span class="r-in">                                   y  <span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">z</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span> <span class="op">*</span> <span class="op">(</span><span class="fl">3</span> <span class="op">+</span> <span class="fl">4</span><span class="op">*</span><span class="va">x1</span> <span class="op">-</span> <span class="va">x2</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span class="r-in">                                       <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">z</span><span class="op">==</span><span class="fl">2</span><span class="op">)</span> <span class="op">*</span> <span class="op">(</span><span class="fl">3</span> <span class="op">+</span> <span class="fl">2</span><span class="op">*</span><span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span class="r-in">                                       <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">z</span><span class="op">==</span><span class="fl">3</span><span class="op">)</span> <span class="op">*</span> <span class="op">(</span><span class="fl">3</span> <span class="op">-</span> <span class="fl">4</span><span class="op">*</span><span class="va">x1</span> <span class="op">-</span> <span class="va">x2</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span> ,</span>
-<span class="r-in">                                   w <span class="op">=</span> <span class="fl">20</span></span>
-<span class="r-in">                                   <span class="op">)</span> </span>
-<span class="r-in"><span class="va">data.context2</span> <span class="op">=</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>x1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span>, <span class="op">-</span><span class="fl">3</span><span class="op">)</span>,</span>
-<span class="r-in">                                   x2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span>,  <span class="fl">3</span><span class="op">)</span>,</span>
-<span class="r-in">                                   z  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="va">n</span>, replace<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>,</span>
-<span class="r-in">                                   y  <span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">z</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span> <span class="op">*</span> <span class="op">(</span><span class="fl">1</span> <span class="op">+</span> <span class="fl">3</span><span class="op">*</span><span class="va">x1</span> <span class="op">-</span> <span class="fl">2</span><span class="op">*</span><span class="va">x2</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span class="r-in">                                       <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">z</span><span class="op">==</span><span class="fl">2</span><span class="op">)</span> <span class="op">*</span> <span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="fl">2</span><span class="op">*</span><span class="va">x1</span> <span class="op">+</span>   <span class="va">x2</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span>,</span>
-<span class="r-in">                                   w <span class="op">=</span> <span class="fl">10</span></span>
-<span class="r-in">                                   <span class="op">)</span> </span>
-<span class="r-in"><span class="va">data</span> <span class="op">=</span> <span class="va">data.context1</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">data.context2</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## estimation</span></span>
-<span class="r-in"><span class="va">mcmc</span>    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>burn.in<span class="op">=</span><span class="fl">1</span>, n.iter<span class="op">=</span><span class="fl">50</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">samples</span> <span class="op">=</span> <span class="fu"><a href="hdpGLM.html">hdpGLM</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span>, <span class="va">y</span> <span class="op">~</span> <span class="va">w</span>, data<span class="op">=</span><span class="va">data</span>, mcmc<span class="op">=</span><span class="va">mcmc</span>, n.display<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org" class="external-link">magrittr</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">66</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Note: this example is just for illustration. MCMC iterations are very reduced</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">n</span> <span class="op">=</span> <span class="fl">20</span></span></span>
+<span class="r-in"><span><span class="va">data.context1</span> <span class="op">=</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>x1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span>, <span class="op">-</span><span class="fl">3</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                   x2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span>,  <span class="fl">3</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                   z  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="va">n</span>, replace<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                   y  <span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">z</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span> <span class="op">*</span> <span class="op">(</span><span class="fl">3</span> <span class="op">+</span> <span class="fl">4</span><span class="op">*</span><span class="va">x1</span> <span class="op">-</span> <span class="va">x2</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>                                       <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">z</span><span class="op">==</span><span class="fl">2</span><span class="op">)</span> <span class="op">*</span> <span class="op">(</span><span class="fl">3</span> <span class="op">+</span> <span class="fl">2</span><span class="op">*</span><span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>                                       <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">z</span><span class="op">==</span><span class="fl">3</span><span class="op">)</span> <span class="op">*</span> <span class="op">(</span><span class="fl">3</span> <span class="op">-</span> <span class="fl">4</span><span class="op">*</span><span class="va">x1</span> <span class="op">-</span> <span class="va">x2</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span> ,</span></span>
+<span class="r-in"><span>                                   w <span class="op">=</span> <span class="fl">20</span></span></span>
+<span class="r-in"><span>                                   <span class="op">)</span> </span></span>
+<span class="r-in"><span><span class="va">data.context2</span> <span class="op">=</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>x1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span>, <span class="op">-</span><span class="fl">3</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                   x2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span>,  <span class="fl">3</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                   z  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="va">n</span>, replace<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                   y  <span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">z</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span> <span class="op">*</span> <span class="op">(</span><span class="fl">1</span> <span class="op">+</span> <span class="fl">3</span><span class="op">*</span><span class="va">x1</span> <span class="op">-</span> <span class="fl">2</span><span class="op">*</span><span class="va">x2</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>                                       <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">z</span><span class="op">==</span><span class="fl">2</span><span class="op">)</span> <span class="op">*</span> <span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="fl">2</span><span class="op">*</span><span class="va">x1</span> <span class="op">+</span>   <span class="va">x2</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                   w <span class="op">=</span> <span class="fl">10</span></span></span>
+<span class="r-in"><span>                                   <span class="op">)</span> </span></span>
+<span class="r-in"><span><span class="va">data</span> <span class="op">=</span> <span class="va">data.context1</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">data.context2</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## estimation</span></span></span>
+<span class="r-in"><span><span class="va">mcmc</span>    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>burn.in<span class="op">=</span><span class="fl">1</span>, n.iter<span class="op">=</span><span class="fl">50</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">samples</span> <span class="op">=</span> <span class="fu"><a href="hdpGLM.html">hdpGLM</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span>, <span class="va">y</span> <span class="op">~</span> <span class="va">w</span>, data<span class="op">=</span><span class="va">data</span>, mcmc<span class="op">=</span><span class="va">mcmc</span>, n.display<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Preparing for estimation ...</span>
@@ -1592,45 +1625,40 @@
 <span class="r-out co"><span class="r-pr">#&gt;</span>    45.0000   50.0000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [=======================================================================] 100 %</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu">plot_pexp_beta</span><span class="op">(</span><span class="va">samples</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">plot_pexp_beta</span><span class="op">(</span><span class="va">samples</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Generating plots ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>`guides(&lt;scale&gt; = FALSE)` is deprecated. Please use `guides(&lt;scale&gt; = "none")` instead.</span>
 <span class="r-plt img"><img src="plot_pexp_beta-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span class="fu">plot_pexp_beta</span><span class="op">(</span><span class="va">samples</span>, X<span class="op">=</span><span class="st">'x1'</span>, ncol.w<span class="op">=</span><span class="fl">2</span>, nrow.w<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">plot_pexp_beta</span><span class="op">(</span><span class="va">samples</span>, X<span class="op">=</span><span class="st">'x1'</span>, ncol.w<span class="op">=</span><span class="fl">2</span>, nrow.w<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Generating plots ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>`guides(&lt;scale&gt; = FALSE)` is deprecated. Please use `guides(&lt;scale&gt; = "none")` instead.</span>
 <span class="r-plt img"><img src="plot_pexp_beta-2.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span class="fu">plot_pexp_beta</span><span class="op">(</span><span class="va">samples</span>, X<span class="op">=</span><span class="st">'x1'</span>, ncol.beta<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">plot_pexp_beta</span><span class="op">(</span><span class="va">samples</span>, X<span class="op">=</span><span class="st">'x1'</span>, ncol.beta<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Generating plots ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>`guides(&lt;scale&gt; = FALSE)` is deprecated. Please use `guides(&lt;scale&gt; = "none")` instead.</span>
 <span class="r-plt img"><img src="plot_pexp_beta-3.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span class="fu">plot_pexp_beta</span><span class="op">(</span><span class="va">samples</span>, pred.pexp.beta<span class="op">=</span><span class="cn">TRUE</span>, W<span class="op">=</span><span class="st">"w"</span>, X<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x1"</span>, <span class="st">"x2"</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">plot_pexp_beta</span><span class="op">(</span><span class="va">samples</span>, pred.pexp.beta<span class="op">=</span><span class="cn">TRUE</span>, W<span class="op">=</span><span class="st">"w"</span>, X<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x1"</span>, <span class="st">"x2"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Generating plots ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>`guides(&lt;scale&gt; = FALSE)` is deprecated. Please use `guides(&lt;scale&gt; = "none")` instead.</span>
 <span class="r-plt img"><img src="plot_pexp_beta-4.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span class="fu">plot_pexp_beta</span><span class="op">(</span><span class="va">samples</span>, W<span class="op">=</span><span class="st">'w'</span>, smooth.line<span class="op">=</span><span class="cn">TRUE</span>, pred.pexp.beta<span class="op">=</span><span class="cn">TRUE</span>, ncol.beta<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">plot_pexp_beta</span><span class="op">(</span><span class="va">samples</span>, W<span class="op">=</span><span class="st">'w'</span>, smooth.line<span class="op">=</span><span class="cn">TRUE</span>, pred.pexp.beta<span class="op">=</span><span class="cn">TRUE</span>, ncol.beta<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Generating plots ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>`guides(&lt;scale&gt; = FALSE)` is deprecated. Please use `guides(&lt;scale&gt; = "none")` instead.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> `geom_smooth()` using formula 'y ~ x'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> `geom_smooth()` using formula 'y ~ x'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> `geom_smooth()` using formula = 'y ~ x'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> `geom_smooth()` using formula = 'y ~ x'</span>
 <span class="r-plt img"><img src="plot_pexp_beta-5.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -1645,7 +1673,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

@@ -19,7 +19,7 @@ the posterior distribution of tau"><!-- mathjax --><script src="https://cdnjs.cl
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">hdpGLM</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.3</span>
       </span>
     </div>
 
@@ -70,111 +70,156 @@ the posterior distribution of tau</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">plot_hdpglm</span><span class="op">(</span>
-  <span class="va">samples</span>,
-  X <span class="op">=</span> <span class="cn">NULL</span>,
-  W <span class="op">=</span> <span class="cn">NULL</span>,
-  ncol.taus <span class="op">=</span> <span class="fl">1</span>,
-  ncol.betas <span class="op">=</span> <span class="cn">NULL</span>,
-  ncol.w <span class="op">=</span> <span class="cn">NULL</span>,
-  nrow.w <span class="op">=</span> <span class="cn">NULL</span>,
-  smooth.line <span class="op">=</span> <span class="cn">FALSE</span>,
-  pred.pexp.beta <span class="op">=</span> <span class="cn">FALSE</span>,
-  title.tau <span class="op">=</span> <span class="cn">NULL</span>,
-  true.tau <span class="op">=</span> <span class="cn">NULL</span>,
-  title.beta <span class="op">=</span> <span class="cn">NULL</span>,
-  tau.x.axis.size <span class="op">=</span> <span class="fl">1.1</span>,
-  tau.y.axis.size <span class="op">=</span> <span class="fl">1.1</span>,
-  tau.title.size <span class="op">=</span> <span class="fl">1.2</span>,
-  tau.panel.title.size <span class="op">=</span> <span class="fl">1.4</span>,
-  tau.legend.size <span class="op">=</span> <span class="fl">1</span>,
-  beta.x.axis.size <span class="op">=</span> <span class="fl">1.1</span>,
-  beta.y.axis.size <span class="op">=</span> <span class="fl">1.1</span>,
-  beta.title.size <span class="op">=</span> <span class="fl">1.2</span>,
-  beta.panel.title.size <span class="op">=</span> <span class="fl">1.4</span>,
-  beta.legend.size <span class="op">=</span> <span class="fl">1</span>,
-  tau.xlab <span class="op">=</span> <span class="cn">NULL</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plot_hdpglm</span><span class="op">(</span></span>
+<span>  <span class="va">samples</span>,</span>
+<span>  X <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  W <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ncol.taus <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  ncol.betas <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ncol.w <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  nrow.w <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  smooth.line <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  pred.pexp.beta <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  title.tau <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  true.tau <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  title.beta <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  tau.x.axis.size <span class="op">=</span> <span class="fl">1.1</span>,</span>
+<span>  tau.y.axis.size <span class="op">=</span> <span class="fl">1.1</span>,</span>
+<span>  tau.title.size <span class="op">=</span> <span class="fl">1.2</span>,</span>
+<span>  tau.panel.title.size <span class="op">=</span> <span class="fl">1.4</span>,</span>
+<span>  tau.legend.size <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  beta.x.axis.size <span class="op">=</span> <span class="fl">1.1</span>,</span>
+<span>  beta.y.axis.size <span class="op">=</span> <span class="fl">1.1</span>,</span>
+<span>  beta.title.size <span class="op">=</span> <span class="fl">1.2</span>,</span>
+<span>  beta.panel.title.size <span class="op">=</span> <span class="fl">1.4</span>,</span>
+<span>  beta.legend.size <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  tau.xlab <span class="op">=</span> <span class="cn">NULL</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>samples</dt>
 <dd><p>an output of the function <code><a href="hdpGLM.html">hdpGLM</a></code></p></dd>
+
+
 <dt>X</dt>
 <dd><p>a string vector with the name of the first-level covariates whose associated tau should be displayed</p></dd>
+
+
 <dt>W</dt>
 <dd><p>a string vector with the name of the context-level covariate(s) whose linear effect will be displayed. If <code>NULL</code>, the linear effect tau of all context-level covariates are displayed. Note: the context-level covariate must have been included in the estimation of the model.</p></dd>
+
+
 <dt>ncol.taus</dt>
 <dd><p>integer with the number of columns of the grid containing the posterior distribution of tau</p></dd>
+
+
 <dt>ncol.betas</dt>
 <dd><p>integer with the number of columns of the posterior expectation of betas as function of context-level features</p></dd>
+
+
 <dt>ncol.w</dt>
 <dd><p>integer with the number of columns to use to display the different context-level covariates</p></dd>
+
+
 <dt>nrow.w</dt>
 <dd><p>integer with the number of rows to use to display the different context-level covariates</p></dd>
+
+
 <dt>smooth.line</dt>
 <dd><p>boolean, if <code>TRUE</code> the plot will display a regression line representing the regression of the posterior expectation of the linear coefficients betas on the context-level covariates. Default <code>FALSE</code></p></dd>
+
+
 <dt>pred.pexp.beta</dt>
 <dd><p>boolean, if <code>TRUE</code> the plots will display a line with the predicted posterior expectation of betas obtained using the posterior expectation of taus, the linear coefficients of the expectation of beta</p></dd>
+
+
 <dt>title.tau</dt>
 <dd><p>string, the title for the posterior distribution of the context effects</p></dd>
+
+
 <dt>true.tau</dt>
 <dd><p>a <code>data.frame</code> with four columns. The first must be named <code>w</code> and it indicates the index of each context-level covariate, starting with 0 for the intercept term. The second column named <code>beta</code> must contain the indexes of the betas of individual-level covariates, starting with 0 for the intercept term. The third column named <code>Parameter</code> must be named <code>tau&lt;w&gt;&lt;beta&gt;</code>, where <code>w</code> and <code>beta</code> must be the actual values displayed in the columns <code>w</code> and <code>beta</code>. Finally, it must have a column named <code>True</code> with the true value of the parameter.</p></dd>
+
+
 <dt>title.beta</dt>
 <dd><p>string, the title for the posterior expectation of beta as function of context-level covariate</p></dd>
+
+
 <dt>tau.x.axis.size</dt>
 <dd><p>numeric, relative size of the x-axis of the plot with tau</p></dd>
+
+
 <dt>tau.y.axis.size</dt>
 <dd><p>numeric, relative size of the y-axis of the plot with tau</p></dd>
+
+
 <dt>tau.title.size</dt>
 <dd><p>numeric, relative size of the title of the plot with tau</p></dd>
+
+
 <dt>tau.panel.title.size</dt>
 <dd><p>numeric, relative size of the title of the panels of the plot with tau</p></dd>
+
+
 <dt>tau.legend.size</dt>
 <dd><p>numeric, relative size of the legend of the plot with tau</p></dd>
+
+
 <dt>beta.x.axis.size</dt>
 <dd><p>numeric, relative size of the x-axis of the plot with beta</p></dd>
+
+
 <dt>beta.y.axis.size</dt>
 <dd><p>numeric, relative size of the y-axis of the plot with beta</p></dd>
+
+
 <dt>beta.title.size</dt>
 <dd><p>numeric, relative size of the title of the plot with beta</p></dd>
+
+
 <dt>beta.panel.title.size</dt>
 <dd><p>numeric, relative size of the title of the panels of the plot with beta</p></dd>
+
+
 <dt>beta.legend.size</dt>
 <dd><p>numeric, relative size of the legend of the plot with beta</p></dd>
+
+
 <dt>tau.xlab</dt>
 <dd><p>string, the label of the x-axis for the plot with tau</p></dd>
+
 </dl></div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org" class="external-link">magrittr</a></span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># Note: this example is just for illustration. MCMC iterations are very reduced</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">n</span> <span class="op">=</span> <span class="fl">20</span></span>
-<span class="r-in"><span class="va">data.context1</span> <span class="op">=</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>x1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span>, <span class="op">-</span><span class="fl">3</span><span class="op">)</span>,</span>
-<span class="r-in">                                   x2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span>,  <span class="fl">3</span><span class="op">)</span>,</span>
-<span class="r-in">                                   z  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="va">n</span>, replace<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>,</span>
-<span class="r-in">                                   y  <span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">z</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span> <span class="op">*</span> <span class="op">(</span><span class="fl">3</span> <span class="op">+</span> <span class="fl">4</span><span class="op">*</span><span class="va">x1</span> <span class="op">-</span> <span class="va">x2</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span class="r-in">                                       <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">z</span><span class="op">==</span><span class="fl">2</span><span class="op">)</span> <span class="op">*</span> <span class="op">(</span><span class="fl">3</span> <span class="op">+</span> <span class="fl">2</span><span class="op">*</span><span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span class="r-in">                                       <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">z</span><span class="op">==</span><span class="fl">3</span><span class="op">)</span> <span class="op">*</span> <span class="op">(</span><span class="fl">3</span> <span class="op">-</span> <span class="fl">4</span><span class="op">*</span><span class="va">x1</span> <span class="op">-</span> <span class="va">x2</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span> ,</span>
-<span class="r-in">                                   w <span class="op">=</span> <span class="fl">20</span></span>
-<span class="r-in">                                   <span class="op">)</span> </span>
-<span class="r-in"><span class="va">data.context2</span> <span class="op">=</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>x1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span>, <span class="op">-</span><span class="fl">3</span><span class="op">)</span>,</span>
-<span class="r-in">                                   x2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span>,  <span class="fl">3</span><span class="op">)</span>,</span>
-<span class="r-in">                                   z  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="va">n</span>, replace<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>,</span>
-<span class="r-in">                                   y  <span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">z</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span> <span class="op">*</span> <span class="op">(</span><span class="fl">1</span> <span class="op">+</span> <span class="fl">3</span><span class="op">*</span><span class="va">x1</span> <span class="op">-</span> <span class="fl">2</span><span class="op">*</span><span class="va">x2</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
-<span class="r-in">                                       <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">z</span><span class="op">==</span><span class="fl">2</span><span class="op">)</span> <span class="op">*</span> <span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="fl">2</span><span class="op">*</span><span class="va">x1</span> <span class="op">+</span>   <span class="va">x2</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span>,</span>
-<span class="r-in">                                   w <span class="op">=</span> <span class="fl">10</span></span>
-<span class="r-in">                                   <span class="op">)</span> </span>
-<span class="r-in"><span class="va">data</span> <span class="op">=</span> <span class="va">data.context1</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span class="r-in">    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">data.context2</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">## estimation</span></span>
-<span class="r-in"><span class="va">mcmc</span>    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>burn.in<span class="op">=</span><span class="fl">1</span>, n.iter<span class="op">=</span><span class="fl">50</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">samples</span> <span class="op">=</span> <span class="fu"><a href="hdpGLM.html">hdpGLM</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span>, <span class="va">y</span> <span class="op">~</span> <span class="va">w</span>, data<span class="op">=</span><span class="va">data</span>, mcmc<span class="op">=</span><span class="va">mcmc</span>, n.display<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org" class="external-link">magrittr</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Note: this example is just for illustration. MCMC iterations are very reduced</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">n</span> <span class="op">=</span> <span class="fl">20</span></span></span>
+<span class="r-in"><span><span class="va">data.context1</span> <span class="op">=</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>x1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span>, <span class="op">-</span><span class="fl">3</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                   x2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span>,  <span class="fl">3</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                   z  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>, <span class="va">n</span>, replace<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                   y  <span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">z</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span> <span class="op">*</span> <span class="op">(</span><span class="fl">3</span> <span class="op">+</span> <span class="fl">4</span><span class="op">*</span><span class="va">x1</span> <span class="op">-</span> <span class="va">x2</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>                                       <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">z</span><span class="op">==</span><span class="fl">2</span><span class="op">)</span> <span class="op">*</span> <span class="op">(</span><span class="fl">3</span> <span class="op">+</span> <span class="fl">2</span><span class="op">*</span><span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>                                       <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">z</span><span class="op">==</span><span class="fl">3</span><span class="op">)</span> <span class="op">*</span> <span class="op">(</span><span class="fl">3</span> <span class="op">-</span> <span class="fl">4</span><span class="op">*</span><span class="va">x1</span> <span class="op">-</span> <span class="va">x2</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span> ,</span></span>
+<span class="r-in"><span>                                   w <span class="op">=</span> <span class="fl">20</span></span></span>
+<span class="r-in"><span>                                   <span class="op">)</span> </span></span>
+<span class="r-in"><span><span class="va">data.context2</span> <span class="op">=</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></span><span class="op">(</span>x1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span>, <span class="op">-</span><span class="fl">3</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                   x2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span>,  <span class="fl">3</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                   z  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span>, <span class="va">n</span>, replace<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                   y  <span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">z</span><span class="op">==</span><span class="fl">1</span><span class="op">)</span> <span class="op">*</span> <span class="op">(</span><span class="fl">1</span> <span class="op">+</span> <span class="fl">3</span><span class="op">*</span><span class="va">x1</span> <span class="op">-</span> <span class="fl">2</span><span class="op">*</span><span class="va">x2</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>                                       <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html" class="external-link">I</a></span><span class="op">(</span><span class="va">z</span><span class="op">==</span><span class="fl">2</span><span class="op">)</span> <span class="op">*</span> <span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="fl">2</span><span class="op">*</span><span class="va">x1</span> <span class="op">+</span>   <span class="va">x2</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                                   w <span class="op">=</span> <span class="fl">10</span></span></span>
+<span class="r-in"><span>                                   <span class="op">)</span> </span></span>
+<span class="r-in"><span><span class="va">data</span> <span class="op">=</span> <span class="va">data.context1</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span></span>
+<span class="r-in"><span>    <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html" class="external-link">bind_rows</a></span><span class="op">(</span><span class="va">data.context2</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## estimation</span></span></span>
+<span class="r-in"><span><span class="va">mcmc</span>    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>burn.in<span class="op">=</span><span class="fl">1</span>, n.iter<span class="op">=</span><span class="fl">50</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">samples</span> <span class="op">=</span> <span class="fu"><a href="hdpGLM.html">hdpGLM</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span>, <span class="va">y</span> <span class="op">~</span> <span class="va">w</span>, data<span class="op">=</span><span class="va">data</span>, mcmc<span class="op">=</span><span class="va">mcmc</span>, n.display<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Preparing for estimation ...</span>
@@ -1612,8 +1657,8 @@ the posterior distribution of tau</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    45.0000   50.0000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [=======================================================================] 100 %</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="fu">plot_hdpglm</span><span class="op">(</span><span class="va">samples</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">plot_hdpglm</span><span class="op">(</span><span class="va">samples</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Plot being generated ...</span>
@@ -1622,9 +1667,8 @@ the posterior distribution of tau</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Generating plots ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>`guides(&lt;scale&gt; = FALSE)` is deprecated. Please use `guides(&lt;scale&gt; = "none")` instead.</span>
 <span class="r-plt img"><img src="plot_hdpglm-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span class="fu">plot_hdpglm</span><span class="op">(</span><span class="va">samples</span>, ncol.taus<span class="op">=</span><span class="fl">2</span>, ncol.betas<span class="op">=</span><span class="fl">2</span>, X<span class="op">=</span><span class="st">'x1'</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">plot_hdpglm</span><span class="op">(</span><span class="va">samples</span>, ncol.taus<span class="op">=</span><span class="fl">2</span>, ncol.betas<span class="op">=</span><span class="fl">2</span>, X<span class="op">=</span><span class="st">'x1'</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Plot being generated ...</span>
@@ -1633,10 +1677,9 @@ the posterior distribution of tau</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Generating plots ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>`guides(&lt;scale&gt; = FALSE)` is deprecated. Please use `guides(&lt;scale&gt; = "none")` instead.</span>
 <span class="r-plt img"><img src="plot_hdpglm-2.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span class="fu">plot_hdpglm</span><span class="op">(</span><span class="va">samples</span>, ncol.taus<span class="op">=</span><span class="fl">2</span>, ncol.betas<span class="op">=</span><span class="fl">2</span>, X<span class="op">=</span><span class="st">'x1'</span>, ncol.w<span class="op">=</span><span class="fl">2</span>, nrow.w<span class="op">=</span><span class="fl">1</span>,</span>
-<span class="r-in">            pred.pexp.beta<span class="op">=</span><span class="cn">TRUE</span>,smooth.line<span class="op">=</span><span class="cn">TRUE</span> <span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">plot_hdpglm</span><span class="op">(</span><span class="va">samples</span>, ncol.taus<span class="op">=</span><span class="fl">2</span>, ncol.betas<span class="op">=</span><span class="fl">2</span>, X<span class="op">=</span><span class="st">'x1'</span>, ncol.w<span class="op">=</span><span class="fl">2</span>, nrow.w<span class="op">=</span><span class="fl">1</span>,</span></span>
+<span class="r-in"><span>            pred.pexp.beta<span class="op">=</span><span class="cn">TRUE</span>,smooth.line<span class="op">=</span><span class="cn">TRUE</span> <span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Plot being generated ...</span>
@@ -1645,12 +1688,11 @@ the posterior distribution of tau</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Generating plots ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>`guides(&lt;scale&gt; = FALSE)` is deprecated. Please use `guides(&lt;scale&gt; = "none")` instead.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> `geom_smooth()` using formula 'y ~ x'</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> `geom_smooth()` using formula 'y ~ x'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> `geom_smooth()` using formula = 'y ~ x'</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> `geom_smooth()` using formula = 'y ~ x'</span>
 <span class="r-plt img"><img src="plot_hdpglm-3.png" alt="" width="700" height="433"></span>
-<span class="r-in"></span>
-<span class="r-in"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -1665,7 +1707,7 @@ the posterior distribution of tau</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

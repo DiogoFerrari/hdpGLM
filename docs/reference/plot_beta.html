@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">hdpGLM</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.0.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.0.3</span>
       </span>
     </div>
 
@@ -66,66 +66,101 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">plot_beta</span><span class="op">(</span>
-  <span class="va">samples</span>,
-  X <span class="op">=</span> <span class="cn">NULL</span>,
-  context.id <span class="op">=</span> <span class="cn">NULL</span>,
-  true.beta <span class="op">=</span> <span class="cn">NULL</span>,
-  title <span class="op">=</span> <span class="cn">NULL</span>,
-  subtitle <span class="op">=</span> <span class="cn">NULL</span>,
-  plot.mean <span class="op">=</span> <span class="cn">FALSE</span>,
-  plot.grid <span class="op">=</span> <span class="cn">FALSE</span>,
-  showKhat <span class="op">=</span> <span class="cn">FALSE</span>,
-  col <span class="op">=</span> <span class="cn">NULL</span>,
-  xlab.size <span class="op">=</span> <span class="cn">NULL</span>,
-  ylab.size <span class="op">=</span> <span class="cn">NULL</span>,
-  title.size <span class="op">=</span> <span class="cn">NULL</span>,
-  legend.size <span class="op">=</span> <span class="cn">NULL</span>,
-  xtick.distance <span class="op">=</span> <span class="cn">NULL</span>,
-  left.margin <span class="op">=</span> <span class="fl">0</span>,
-  ytick.distance <span class="op">=</span> <span class="cn">NULL</span>,
-  col.border <span class="op">=</span> <span class="st">"white"</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plot_beta</span><span class="op">(</span></span>
+<span>  <span class="va">samples</span>,</span>
+<span>  X <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  context.id <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  true.beta <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  title <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  subtitle <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  plot.mean <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  plot.grid <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  showKhat <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  col <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  xlab.size <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ylab.size <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  title.size <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  legend.size <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  xtick.distance <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  left.margin <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  ytick.distance <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  col.border <span class="op">=</span> <span class="st">"white"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>samples</dt>
 <dd><p>an output of the function <code><a href="hdpGLM.html">hdpGLM</a></code></p></dd>
+
+
 <dt>X</dt>
 <dd><p>a string vector with the name of the first-level covariates whose associated tau should be displayed</p></dd>
+
+
 <dt>context.id</dt>
 <dd><p>string with the name of the column containing the labels identifying the contexts. This variable should have been specified when the estimation was conducted using the function <code><a href="hdpGLM.html">hdpGLM</a></code>.</p></dd>
+
+
 <dt>true.beta</dt>
 <dd><p>a <code>data.frame</code> with the true values of the linear coefficients <code>beta</code> if they are known. The <code>data.frame</code> must contain a column named <code>j</code> with the index of the context associated with that particular linear coefficient <code>beta</code>. It must match the indexes used in the data set for each context. Another column named <code>k</code> must be provided, indicating the cluster of <code>beta</code>, and a column named <code>Parameter</code> with the name of the linear coefficients (<code>beta1</code>, <code>beta2</code>, ..., <code>beta_dx</code>, where <code>dx</code> is the number of covariates at the individual level, and beta1 is the coefficient of the intercept term). It must contain a column named <code>True</code> with the true value of the <code>betas</code>. Finally, the <code>data.frame</code> must contain columns with the context-level covariates as used in the estimation of the <a href="hdpGLM.html">hdpGLM</a> function (see Details below).</p></dd>
+
+
 <dt>title</dt>
 <dd><p>string, title of the plot</p></dd>
+
+
 <dt>subtitle</dt>
 <dd><p>string, the subtitle of the plot</p></dd>
+
+
 <dt>plot.mean</dt>
 <dd><p>boolean, if <code>TRUE</code> the posterior mean of every cluster is displayed</p></dd>
+
+
 <dt>plot.grid</dt>
 <dd><p>boolean, if <code>TRUE</code> a grid is displayed in the background</p></dd>
+
+
 <dt>showKhat</dt>
 <dd><p>boolean, if <code>TRUE</code> a message with the number of estimated clusters by context is displayed</p></dd>
+
+
 <dt>col</dt>
 <dd><p>string, color of the densities</p></dd>
+
+
 <dt>xlab.size</dt>
 <dd><p>numeric, size of the breaks in the x-axis</p></dd>
+
+
 <dt>ylab.size</dt>
 <dd><p>numeric, size of the breaks in the y-axis</p></dd>
+
+
 <dt>title.size</dt>
 <dd><p>numeric, size of the title</p></dd>
+
+
 <dt>legend.size</dt>
 <dd><p>numeric, size of the legend</p></dd>
+
+
 <dt>xtick.distance</dt>
 <dd><p>numeric, distance between x-axis marks and bottom of the figure</p></dd>
+
+
 <dt>left.margin</dt>
 <dd><p>numeric, distance between left margin and left side of the figure</p></dd>
+
+
 <dt>ytick.distance</dt>
 <dd><p>numeric, distance between y-axis marks and bottom of the figure</p></dd>
+
+
 <dt>col.border</dt>
 <dd><p>string, color of the border of the densities</p></dd>
+
 </dl></div>
 
   </div>
@@ -140,7 +175,7 @@
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>
