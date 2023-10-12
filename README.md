@@ -38,7 +38,7 @@ page in R by running `help(install_github)`).
 Usage
 =====
 
-For more details, see package [website](http://www.diogoferrari.com/hdpGLM/index.html). Here is a simple example:
+Here is a simple example of how to use the package:
 
 ```
 library(hdpGLM)

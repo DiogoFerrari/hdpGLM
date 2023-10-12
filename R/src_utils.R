@@ -87,7 +87,7 @@ NULL
 ## ===============================================================
 
 Author: Diogo Ferrari
-Usage : http://www.diogoferrari.com/hdpGLM/index.html
+Usage : https://github.com/DiogoFerrari/hdpGLM
 
 '))
 }
