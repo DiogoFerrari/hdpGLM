@@ -7,7 +7,6 @@ using namespace Rcpp;
 using namespace arma;
 
 
-
 // these depend on family
 // ----------------------
 double U(colvec theta, List fix)
