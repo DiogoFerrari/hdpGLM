@@ -1,5 +1,8 @@
 # hdpGLM (development version)
 
+# hdpGLM 1.0.4
+- Removed ggjoy from DESCRIPTION. The package is not being used.
+
 # hdpGLM 1.0.3
 
 - This is a minor release with typos corrected and the inclusion of information regarding the publication of the package in the Journal of Statistical Software (10.18637/jss.v107.i10)

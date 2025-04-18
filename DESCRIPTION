@@ -1,6 +1,6 @@
 Package: hdpGLM
 Title: Hierarchical Dirichlet Process Generalized Linear Models
-Version: 1.0.3
+Version: 1.0.4
 Authors@R: c(person(given="Diogo", family="Ferrari", email="diogoferrari@gmail.com", role=c("aut", "cre")))
 Description: Implementation of MCMC algorithms to estimate the Hierarchical Dirichlet Process Generalized Linear Model (hdpGLM) presented in the paper Ferrari (2020) Modeling Context-Dependent Latent Heterogeneity, Political Analysis <DOI:10.1017/pan.2019.13> and <doi:10.18637/jss.v107.i10>.
 Depends: R (>= 3.3.3)
@@ -14,7 +14,6 @@ Imports: coda,
     data.table,
     dplyr,
     formula.tools,
-    ggjoy,
     ggplot2,
     stringr,
     ggridges,
